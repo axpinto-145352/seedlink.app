@@ -1,5 +1,5 @@
 {
-  "name": "SeedLink - Outreach Response Handler",
+  "name": "SeedLink - Outreach Handler",
   "nodes": [
     {
       "parameters": {
@@ -153,11 +153,12 @@
         "sheetName": {
           "__rl": true,
           "mode": "list",
-          "value": "Hot Leads"
+          "value": "Outreach"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
+            "Type": "={{$json.classification === 'interested' ? 'Hot Lead' : $json.classification === 'not_interested' ? 'Archived' : $json.classification === 'question' ? 'Question' : $json.classification === 'meeting_request' ? 'Meeting' : 'Unknown'}}",
             "Sender Name": "={{$json.sender_name}}",
             "Title": "={{$json.sender_title}}",
             "Company": "={{$json.sender_company}}",
@@ -168,142 +169,16 @@
             "Confidence": "={{$json.confidence}}",
             "Reasoning": "={{$json.reasoning}}",
             "Suggested Action": "={{$json.suggested_action}}",
-            "Urgency": "high"
-          }
-        },
-        "options": {}
-      },
-      "id": "b2c3d4e5-0006-4000-8000-000000000006",
-      "name": "Sheets: Add to Hot Leads",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
-      "position": [1340, 0],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "google_sheets",
-          "name": "Google Sheets"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "list",
-          "value": "Archived"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Sender Name": "={{$json.sender_name}}",
-            "Title": "={{$json.sender_title}}",
-            "Company": "={{$json.sender_company}}",
-            "Message": "={{$json.message_text}}",
-            "Response Date": "={{$json.response_date}}",
-            "Source": "={{$json.profile_source}}",
-            "Classification": "={{$json.classification}}",
-            "Reason": "={{$json.reasoning}}",
-            "Confidence": "={{$json.confidence}}"
-          }
-        },
-        "options": {}
-      },
-      "id": "b2c3d4e5-0007-4000-8000-000000000007",
-      "name": "Sheets: Log and Archive",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
-      "position": [1340, 220],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "google_sheets",
-          "name": "Google Sheets"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "list",
-          "value": "Questions"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Sender Name": "={{$json.sender_name}}",
-            "Title": "={{$json.sender_title}}",
-            "Company": "={{$json.sender_company}}",
-            "Message": "={{$json.message_text}}",
-            "Response Date": "={{$json.response_date}}",
-            "Source": "={{$json.profile_source}}",
-            "Classification": "={{$json.classification}}",
-            "Suggested Action": "={{$json.suggested_action}}",
-            "Confidence": "={{$json.confidence}}",
             "Urgency": "={{$json.urgency}}"
           }
         },
         "options": {}
       },
-      "id": "b2c3d4e5-0008-4000-8000-000000000008",
-      "name": "Sheets: Flag for Review",
+      "id": "b2c3d4e5-0013-4000-8000-000000000013",
+      "name": "Sheets: Log Response",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1340, 440],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "google_sheets",
-          "name": "Google Sheets"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "list",
-          "value": "Meetings"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "Sender Name": "={{$json.sender_name}}",
-            "Title": "={{$json.sender_title}}",
-            "Company": "={{$json.sender_company}}",
-            "Message": "={{$json.message_text}}",
-            "Response Date": "={{$json.response_date}}",
-            "Source": "={{$json.profile_source}}",
-            "Classification": "={{$json.classification}}",
-            "Confidence": "={{$json.confidence}}",
-            "Reasoning": "={{$json.reasoning}}",
-            "Suggested Action": "={{$json.suggested_action}}",
-            "Urgency": "high"
-          }
-        },
-        "options": {}
-      },
-      "id": "b2c3d4e5-0009-4000-8000-000000000009",
-      "name": "Sheets: Add to Meetings",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
-      "position": [1340, 660],
+      "position": [1340, 300],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
@@ -399,68 +274,35 @@
       "main": [
         [
           {
-            "node": "Sheets: Add to Hot Leads",
+            "node": "Sheets: Log Response",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Sheets: Log and Archive",
+            "node": "Sheets: Log Response",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Sheets: Flag for Review",
+            "node": "Sheets: Log Response",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Sheets: Add to Meetings",
+            "node": "Sheets: Log Response",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Sheets: Add to Hot Leads": {
-      "main": [
-        [
-          {
-            "node": "HTTP: Notify Slack",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Sheets: Log and Archive": {
-      "main": [
-        [
-          {
-            "node": "HTTP: Notify Slack",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Sheets: Flag for Review": {
-      "main": [
-        [
-          {
-            "node": "HTTP: Notify Slack",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Sheets: Add to Meetings": {
+    "Sheets: Log Response": {
       "main": [
         [
           {
@@ -499,6 +341,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2026-02-10T00:00:00.000Z",
-  "versionId": "1"
+  "updatedAt": "2026-02-17T00:00:00.000Z",
+  "versionId": "2"
 }

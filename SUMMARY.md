@@ -1,115 +1,231 @@
 # SeedLink.app — Build Summary
 
-**Build Date**: February 10, 2026
+**Original Build Date**: February 10, 2026
+**v2 Update Date**: February 17, 2026
 **Builder**: Veteran Vectors (Claude Code automation)
 **Source Documents**: `SeedLink_Combined_Proposal_VeteranVectors_Updated.pdf`, `SeedLink_SOW_Combined_VeteranVectors_Updated.pdf`
 
 ---
 
-## What Was Built
+## v2 Changes Summary (February 17, 2026)
 
-### Documentation (5 files)
+### What Triggered This Update
+
+Founder requested:
+1. Competitor review of Waldium (YC S23) and their AEO/content strategy
+2. Evaluation of MarketerHire as a reference model for scalability
+3. AEO (Answer Engine Optimization) upgrades to the existing build
+4. Multi-agent review architecture — specialized agents for voice, strategy, SEO, editing
+5. Workflow consolidation from 7 to 5
+6. Google Sheets as the primary user interface
+
+### Files Added
 
 | File | Purpose |
 |------|---------|
-| `REQUIREMENTS.md` | Extracted requirements from both PDFs — all automation touchpoints, integration points, content pillars, voice guidelines, budget constraints |
-| `ARCHITECTURE.md` | Workflow architecture with data flows, node specifications, shared standards, and dependency map |
-| `setup-guide.md` | Step-by-step setup: credential configuration, environment variables, workflow import order, manual testing procedures |
-| `sop.md` | Standard Operating Procedures: daily (10-15 min), weekly (30-45 min), monthly (2-3 hr), quarterly (half day) operations |
-| `google-sheets-template.md` | Complete Google Sheets workbook structure: 7 sheets with all column definitions, data types, and status values |
+| `COMPETITOR_REVIEW_WALDIUM.md` | Deep analysis of Waldium (YC S23), MarketerHire reference model, feature comparison vs SeedLink, AEO gap analysis, scalability assessment (1-off → productized → platform), content pillar recommendation, 3-phase strategic roadmap |
+| `prompts/voice-agent.md` | NEW — Voice & tone review agent: evaluates founder-to-founder tone, concreteness, accessibility, word choice (scores 1-5) |
+| `prompts/strategy-agent.md` | NEW — Strategy review agent: evaluates pillar alignment, audience targeting, CTA integration, value delivery (scores 1-5) |
+| `prompts/seo-aeo-agent.md` | NEW — SEO/AEO review agent: evaluates keyword placement, meta quality, AI citability, FAQ quality, verifiable claims + generates all SEO metadata |
+| `prompts/editor-unifier-agent.md` | NEW — Final editorial agent: synthesizes all agent feedback, produces publication-ready draft |
+| `workflows/social-engine.json` | NEW — Merged social derivation + scheduling + publishing (21 nodes) |
 
-### System Prompts (8 files in `prompts/`)
+### Files Updated
+
+| File | What Changed |
+|------|-------------|
+| `ARCHITECTURE.md` | Complete rewrite for v2: 5-workflow architecture, multi-agent review diagrams, token budget breakdown, Google Sheets UI design |
+| `prompts/blog-writer.md` | AEO enhancements: opening definitions for AI citation, Key Takeaways section, FAQ section with self-contained answers, verifiable claims requirement |
+| `workflows/content-pipeline-main.json` | Rebuilt from scratch: 25 nodes with 4-agent review (Voice → Strategy → SEO/AEO → Aggregate → Editor-Unifier), revision loop, SEO optimization built in |
+| `workflows/editorial-calendar-manager.json` | Sheet references updated to "Content Hub", column mappings updated to match new schema |
+| `workflows/analytics-reporter.json` | Renamed to "Analytics & Reporting", sheet references updated to "Content Hub" |
+| `workflows/outreach-response-handler.json` | Renamed to "Outreach Handler", consolidated 4 separate sheets into single "Outreach" sheet with Type column |
+| `google-sheets-template.md` | Complete redesign: 7 sheets → 5 sheets, Content Hub as primary UI with user action guide, status flow documentation, formatting recommendations |
+| `setup-guide.md` | Updated for 5 workflows, new sheet names, new testing procedures for multi-agent pipeline |
+| `sop.md` | Updated for Content Hub UI, social content review step, agent score trend monitoring, AEO quarterly assessment |
+
+### Files Removed
+
+| File | Reason |
+|------|--------|
+| `prompts/content-reviewer.md` | Replaced by 4 specialized agents (voice-agent, strategy-agent, seo-aeo-agent, editor-unifier-agent) |
+| `prompts/seo-optimizer.md` | Absorbed into seo-aeo-agent.md (combined SEO + AEO review + metadata generation) |
+| `workflows/seo-content-optimizer.json` | Absorbed into content-pipeline-main.json (SEO/AEO now built into the pipeline) |
+| `workflows/social-derivation.json` | Merged into social-engine.json |
+| `workflows/social-scheduler.json` | Merged into social-engine.json |
+
+---
+
+## Current State (v2)
+
+### Documentation (7 files)
+
+| File | Purpose |
+|------|---------|
+| `REQUIREMENTS.md` | Extracted requirements from both PDFs (unchanged from v1) |
+| `ARCHITECTURE.md` | v2 workflow architecture with multi-agent review, 5 workflows, Google Sheets UI |
+| `SUMMARY.md` | This file — consolidated change report |
+| `COMPETITOR_REVIEW_WALDIUM.md` | Waldium competitor analysis, scalability assessment, strategic roadmap |
+| `setup-guide.md` | Step-by-step setup for v2 architecture |
+| `sop.md` | Standard Operating Procedures for v2 |
+| `google-sheets-template.md` | Google Sheets UI template (5 sheets) |
+
+### System Prompts (10 files in `prompts/`)
 
 | File | Purpose | Used By |
 |------|---------|---------|
-| `content-brief-generator.md` | Expands topics into structured content briefs with headline, angle, outline, CTA type | content-pipeline-main |
-| `blog-writer.md` | Generates 1,000-1,500 word blog posts with full voice guidelines, structure requirements, SEO/AEO rules | content-pipeline-main |
-| `content-reviewer.md` | Agentic editor with 5-category scoring rubric (voice, CTA, SEO, AEO/GEO, editorial quality) and pass/fail logic | content-pipeline-main |
-| `linkedin-deriver.md` | Converts blog posts to 150-300 word LinkedIn thought-leadership posts for Shilpa's profile | social-derivation |
-| `twitter-deriver.md` | Converts blog posts to 5-7 tweet X/Twitter threads with hook-insight-CTA structure | social-derivation |
-| `seo-optimizer.md` | Generates meta titles, descriptions, JSON-LD schema markup, and internal link suggestions | seo-content-optimizer |
-| `topic-generator.md` | Generates 5-7 weekly topics balanced across 4 pillars with dedup and priority rules | editorial-calendar-manager |
-| `response-classifier.md` | Classifies LinkedIn outreach responses into 4 categories with confidence scores and urgency | outreach-response-handler |
+| `content-brief-generator.md` | Topic → structured content brief | Content Pipeline |
+| `blog-writer.md` | Brief → 1,000-1,500 word blog post with AEO optimization | Content Pipeline |
+| `voice-agent.md` | Review: tone, concreteness, accessibility, word choice | Content Pipeline |
+| `strategy-agent.md` | Review: pillar alignment, audience, CTA, value delivery | Content Pipeline |
+| `seo-aeo-agent.md` | Review: SEO + AEO + metadata generation | Content Pipeline |
+| `editor-unifier-agent.md` | Synthesize all agent feedback → final draft | Content Pipeline |
+| `linkedin-deriver.md` | Blog → LinkedIn post | Social Engine |
+| `twitter-deriver.md` | Blog → X/Twitter thread | Social Engine |
+| `topic-generator.md` | Weekly topic ideation with dedup | Editorial Calendar |
+| `response-classifier.md` | Outreach response classification | Outreach Handler |
 
-### n8n Workflows (7 files in `workflows/`)
+### n8n Workflows (5 files in `workflows/`)
 
 | File | Nodes | Trigger | Purpose |
 |------|-------|---------|---------|
-| `content-pipeline-main.json` | 22 | Daily schedule + manual | End-to-end blog creation: topic expansion → draft → agentic review → revision loop (max 2) → save + notify |
-| `social-derivation.json` | 11 | Webhook (post approved) | Blog-to-social repurposing: LinkedIn post + X/Twitter thread + short-form snippets |
-| `social-scheduler.json` | 11 | Daily schedule | Auto-publish: routes posts to Buffer (LinkedIn/Twitter) or WordPress (blog) by platform |
-| `editorial-calendar-manager.json` | 11 | Weekly (Monday) | Topic generation: 5-7 topics balanced across pillars with dedup against last 30 days |
-| `seo-content-optimizer.json` | 9 | Webhook (pre-publish) | SEO metadata + JSON-LD schema markup generation for blog posts |
-| `analytics-reporter.json` | 9 | Weekly (Friday) | Compiles weekly performance report to Google Sheets + Slack |
-| `outreach-response-handler.json` | 12 | Webhook (from Prosp.AI) | Classifies and routes LinkedIn responses to appropriate sheets (Hot Leads, Meetings, Questions, Archived) |
+| `content-pipeline-main.json` | 25 | Daily schedule + manual | Topic → brief → draft → Voice/Strategy/SEO-AEO review → Editor-Unifier → save with scores + metadata |
+| `social-engine.json` | 21 | Webhook + daily schedule | Path A: derive LinkedIn + Twitter + short posts from approved blog. Path B: publish scheduled posts via Buffer/WordPress |
+| `editorial-calendar-manager.json` | 11 | Weekly (Monday) | Generate 5-7 topics balanced across pillars, dedup against last 30 days |
+| `analytics-reporter.json` | 9 | Weekly (Friday) | Compile performance report to Google Sheets + Slack |
+| `outreach-response-handler.json` | 9 | Webhook (Prosp.AI) | Classify responses → log to single Outreach sheet with Type column |
 
-**Total**: 85 nodes across 7 workflows
+**Total**: 75 nodes across 5 workflows (down from 85 nodes across 7 workflows)
+
+### Multi-Agent Review Pipeline
+
+```
+Blog Draft
+    ↓
+┌── Voice Agent (tone, wording, concreteness, accessibility) ──────── Score 1-5
+├── Strategy Agent (pillar alignment, audience, CTA, value) ────────── Score 1-5
+└── SEO/AEO Agent (keywords, meta, AI citability, FAQs, claims) ──── Score 1-5 + metadata
+    ↓
+Code: Aggregate Reviews (all must pass: avg >= 3.5, no score < 2.5)
+    ↓
+├── All passed → Editor-Unifier (synthesize feedback, produce final draft)
+│                     ↓
+│                 Save to Content Hub (Status = "Ready for Review")
+│
+└── Failed → Revision loop (max 2 cycles) or → "Needs Manual Review"
+```
+
+### Google Sheets UI (5 sheets)
+
+| Sheet | Purpose | User Interaction |
+|-------|---------|-----------------|
+| **Content Hub** | Central workspace — all content from idea to publication | Add topics, review drafts, edit content, approve, schedule |
+| **Social Queue** | Social post scheduling view | Review derived posts, verify dates |
+| **Analytics** | Weekly performance data | Review reports |
+| **Topics Archive** | Historical dedup reference | Read-only |
+| **Outreach** | All response types in one sheet | Review classifications, update follow-up status |
+
+**Key Design Principle**: Workflows never auto-advance past human checkpoints. User manually changes Status to "Approved" and "Scheduled."
+
+### Token Budget
+
+| API Call | max_tokens | Cost |
+|----------|-----------|------|
+| Topic Expansion | 1,024 | ~$0.05 |
+| Draft Generation | 4,096 | ~$0.15 |
+| Voice Review | 1,024 | ~$0.08 |
+| Strategy Review | 1,024 | ~$0.08 |
+| SEO/AEO Review | 1,024 | ~$0.08 |
+| Editor-Unifier | 4,096 | ~$0.15 |
+| LinkedIn Derivation | 1,024 | ~$0.08 |
+| Twitter Derivation | 1,024 | ~$0.08 |
+| Short Posts | 512 | ~$0.04 |
+| **Total per piece** | — | **~$0.79** |
+
+At 4 pieces/week × 4 weeks = **~$12.64/month** — well within the $50/month Claude API budget.
 
 ---
 
 ## Validation Results
 
-- All 7 workflow JSONs pass JSON syntax validation
-- All workflows contain: name, nodes array, connections object, and tags (seedlink, production)
+- All 5 workflow JSONs pass JSON syntax validation
+- All workflows contain: name, nodes array, connections object, tags (seedlink, production)
 - All workflows include error handling (Error Trigger → Slack notification)
 - All Claude API calls use correct endpoint, headers, and model (`claude-sonnet-4-20250514`)
-- All Google Sheets operations reference the `SEEDLINK_EDITORIAL_CALENDAR_ID` environment variable
+- Content Pipeline confirmed: Voice Review, Strategy Review, SEO/AEO Review, Editor-Unifier nodes present
+- Social Engine confirmed: dual-path architecture (webhook + schedule), parallel Claude derivation calls
+- Outreach Handler confirmed: single Outreach sheet with Type column mapping
+- All Google Sheets references updated from "Editorial Calendar" to "Content Hub"
+- Zero remaining references to removed files (content-reviewer.md, seo-optimizer.md, etc.)
 
 ---
 
-## Assumptions Made
+## Assumptions (Updated)
 
-1. **CMS is WordPress**: The social-scheduler uses WordPress REST API for blog publishing. If SeedLink uses a different CMS, the `HTTP: Publish to WordPress` node will need to be updated with the correct API endpoint and authentication.
-
-2. **Buffer for social scheduling**: Workflows default to Buffer API for LinkedIn and X/Twitter scheduling. If Typefully is preferred, swap the Buffer API endpoints and credentials for Typefully's API. The node structure remains the same.
-
-3. **Google Sheets as primary data store**: All workflows use Google Sheets as the editorial calendar and tracking database. This is appropriate for the current content volume (4 blog posts/month, ~50 social posts/month). If volume scales significantly, consider migrating to Airtable or a database.
-
-4. **Single Google Sheets workbook**: All sheets (editorial calendar, analytics, leads, archive) live in one workbook referenced by `SEEDLINK_EDITORIAL_CALENDAR_ID`. This simplifies credential management.
-
-5. **Slack for notifications**: All workflow notifications (drafts ready, errors, reports) go to Slack via webhook. If Slack isn't used, replace with email notifications using n8n's Email node.
-
-6. **Prosp.AI webhook availability**: The outreach-response-handler assumes Prosp.AI can send webhook POST requests when responses are received. If Prosp.AI doesn't support webhooks, responses will need to be manually triggered or polled via API.
-
-7. **Content review is human-in-the-loop**: The pipeline generates drafts and marks them "Ready for Review" — it does NOT auto-publish blog posts. Shilpa must manually change status to "Approved" to trigger downstream workflows (SEO optimization, social derivation). Social posts are auto-published once scheduled.
-
-8. **X/Twitter posting via Buffer**: Direct X API automation is deferred to Phase B per the proposal. Initial X/Twitter posting routes through Buffer/Typefully.
-
-9. **Claude model selection**: All workflows use `claude-sonnet-4-20250514` per the CLAUDE.md specification — this balances quality with the $50/month API budget constraint.
-
-10. **Webhook URLs are environment-specific**: Webhook-triggered workflows (social-derivation, seo-content-optimizer, outreach-response-handler) will have unique webhook URLs generated when activated in n8n. These URLs need to be configured in upstream systems.
+1. **CMS is WordPress** — Social Engine uses WordPress REST API for blog publishing
+2. **Buffer for social scheduling** — LinkedIn and X/Twitter posts route through Buffer API
+3. **Google Sheets as primary UI** — All user interaction happens through the 5-sheet workbook
+4. **Single Google Sheets workbook** — All sheets in one workbook referenced by `SEEDLINK_EDITORIAL_CALENDAR_ID`
+5. **Slack for notifications** — All workflow notifications go to Slack via webhook
+6. **Prosp.AI webhook availability** — Outreach handler assumes Prosp.AI can send webhook POST requests
+7. **Human-in-the-loop** — Workflows never auto-publish. User approves drafts and schedules posts manually
+8. **X/Twitter via Buffer** — Direct X API deferred to Phase B per proposal
+9. **Claude Sonnet for cost efficiency** — All workflows use `claude-sonnet-4-20250514` to stay within $50/month budget
+10. **4 review agents is optimal** — Evaluated 6-agent (one per concern) vs 3-agent (grouped) vs 4-agent. Selected 4 agents as the right balance of specialization vs. API cost
 
 ---
 
-## File Structure
+## Competitor Intelligence
+
+### Waldium (YC S23) — Key Findings
+
+- **Not a direct competitor** — Waldium targets developer tools/technical products. SeedLink targets AI talent marketplace + SMB founders. Different audiences.
+- **Where Waldium leads**: AEO-first architecture, AI citation analytics, LLMs.txt auto-generation, zero-setup hosted publishing
+- **Where SeedLink leads**: Full-funnel automation (content + social + outreach + scheduling), multi-channel publishing, human-in-the-loop quality, cost transparency
+- **What we adopted from Waldium**: AEO content structuring (opening definitions, self-contained FAQs, verifiable claims, Key Takeaways sections) — implemented via prompt upgrades and SEO/AEO agent
+
+### Scalability Assessment
+
+| Phase | Timeline | Model | Effort per Client |
+|-------|----------|-------|-------------------|
+| **A: Referral builds** | Now → 3 months | Clone workflows, change prompts/credentials | 2-3 days |
+| **B: Productized service** | 3-6 months | Parameterized templates, onboarding form, landing page | 1-2 days |
+| **C: Self-serve platform** | 6-12+ months (if demand warrants) | Multi-tenant infrastructure, configuration UI | Zero (self-serve) |
+
+Founder's instinct confirmed: referral builds now → productized service → platform only if demand warrants.
+
+---
+
+## File Structure (v2)
 
 ```
-Seedlink.app builds/
-├── CLAUDE.md                          (project instructions — pre-existing)
-├── README.md                          (how to run this build — pre-existing)
-├── REQUIREMENTS.md                    (extracted requirements)
-├── ARCHITECTURE.md                    (workflow architecture)
-├── SUMMARY.md                         (this file)
-├── setup-guide.md                     (setup instructions)
-├── sop.md                             (standard operating procedures)
-├── google-sheets-template.md          (Google Sheets structure)
-├── SeedLink_Combined_Proposal_VeteranVectors_Updated.pdf   (source — pre-existing)
-├── SeedLink_SOW_Combined_VeteranVectors_Updated.pdf        (source — pre-existing)
+seedlink.app/
+├── CLAUDE.md                              (project instructions)
+├── README.md                              (quick start)
+├── REQUIREMENTS.md                        (extracted requirements)
+├── ARCHITECTURE.md                        (v2 workflow architecture)
+├── SUMMARY.md                             (this file)
+├── COMPETITOR_REVIEW_WALDIUM.md           (competitor analysis + scalability)
+├── setup-guide.md                         (v2 setup instructions)
+├── sop.md                                 (v2 standard operating procedures)
+├── google-sheets-template.md              (Google Sheets UI template — 5 sheets)
+├── SeedLink_Combined_Proposal_VeteranVectors_Updated.pdf
+├── SeedLink_SOW_Combined_VeteranVectors_Updated.pdf
 ├── workflows/
-│   ├── content-pipeline-main.json     (22 nodes)
-│   ├── social-derivation.json         (11 nodes)
-│   ├── social-scheduler.json          (11 nodes)
-│   ├── editorial-calendar-manager.json (11 nodes)
-│   ├── seo-content-optimizer.json     (9 nodes)
-│   ├── analytics-reporter.json        (9 nodes)
-│   └── outreach-response-handler.json (12 nodes)
+│   ├── content-pipeline-main.json         (25 nodes — multi-agent review)
+│   ├── social-engine.json                 (21 nodes — derive + publish)
+│   ├── editorial-calendar-manager.json    (11 nodes)
+│   ├── analytics-reporter.json            (9 nodes)
+│   └── outreach-response-handler.json     (9 nodes)
 └── prompts/
     ├── content-brief-generator.md
-    ├── blog-writer.md
-    ├── content-reviewer.md
+    ├── blog-writer.md                     (AEO-enhanced)
+    ├── voice-agent.md                     (NEW)
+    ├── strategy-agent.md                  (NEW)
+    ├── seo-aeo-agent.md                   (NEW)
+    ├── editor-unifier-agent.md            (NEW)
     ├── linkedin-deriver.md
     ├── twitter-deriver.md
-    ├── seo-optimizer.md
     ├── topic-generator.md
     └── response-classifier.md
 ```
@@ -118,9 +234,11 @@ Seedlink.app builds/
 
 ## Next Steps
 
-1. **Set up n8n instance** and configure credentials per `setup-guide.md`
-2. **Create Google Sheets workbook** per `google-sheets-template.md`
-3. **Import workflows** in the order specified in the setup guide
-4. **Test each workflow manually** before enabling scheduled triggers
-5. **Configure Prosp.AI webhooks** to connect to the outreach response handler
-6. **Train Shilpa** on the daily review process per `sop.md`
+1. **Deploy**: Set up n8n instance, configure credentials per `setup-guide.md`
+2. **Create Google Sheets**: Build the 5-sheet workbook per `google-sheets-template.md`
+3. **Import & test**: Import 5 workflows in order, run manual tests
+4. **Run for 30 days**: Collect real performance data on content quality and agent scores
+5. **Implement LLMs.txt**: Add `/llms.txt` file to WordPress listing published content URLs
+6. **Create landing page**: "AI Content Automation for Startups" on SeedLink.app for referral pipeline
+7. **First referral build**: Clone for one of the 3 CEOs the founder mentioned
+8. **Track AEO**: Manually check if SeedLink content is cited by AI assistants (ChatGPT, Perplexity)

@@ -7,113 +7,136 @@ Standard operating procedures for ongoing content operations and outreach manage
 ## Daily Operations (10-15 minutes)
 
 ### Review Drafted Content
-1. Open the Google Sheets editorial calendar
+1. Open the Google Sheets **Content Hub** sheet
 2. Filter for Status = "Ready for Review"
-3. Read the draft in the "Draft Content" column
-4. Check the Review Score and Review Notes for AI feedback
-5. Decision:
-   - **Approve**: Change Status to "Approved" — this triggers the SEO optimizer and social derivation workflows
-   - **Request Changes**: Add notes in the Notes column and change Status back to "Queued" for re-processing
-   - **Reject**: Change Status to "Rejected" and add reason in Notes
+3. For each draft:
+   - Read the **Draft Content** column (expand the cell or use the sidebar)
+   - Check **Voice Score**, **Strategy Score**, **SEO/AEO Score** — all should be 3.5+
+   - Read **Review Notes** for the Editor-Unifier's summary of changes made
+   - Edit the draft directly in the cell if you want to make changes
+4. Decision:
+   - **Approve**: Change Status to "Approved" — this triggers social content derivation
+   - **Request Changes**: Add notes in the Notes column and change Status to "Queued" for re-processing
+   - **Reject**: Delete the row or change Status to "Rejected" with reason in Notes
+
+### Review Social Content
+1. Filter Content Hub for Status = "Social Ready"
+2. Review **LinkedIn Post**, **Twitter Thread**, and **Short Posts** columns
+3. Edit any content directly in the cells if needed
+4. When satisfied: Set **Publish Date** and change Status to "Scheduled"
 
 ### Check Outreach Responses
-1. Open the "Hot Leads" sheet — follow up with interested prospects within 24 hours
-2. Open the "Meetings" sheet — send calendar links to meeting requests immediately
-3. Open the "Questions" sheet — draft and send responses to prospect questions
-4. Mark follow-up status for each lead after action is taken
+1. Open the **Outreach** sheet
+2. Filter by Type = "Hot Lead" and Follow-Up Status = "Pending" — follow up within 24 hours
+3. Filter by Type = "Meeting" — send calendar links immediately
+4. Filter by Type = "Question" — draft and send responses
+5. Update Follow-Up Status and Notes for each response after action is taken
 
 ---
 
 ## Weekly Operations (30-45 minutes)
 
 ### Monday: Editorial Calendar Review
-1. Verify the Editorial Calendar Manager ran successfully (check for new "Queued" topics)
-2. Review the 5-7 generated topics — reorder or replace any that don't align with current priorities
-3. Ensure pillar balance looks right for the week
-4. Add any manually-generated topics (from outreach conversations, client feedback, timely events)
+1. Verify the Editorial Calendar workflow ran (check for new "Queued" topics in Content Hub)
+2. Review generated topics — edit Topic, Angle, or Keyword if needed
+3. Adjust Priority for the week's topics
+4. Optionally add manual topics (type directly into the sheet, set Status = "Queued")
+5. Check pillar balance — are all 4 pillars represented this week?
 
 ### Wednesday: Mid-Week Content Check
-1. Verify the Content Pipeline is processing topics on schedule
-2. Review any drafts that are in "Ready for Review" status
-3. Check social content queue in Buffer/Typefully — verify posts are scheduled for correct dates
+1. Verify content pipeline has been generating drafts
+2. Review and approve any "Ready for Review" drafts that accumulated
+3. Check Social Queue for any posts due this week — verify dates and content
 
-### Friday: Weekly Performance Review
-1. Review the weekly analytics report (posted to Slack and saved to Analytics sheet)
-2. Note top-performing content — what topic, pillar, and format worked best?
-3. Note underperforming content — what can be improved?
-4. Record observations in the Notes column for future reference
+### Friday: Analytics Review
+1. Check Slack for the weekly analytics report
+2. Open the **Analytics** sheet to review detailed metrics
+3. Note which content pillars and platforms performed best
+4. Flag any underperforming content for topic adjustment next week
 
 ---
 
 ## Monthly Operations (2-3 hours)
 
-### Content Strategy Review (First Monday of each month)
-1. **Pillar Performance Analysis**: Which pillar is driving the most engagement and conversions? Adjust weighting for next month.
-2. **Keyword Review**: Check Google Search Console for keyword rankings. Are target keywords improving? Identify new keyword opportunities.
-3. **Voice Quality Audit**: Read the last 4 blog posts. Is the voice consistent? Does it still sound founder-to-founder? If quality has drifted, review and update the Claude prompts in the `prompts/` directory.
-4. **CTA Effectiveness**: Are marketplace, Playbook, and talent matching CTAs driving clicks? Adjust CTA strategy if needed.
-5. **Competitor Scan**: Quick review of what competitors are publishing on LinkedIn and their blogs. Identify gaps or topics SeedLink should address.
+### Content Pillar Performance Review
+1. In Content Hub, filter by each pillar and review engagement trends
+2. Are any pillars consistently underperforming? Consider adjusting topic angles
+3. Are any pillars over-represented? Rebalance the editorial calendar
 
-### Outreach Performance Review (First Monday of each month)
-1. **Campaign Metrics**: Review connection acceptance rates, response rates, and call booking rates across all 4 profiles
-2. **Messaging Optimization**: Identify which A/B variants are performing better. Kill underperformers and create new test variants.
-3. **Lead Quality**: Review converted leads — are they the right profile? Adjust Sales Navigator targeting if needed.
-4. **Pipeline Health**: Count total active conversations, meetings booked, and conversions. Compare to targets (600-800 connections, 25-35% acceptance, 5-10% call booking).
+### Keyword Strategy Update
+1. Review which target keywords drove the most traffic (from Analytics sheet)
+2. Check Google Search Console for new ranking opportunities
+3. Update upcoming topic keywords based on performance data
 
-### Technical Maintenance (First Monday of each month)
-1. **n8n Execution Log**: Review failed executions from the past month. Identify and fix recurring errors.
-2. **API Usage Check**: Log into Anthropic dashboard. Verify Claude API usage is within $50/month budget. If approaching limit, review prompt efficiency.
-3. **Credential Rotation**: Check if any API keys or OAuth tokens need renewal.
-4. **Workflow Updates**: If n8n has released updates, review changelog for breaking changes before updating.
+### Voice Quality Audit
+1. Read the last 4 published blog posts end-to-end
+2. Check: Does the voice still feel authentic and founder-to-founder?
+3. Check: Are CTAs feeling natural or forced?
+4. If voice has drifted, update the Notes column on upcoming topics with specific guidance
+
+### Agent Review Score Trends
+1. In Content Hub, review the Voice, Strategy, and SEO/AEO scores over the past month
+2. If any agent consistently scores low, the prompts may need tuning
+3. If scores are consistently 4.5+, the agents may not be critical enough — review prompt thresholds
+
+### Technical Maintenance
+1. Check n8n execution logs for any failed runs
+2. Verify all API credentials are still valid (Buffer, WordPress, Google Sheets)
+3. Check Claude API usage against the $50/month budget
+4. Clear old execution data in n8n to keep the instance performant
 
 ---
 
-## Quarterly Operations (Half day)
+## Quarterly Operations (half day)
 
-### Quarter Review & Strategy Refresh
-1. **Content Audit**: Review all published content. Which posts drove the most traffic, engagement, and conversions? Double down on winning formats.
-2. **SEO/GEO Assessment**: Check organic search traffic trends. Are any posts ranking on page 1? Check AI answer engine mentions (search SeedLink on ChatGPT, Perplexity, Google AI Overviews).
-3. **Pillar Refresh**: Update content pillars if SeedLink's product or market has evolved. Add or remove topics/themes.
-4. **Voice Guidelines Update**: Refine voice guidelines based on 3 months of content. Update prompts if needed.
-5. **Outreach Strategy Refresh**: Update targeting criteria, messaging, and lead lists based on quarter performance.
-6. **ROI Assessment**: Calculate hours saved, content produced, leads generated, and conversions vs. costs. Compare to projections in the original proposal.
+### Content Audit
+1. Review all published content for the quarter
+2. Identify top 5 performers by engagement — what made them work?
+3. Identify bottom 5 — what went wrong?
+4. Update content strategy for next quarter based on learnings
+
+### AEO/SEO Assessment
+1. Check Google Search Console for ranking changes
+2. Test whether SeedLink content is being cited by AI assistants (search relevant terms in ChatGPT, Perplexity)
+3. Review and update the `/llms.txt` file on the WordPress site
+4. Adjust SEO/AEO agent prompt if citation patterns have changed
+
+### ROI Calculation
+1. Compare content costs (Claude API + n8n + tools) against outcomes
+2. Track: marketplace visits, Playbook sign-ups, and talent matching inquiries attributed to content
+3. Present findings to inform budget and strategy decisions
 
 ---
 
 ## Emergency Procedures
 
 ### Workflow Failure
-1. Check Slack for error alerts (all workflows send failure notifications)
-2. Open n8n > Executions > filter for errors
-3. Common fixes:
-   - **API key expired**: Refresh the credential in n8n Settings
-   - **Google Sheets permission lost**: Re-authorize the OAuth connection
-   - **Claude API rate limit**: Wait 60 seconds and retry, or check if usage exceeds plan limits
-4. If a workflow is stuck, manually re-trigger it after fixing the issue
+1. Check Slack for error notifications (all workflows send Slack alerts on failure)
+2. Open n8n → Executions → filter by failed
+3. Read the error message — most common issues:
+   - Claude API rate limit → wait and retry, or check billing
+   - Google Sheets permission → re-share the workbook
+   - Buffer token expired → regenerate in Buffer settings
+4. Fix the issue and re-run the workflow manually
 
-### Content Quality Issue (Published Post Has Errors)
-1. Update the post directly in the CMS (WordPress)
-2. Note the issue in the editorial calendar Notes column
-3. If it's a systemic issue (e.g., voice drift), review and update the relevant prompt in `prompts/`
+### Content Quality Issue (Published Bad Content)
+1. Immediately update the post on WordPress/LinkedIn/X
+2. In Content Hub, add notes about what went wrong
+3. Review the agent scores for that piece — did the agents miss something?
+4. If systemic, tighten the relevant agent prompt thresholds
 
 ### Outreach Misclassification
-1. Manually move the lead to the correct sheet (Hot Leads, Questions, Meetings, or Archived)
-2. If misclassification is happening frequently, review the response-classifier prompt
+1. In the Outreach sheet, correct the Type and Classification manually
+2. Take appropriate follow-up action
+3. If misclassifications are frequent, review the response-classifier prompt
 
 ---
 
 ## Roles & Responsibilities
 
-| Role | Responsibility | Time Commitment |
-|------|---------------|-----------------|
-| Shilpa (CEO) | Review/approve drafts, respond to hot leads, strategic decisions | 30-45 min/week |
-| Veteran Vectors (Retainer) | Pipeline maintenance, prompt optimization, reporting, A/B testing, troubleshooting | Included in $600/month retainer |
-
----
-
-## Key Contacts
-
-- **Pipeline Issues**: anthony@veteranvectors.com
-- **Prosp.AI Support**: Prosp.AI support portal
-- **n8n Support**: n8n community forum or cloud support
-- **Claude API Issues**: Anthropic support portal
+| Role | Person | Responsibilities |
+|------|--------|-----------------|
+| **Content Approver** | Shilpa (CEO) | Daily: review and approve drafts, review social content |
+| **Content Strategy** | Shilpa + VeteranVectors | Monthly: pillar performance, keyword strategy, voice audit |
+| **Technical Ops** | VeteranVectors | Monthly: maintenance, credential checks, prompt tuning |
+| **Outreach Manager** | Shilpa | Daily: follow up on hot leads, respond to questions, book meetings |
