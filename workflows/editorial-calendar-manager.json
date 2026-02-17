@@ -1,5 +1,5 @@
 {
-  "name": "SeedLink - Editorial Calendar Manager",
+  "name": "SeedLink - Editorial Calendar",
   "nodes": [
     {
       "parameters": {
@@ -66,7 +66,7 @@
         "sheetName": {
           "__rl": true,
           "mode": "list",
-          "value": "Editorial Calendar"
+          "value": "Content Hub"
         },
         "filtersUI": {
           "values": []
@@ -201,22 +201,22 @@
         "sheetName": {
           "__rl": true,
           "mode": "list",
-          "value": "Editorial Calendar"
+          "value": "Content Hub"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "topic": "={{ $json.topic }}",
-            "pillar": "={{ $json.pillar }}",
-            "target_keyword": "={{ $json.target_keyword }}",
-            "target_audience": "={{ $json.target_audience }}",
-            "angle": "={{ $json.angle }}",
-            "suggested_publish_date": "={{ $json.suggested_publish_date }}",
-            "cta_opportunity": "={{ $json.cta_opportunity }}",
-            "priority": "={{ $json.priority }}",
-            "status": "Queued",
-            "created_date": "={{ new Date().toISOString().split('T')[0] }}",
-            "created_by": "Editorial Calendar Manager Workflow"
+            "Topic": "={{ $json.topic }}",
+            "Pillar": "={{ $json.pillar }}",
+            "Target Keyword": "={{ $json.target_keyword }}",
+            "Target Audience": "={{ $json.target_audience }}",
+            "Angle": "={{ $json.angle }}",
+            "Publish Date": "={{ $json.suggested_publish_date }}",
+            "CTA Type": "={{ $json.cta_opportunity }}",
+            "Priority": "={{ $json.priority }}",
+            "Status": "Queued",
+            "Created Date": "={{ new Date().toISOString().split('T')[0] }}",
+            "Created By": "Editorial Calendar Manager Workflow"
           },
           "matchingColumns": []
         },
