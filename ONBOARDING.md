@@ -18,14 +18,15 @@
 1. Welcome & What Was Built
 2. System Overview
 3. Getting Started Checklist
-4. Your Google Sheets Hub — The Control Center
-5. Daily Operations (10-15 minutes)
-6. Weekly Operations (30-45 minutes)
-7. Monthly Operations (2-3 hours)
-8. How the AI Works Behind the Scenes
-9. What You Control vs. What's Automated
-10. Troubleshooting & FAQ
-11. Support & Contacts
+4. Platform Setup Guide
+5. Your Google Sheets Hub — The Control Center
+6. Daily Operations (10-15 minutes)
+7. Weekly Operations (30-45 minutes)
+8. Monthly Operations (2-3 hours)
+9. How the AI Works Behind the Scenes
+10. What You Control vs. What's Automated
+11. Troubleshooting & FAQ
+12. Support & Contacts
 
 ---
 
@@ -128,7 +129,246 @@ Complete these steps to go live. Veteran Vectors will handle the technical setup
 
 ---
 
-## 4. Your Google Sheets Hub — The Control Center
+## 4. Platform Setup Guide
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Step-by-step setup instructions for every platform in the SeedLink automation stack. Items marked **[YOU]** require your action or credentials. Items marked **[VV]** are handled by Veteran Vectors during onboarding.
+
+### 4.1 n8n (Workflow Automation Platform)
+
+n8n is the engine that runs all 5 workflows. It connects everything together.
+
+| Detail | Value |
+|--------|-------|
+| **What it does** | Runs your automated workflows on schedule |
+| **Plan needed** | Cloud Starter ($25/month minimum) or self-hosted |
+| **URL** | https://n8n.io |
+
+**Setup Steps:**
+
+1. **[YOU]** Create an n8n Cloud account at https://app.n8n.cloud/register
+2. **[YOU]** Select the Starter plan ($25/month) — this includes enough executions for all 5 workflows
+3. **[YOU]** Share your n8n instance URL and login credentials with VV (temporarily, for setup)
+4. **[VV]** Import all 5 workflow JSON files
+5. **[VV]** Configure environment variables in **Settings > Variables**:
+
+   | Variable | Value | Where You Get It |
+   |----------|-------|-----------------|
+   | `ANTHROPIC_API_KEY` | `sk-ant-...` | Anthropic Console (see 4.2) |
+   | `SEEDLINK_EDITORIAL_CALENDAR_ID` | Sheet ID string | Google Sheets URL (see 4.3) |
+   | `SEEDLINK_BLOG_URL` | `https://seedlink.app` | Your blog URL |
+   | `NOTIFICATION_SLACK_WEBHOOK` | `https://hooks.slack.com/...` | Slack (see 4.7) |
+   | `BUFFER_LINKEDIN_PROFILE_ID` | Profile ID | Buffer API (see 4.5) |
+   | `BUFFER_TWITTER_PROFILE_ID` | Profile ID | Buffer API (see 4.5) |
+
+6. **[VV]** Set up credentials in **Settings > Credentials** (Google Sheets OAuth, Buffer API, WordPress API)
+7. **[VV]** Test each workflow manually, then activate scheduled triggers
+
+### 4.2 Anthropic (Claude AI API)
+
+Claude AI writes all content, reviews drafts, classifies outreach responses, and generates SEO metadata.
+
+| Detail | Value |
+|--------|-------|
+| **What it does** | Powers all AI content generation and review |
+| **Budget** | ~$13/month typical, $50/month maximum |
+| **URL** | https://console.anthropic.com |
+
+**Setup Steps:**
+
+1. **[YOU]** Create an Anthropic account at https://console.anthropic.com
+2. **[YOU]** Go to **Settings > Billing** and add a payment method
+3. **[YOU]** Set a monthly spending limit of **$50** (Settings > Limits) — this prevents surprise charges
+4. **[YOU]** Go to **Settings > API Keys** and click **Create Key**
+5. **[YOU]** Name it "SeedLink n8n" and copy the key (starts with `sk-ant-`)
+6. **[YOU]** Send the API key to VV securely (do not send via plain email — use a secure channel)
+7. **[VV]** Add the key as `ANTHROPIC_API_KEY` in n8n environment variables
+
+**Monthly cost estimate:** At 4 blog posts/week, the system uses approximately $12-13/month in API calls. The $50 limit is a safety net, not a target.
+
+### 4.3 Google Cloud Console + Google Sheets
+
+Google Sheets is your primary interface for the entire system. The Google Cloud Console provides the OAuth credentials that let n8n read and write to your sheets.
+
+| Detail | Value |
+|--------|-------|
+| **What it does** | Google Sheets = your control center. Cloud Console = API access. |
+| **Cost** | Free (Google Sheets API has no cost at this usage level) |
+| **Cloud Console URL** | https://console.cloud.google.com |
+
+**Google Cloud Console Setup:**
+
+1. **[YOU]** Go to https://console.cloud.google.com and sign in with the Google account that will own the Sheets workbook
+2. **[YOU]** Create a new project — name it "SeedLink Automation"
+3. **[VV]** Enable the **Google Sheets API**:
+   - Navigate to **APIs & Services > Library**
+   - Search "Google Sheets API" and click **Enable**
+4. **[VV]** Create OAuth 2.0 credentials:
+   - Go to **APIs & Services > Credentials**
+   - Click **Create Credentials > OAuth client ID**
+   - Application type: **Web application**
+   - Name: "n8n SeedLink"
+   - Add n8n's redirect URI under **Authorized redirect URIs** (n8n shows this URI during credential setup)
+   - Copy the **Client ID** and **Client Secret**
+5. **[VV]** Configure the OAuth consent screen:
+   - Go to **APIs & Services > OAuth consent screen**
+   - User type: **External** (or Internal if using Google Workspace)
+   - App name: "SeedLink Automation"
+   - Add your email as a test user
+6. **[VV]** In n8n, create a **Google Sheets OAuth2** credential using the Client ID and Client Secret
+7. **[VV]** Complete the OAuth authorization flow (browser popup to grant access)
+
+**Google Sheets Workbook Setup:**
+
+8. **[VV]** Create a new Google Sheets workbook named **"SeedLink Content Hub"**
+9. **[VV]** Create 5 sheets with exact names: `Content Hub`, `Social Queue`, `Analytics`, `Topics Archive`, `Outreach`
+10. **[VV]** Add all column headers, data validation dropdowns, and conditional formatting per the template
+11. **[YOU]** Copy the **Sheet ID** from the URL — it's the long string between `/d/` and `/edit`:
+    ```
+    https://docs.google.com/spreadsheets/d/[THIS_IS_YOUR_SHEET_ID]/edit
+    ```
+12. **[YOU]** Share the workbook with the Google account used in the OAuth flow (edit access)
+13. **[YOU]** Bookmark the workbook — this is your daily workspace
+
+### 4.4 Prosp.AI + Sales Navigator (LinkedIn Outreach)
+
+Prosp.AI automates LinkedIn outreach across your 4 profiles. Sales Navigator provides the lead targeting data. n8n connects to Prosp.AI via webhooks to classify and route incoming responses.
+
+| Detail | Value |
+|--------|-------|
+| **What it does** | Automated LinkedIn outreach + lead targeting |
+| **Cost** | Per your existing Prosp.AI and Sales Navigator plans |
+| **Prosp.AI URL** | https://prosp.ai |
+
+**Prosp.AI Setup:**
+
+1. **[YOU]** Log into Prosp.AI and confirm all 4 LinkedIn profiles are connected and active
+2. **[VV]** In n8n, activate the Outreach Response Handler workflow and copy the **Production Webhook URL**
+3. **[YOU]** In Prosp.AI, go to **Settings > Webhooks** (or Integrations)
+4. **[YOU]** Add the n8n webhook URL as the destination for **response events**
+5. **[VV]** Map the Prosp.AI response payload fields:
+
+   | Prosp.AI Field | Maps To |
+   |---------------|---------|
+   | Prospect name | `sender_name` |
+   | Prospect title | `sender_title` |
+   | Prospect company | `sender_company` |
+   | Response text | `message_text` |
+   | Response date | `response_date` |
+   | Sending profile | `profile_source` |
+
+6. **[VV + YOU]** Test with a sample response to verify the webhook connection works
+7. **[VV]** Verify the response appears in the **Outreach** sheet with correct classification
+
+**Sales Navigator Setup:**
+
+8. **[YOU]** Confirm Sales Navigator subscription is active on all outreach profiles
+9. **[VV]** Create initial lead lists segmented by target persona (per the proposal targeting strategy)
+10. **[VV]** Configure Prosp.AI campaigns to pull from Sales Navigator lead lists
+
+### 4.5 Buffer (Social Scheduling)
+
+Buffer queues and publishes LinkedIn posts and X/Twitter content on your schedule.
+
+| Detail | Value |
+|--------|-------|
+| **What it does** | Publishes social content to LinkedIn and X/Twitter |
+| **Plan needed** | Team plan or higher (for API access) |
+| **URL** | https://buffer.com |
+
+**Setup Steps:**
+
+1. **[YOU]** Log into Buffer and confirm LinkedIn and X/Twitter profiles are connected
+2. **[YOU]** Go to **Settings > API** (or use Buffer's developer portal)
+3. **[YOU]** Generate an **Access Token** and send it to VV securely
+4. **[VV]** Find your profile IDs via the Buffer API (`GET /1/profiles.json`) — needed for routing posts to the correct accounts:
+
+   | Profile | Environment Variable |
+   |---------|---------------------|
+   | LinkedIn (Shilpa's profile) | `BUFFER_LINKEDIN_PROFILE_ID` |
+   | X/Twitter | `BUFFER_TWITTER_PROFILE_ID` |
+
+5. **[VV]** Create a **Header Auth** credential in n8n named `buffer_api` with the access token
+6. **[VV + YOU]** Test by scheduling a test post through the workflow and verifying it appears in Buffer's queue
+
+**Alternative — Typefully:** If using Typefully instead of Buffer, the setup is similar: generate an API key in Typefully settings and provide it to VV. The workflow nodes will be adjusted to use Typefully's API endpoints.
+
+### 4.6 WordPress (Blog CMS)
+
+WordPress hosts the seedlink.app blog. The Social Engine publishes blog posts directly via the WordPress REST API.
+
+| Detail | Value |
+|--------|-------|
+| **What it does** | Publishes blog posts to seedlink.app |
+| **Cost** | Part of your existing hosting |
+| **URL** | Your WordPress admin panel |
+
+**Setup Steps:**
+
+1. **[YOU]** Log into your WordPress admin panel (seedlink.app/wp-admin)
+2. **[YOU]** Verify you're running **WordPress 5.6+** (Application Passwords is built in)
+   - If running an older version, install the "Application Passwords" plugin
+3. **[YOU]** Go to **Users > Your Profile > Application Passwords**
+4. **[YOU]** Enter the name **"n8n SeedLink"** and click **Add New Application Password**
+5. **[YOU]** Copy the generated password (it will only be shown once) — send it to VV securely along with your WordPress admin username
+6. **[VV]** Create an **HTTP Basic Auth** credential in n8n named `wordpress_api`:
+   - Username: your WordPress admin username
+   - Password: the application password from step 5
+7. **[VV]** Set `SEEDLINK_BLOG_URL` environment variable to `https://seedlink.app` (no trailing slash)
+8. **[VV + YOU]** Test by publishing a draft post through the workflow and verifying it appears on the blog
+
+### 4.7 Slack (Notifications)
+
+Slack receives all system notifications — new drafts ready, published posts, weekly reports, errors, and outreach alerts.
+
+| Detail | Value |
+|--------|-------|
+| **What it does** | Delivers real-time notifications from all workflows |
+| **Cost** | Free (Incoming Webhooks) |
+| **URL** | Your Slack workspace |
+
+**Setup Steps:**
+
+1. **[YOU]** In your Slack workspace, create a channel for notifications (e.g., `#seedlink-alerts`)
+2. **[YOU]** Go to **Apps** (left sidebar) > search "Incoming Webhooks" > click **Add to Slack**
+3. **[YOU]** Select the `#seedlink-alerts` channel as the destination
+4. **[YOU]** Copy the **Webhook URL** (starts with `https://hooks.slack.com/services/...`)
+5. **[YOU]** Send the webhook URL to VV
+6. **[VV]** Set `NOTIFICATION_SLACK_WEBHOOK` environment variable in n8n
+7. **[VV + YOU]** Test by triggering a workflow manually and verifying the Slack notification arrives
+
+**What you'll receive in Slack:**
+
+| Notification | When | From |
+|-------------|------|------|
+| "New topics generated" | Monday morning | Editorial Calendar |
+| "Draft ready for review" | After each blog is drafted | Content Pipeline |
+| "Social content derived" | After you approve a blog | Social Engine |
+| "Post published" | When scheduled posts go live | Social Engine |
+| "Weekly analytics report" | Friday afternoon | Analytics Reporter |
+| "New outreach response" | When LinkedIn responses arrive | Outreach Handler |
+| "Workflow error" | When any workflow fails | All workflows |
+
+### 4.8 Platform Summary
+
+| Platform | Owner Sets Up | VV Configures | Monthly Cost |
+|----------|--------------|---------------|-------------|
+| **n8n** | Account + plan | Workflows, credentials, variables | $25 |
+| **Anthropic** | Account + billing + API key | n8n integration | ~$13 (up to $50) |
+| **Google Cloud** | Account + project | OAuth, Sheets API, credentials | Free |
+| **Google Sheets** | Sharing + bookmark | Workbook creation, formatting | Free |
+| **Prosp.AI** | Webhook configuration | Payload mapping, testing | Per existing plan |
+| **Sales Navigator** | Active subscription | Lead list creation | Per existing plan |
+| **Buffer** | Account + API token | n8n credential, profile IDs | Per existing plan |
+| **WordPress** | Application Password | n8n credential, blog URL | Per existing hosting |
+| **Slack** | Channel + webhook | n8n environment variable | Free |
+
+**Total new costs**: ~$38/month (n8n $25 + Claude API ~$13). All other tools use your existing subscriptions.
+
+---
+
+## 5. Your Google Sheets Hub — The Control Center
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -220,7 +460,7 @@ All LinkedIn outreach responses, classified by type. This is where you follow up
 
 ---
 
-## 5. Daily Operations (10-15 minutes)
+## 6. Daily Operations (10-15 minutes)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -254,7 +494,7 @@ All LinkedIn outreach responses, classified by type. This is where you follow up
 
 ---
 
-## 6. Weekly Operations (30-45 minutes)
+## 7. Weekly Operations (30-45 minutes)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -282,7 +522,7 @@ All LinkedIn outreach responses, classified by type. This is where you follow up
 
 ---
 
-## 7. Monthly Operations (2-3 hours)
+## 8. Monthly Operations (2-3 hours)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -314,7 +554,7 @@ All LinkedIn outreach responses, classified by type. This is where you follow up
 
 ---
 
-## 8. How the AI Works Behind the Scenes
+## 9. How the AI Works Behind the Scenes
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -373,7 +613,7 @@ This means SeedLink content is structured to appear when someone asks an AI assi
 
 ---
 
-## 9. What You Control vs. What's Automated
+## 10. What You Control vs. What's Automated
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -396,7 +636,7 @@ This means SeedLink content is structured to appear when someone asks an AI assi
 
 ---
 
-## 10. Troubleshooting & FAQ
+## 11. Troubleshooting & FAQ
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -444,7 +684,7 @@ The system is designed for 4 blog posts/month (1/week) with 3-4 LinkedIn posts a
 
 ---
 
-## 11. Support & Contacts
+## 12. Support & Contacts
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
