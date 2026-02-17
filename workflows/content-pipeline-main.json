@@ -70,9 +70,9 @@
           "conditions": [
             {
               "id": "cond-topic-exists",
-              "leftValue": "={{$input.all().length}}",
-              "rightValue": 0,
-              "operator": { "type": "number", "operation": "gt" }
+              "leftValue": "={{$json.Topic}}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "isNotEmpty" }
             }
           ],
           "combinator": "and"
@@ -82,7 +82,7 @@
       "id": "cp-0004-4000-8000-000000000004",
       "name": "IF: Topic Found",
       "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
+      "typeVersion": 2.2,
       "position": [500, 400]
     },
     {
@@ -92,13 +92,11 @@
         "assignments": {
           "assignments": [
             { "id": "a1", "name": "topic", "value": "={{$json.Topic}}", "type": "string" },
-            { "id": "a2", "name": "pillar", "value": "={{$json.Pillar}}", "type": "string" },
-            { "id": "a3", "name": "keyword", "value": "={{$json['Target Keyword']}}", "type": "string" },
-            { "id": "a4", "name": "audience", "value": "={{$json['Target Audience']}}", "type": "string" },
-            { "id": "a5", "name": "angle", "value": "={{$json.Angle || ''}}", "type": "string" },
-            { "id": "a6", "name": "cta_type", "value": "={{$json['CTA Type'] || 'marketplace'}}", "type": "string" },
-            { "id": "a7", "name": "row_number", "value": "={{$json.row_number || $itemIndex + 2}}", "type": "number" },
-            { "id": "a8", "name": "revision_count", "value": 0, "type": "number" }
+            { "id": "a2", "name": "content_pillar", "value": "={{$json['Content Pillar']}}", "type": "string" },
+            { "id": "a3", "name": "target_keyword", "value": "={{$json['Target Keyword']}}", "type": "string" },
+            { "id": "a4", "name": "target_audience", "value": "={{$json['Target Audience']}}", "type": "string" },
+            { "id": "a5", "name": "row_number", "value": "={{$json.row_number || $itemIndex + 2}}", "type": "number" },
+            { "id": "a6", "name": "revision_count", "value": 0, "type": "number" }
           ]
         },
         "options": {}
@@ -123,7 +121,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1024,\n  \"system\": \"You are a content strategist for SeedLink.app, an AI talent marketplace. Given a topic, pillar, keyword, and audience, generate a structured content brief as JSON: {headline, angle, target_keyword, secondary_keywords[], content_pillar, target_audience, outline[] (3 H2 sections + FAQ section), cta_type (marketplace|playbook|talent_matching), cta_context, word_count_target: 1200, reference_notes}. Headlines: specific, benefit-driven. Angles: real pain points. Include FAQ section in outline for AEO. Output JSON only.\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Topic: {{ $json.topic }}\\nPillar: {{ $json.pillar }}\\nKeyword: {{ $json.keyword }}\\nAudience: {{ $json.audience }}\\nAngle: {{ $json.angle }}\\nCTA Type: {{ $json.cta_type }}\"}]\n}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":1024,\"system\":\"You are a content strategist for SeedLink.app, an AI-augmented talent marketplace connecting founders with AI talent, tools, and an AI Playbook milestone planner.\\n\\nGiven a topic, pillar, audience, and keyword, generate a structured content brief as JSON:\\n{\\n  \\\"headline\\\": \\\"60-70 char SEO headline\\\",\\n  \\\"angle\\\": \\\"Specific hook — why this matters now\\\",\\n  \\\"target_keyword\\\": \\\"Primary keyword\\\",\\n  \\\"secondary_keywords\\\": [\\\"kw2\\\",\\\"kw3\\\",\\\"kw4\\\"],\\n  \\\"content_pillar\\\": \\\"The assigned pillar\\\",\\n  \\\"target_audience\\\": \\\"Who this is for\\\",\\n  \\\"outline\\\": [\\\"H2: Section — description\\\", \\\"H2: Section — description\\\", \\\"H2: Section — description\\\", \\\"H2: FAQ — 3-5 questions readers would ask\\\"],\\n  \\\"cta_type\\\": \\\"marketplace|playbook|talent_matching|combo\\\",\\n  \\\"cta_context\\\": \\\"Where to reference SeedLink products naturally\\\",\\n  \\\"word_count_target\\\": 1200,\\n  \\\"reference_notes\\\": \\\"Data points or angles to include\\\"\\n}\\n\\nPillar reference:\\n- Finding AI Talent: hiring AI builders, vetting, fractional teams, costs\\n- Zero to MVP: validating with AI, building fast, co-pilot workflows, Playbook guidance\\n- AI Industry & Trends: agent landscape, tools ecosystem, marketplace dynamics\\n- SeedLink in Action: platform updates, user outcomes, marketplace highlights\\n\\nGuidelines: Headlines must be benefit-driven, not clickbait. Angles address real pain points. Outlines include FAQ for AEO. CTAs feel natural, not forced. Target ~1,200 words. Output JSON only.\",\"messages\":[{\"role\":\"user\",\"content\":\"Generate a content brief for:\\n\\nTopic: \"+$json.topic+\"\\nContent Pillar: \"+$json.content_pillar+\"\\nTarget Keyword: \"+$json.target_keyword+\"\\nTarget Audience: \"+$json.target_audience}]}) }}",
         "options": { "timeout": 60000 }
       },
       "id": "cp-0006-4000-8000-000000000006",
@@ -138,11 +136,11 @@
         "duplicateItem": false,
         "assignments": {
           "assignments": [
-            { "id": "b1", "name": "brief", "value": "={{$json.content[0].text}}", "type": "string" },
+            { "id": "b1", "name": "content_brief", "value": "={{$json.content[0].text}}", "type": "string" },
             { "id": "b2", "name": "topic", "value": "={{$('Set: Prepare Topic Brief').item.json.topic}}", "type": "string" },
-            { "id": "b3", "name": "pillar", "value": "={{$('Set: Prepare Topic Brief').item.json.pillar}}", "type": "string" },
-            { "id": "b4", "name": "keyword", "value": "={{$('Set: Prepare Topic Brief').item.json.keyword}}", "type": "string" },
-            { "id": "b5", "name": "audience", "value": "={{$('Set: Prepare Topic Brief').item.json.audience}}", "type": "string" },
+            { "id": "b3", "name": "content_pillar", "value": "={{$('Set: Prepare Topic Brief').item.json.content_pillar}}", "type": "string" },
+            { "id": "b4", "name": "target_keyword", "value": "={{$('Set: Prepare Topic Brief').item.json.target_keyword}}", "type": "string" },
+            { "id": "b5", "name": "target_audience", "value": "={{$('Set: Prepare Topic Brief').item.json.target_audience}}", "type": "string" },
             { "id": "b6", "name": "row_number", "value": "={{$('Set: Prepare Topic Brief').item.json.row_number}}", "type": "number" },
             { "id": "b7", "name": "revision_count", "value": "={{$('Set: Prepare Topic Brief').item.json.revision_count}}", "type": "number" }
           ]
@@ -169,7 +167,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 4096,\n  \"system\": \"You are a blog writer for SeedLink.app, an AI talent marketplace. Write a 1000-1500 word blog post. Voice: founder-to-founder, concrete (specific numbers/examples), accessible (define jargon), opinionated but not pushy. Structure: 1) Opening hook (2-3 sentences, no cliches), 2) Opening definition (standalone, citable by AI systems), 3) Context paragraph, 4) Key Takeaways (3-5 complete citable bullets), 5) 3-4 H2 body sections (short paragraphs, verifiable claims with data), 6) FAQ section (3-5 Q&A, self-contained answers), 7) Closing with natural CTA. Include 1-2 SeedLink product refs (marketplace for tools, Playbook for planning, talent matching for hiring). Use target keyword in headline, first paragraph, one H2, closing. End with meta description (150-160 chars). Output clean markdown.\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Content Brief:\\n{{ $json.brief }}\\n\\nTopic: {{ $json.topic }}\\nPillar: {{ $json.pillar }}\\nTarget Keyword: {{ $json.keyword }}\\nAudience: {{ $json.audience }}\"}]\n}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are a blog writer for SeedLink.app, an AI-augmented talent marketplace connecting founders with AI talent, tools marketplace, and AI Playbook.\\n\\nVoice & Tone:\\n- Lead with value, not pitch. Open with a problem, insight, or story — never a product description.\\n- Founder-to-founder tone. Write as a peer building in the same space. Use 'you' and 'we' naturally.\\n- Concrete over abstract. Use specific numbers and outcomes. Example: 'Teams using AI co-pilots ship MVPs in 3 weeks instead of 3 months.'\\n- Accessible technical language. Define jargon on first use. No unexplained acronyms.\\n- Opinionated but not pushy. Take clear positions. Say 'Here is what we think works' not 'You should do this.'\\n\\nStructure (1,000-1,500 words):\\n1. Opening hook (2-3 sentences) — pain point, surprising stat, or relatable scenario. Never 'In today's fast-paced world.'\\n2. Opening definition (1-2 sentences) — clear, standalone definition of the core concept. Must make sense if extracted by an AI system on its own.\\n3. Context paragraph — why this matters now for the target audience.\\n4. Key Takeaways (bullet list) — 3-5 bullets summarizing main insights. Each bullet must be a complete, citable statement. Place before body sections.\\n5. Body sections (3-4 H2s) — follow the brief outline. Short paragraphs (2-3 sentences). Include at least one verifiable claim with a specific number, date, or data point per section.\\n6. FAQ section (H2: 'Frequently Asked Questions') — 3-5 Q&A pairs. Questions phrased as real search queries. Answers are 2-3 sentences, factual, self-contained.\\n7. Closing (1 paragraph) — key takeaway + natural CTA.\\n\\nCTA Rules:\\n- 1-2 contextual SeedLink product references where they genuinely solve a discussed problem.\\n- CTAs read as helpful suggestions, not ads.\\n- Never open or close with a hard sell.\\n- Reference Playbook for planning/milestones, marketplace for tools/agents, talent matching for hiring.\\n\\nSEO: Use target keyword in headline, first paragraph, one H2, and closing. Include secondary keywords naturally. End with meta description (150-160 chars) after a horizontal rule.\\n\\nAEO/GEO: Opening definition must be a clear, self-contained statement AI systems can extract. FAQ answers must be standalone. Key Takeaways must be complete, authoritative. Include specific numbers, dates, or named sources for verifiable claims.\\n\\nOutput: Clean markdown — H1 headline, H2 sections, FAQ, closing, then meta description after '---'.\",\"messages\":[{\"role\":\"user\",\"content\":\"Write a blog post based on:\\n\\nTopic: \"+$json.topic+\"\\nContent Pillar: \"+$json.content_pillar+\"\\nTarget Keyword: \"+$json.target_keyword+\"\\nTarget Audience: \"+$json.target_audience+\"\\n\\nContent Brief:\\n\"+$json.content_brief}]}) }}",
         "options": { "timeout": 120000 }
       },
       "id": "cp-0008-4000-8000-000000000008",
@@ -180,25 +178,26 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.anthropic.com/v1/messages",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
-            { "name": "anthropic-version", "value": "2023-06-01" },
-            { "name": "content-type", "value": "application/json" }
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            { "id": "c1", "name": "draft_text", "value": "={{$json.content[0].text}}", "type": "string" },
+            { "id": "c2", "name": "topic", "value": "={{$('Set: Prepare Draft Request').item.json.topic}}", "type": "string" },
+            { "id": "c3", "name": "content_pillar", "value": "={{$('Set: Prepare Draft Request').item.json.content_pillar}}", "type": "string" },
+            { "id": "c4", "name": "target_keyword", "value": "={{$('Set: Prepare Draft Request').item.json.target_keyword}}", "type": "string" },
+            { "id": "c5", "name": "target_audience", "value": "={{$('Set: Prepare Draft Request').item.json.target_audience}}", "type": "string" },
+            { "id": "c6", "name": "content_brief", "value": "={{$('Set: Prepare Draft Request').item.json.content_brief}}", "type": "string" },
+            { "id": "c7", "name": "row_number", "value": "={{$('Set: Prepare Draft Request').item.json.row_number}}", "type": "number" },
+            { "id": "c8", "name": "revision_count", "value": "={{$('Set: Prepare Draft Request').item.json.revision_count}}", "type": "number" }
           ]
         },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1024,\n  \"system\": \"You are a voice/tone reviewer for SeedLink.app. Evaluate the blog draft against these standards: founder-to-founder tone, concrete claims with numbers, accessible language (jargon defined), opinionated but not pushy, no corporate speak, short paragraphs (2-3 sentences). Score 1-5 on: tone_match, concreteness, accessibility, word_choice. Return JSON: {voice_score (avg), tone_match: {score, issues[]}, concreteness: {score, issues[]}, accessibility: {score, issues[]}, word_choice: {score, issues[]}, flagged_lines[], passed (true if avg>=3.5 and no score<2.5)}. Output JSON only.\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Review this blog draft for voice and tone:\\n\\n{{ $('Claude: Generate Draft').item.json.content[0].text }}\"}]\n}",
-        "options": { "timeout": 60000 }
+        "options": {}
       },
       "id": "cp-0009-4000-8000-000000000009",
-      "name": "Claude: Voice Review",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "name": "Set: Prepare for Review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [1750, 300]
     },
     {
@@ -215,11 +214,11 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1024,\n  \"system\": \"You are a content strategy reviewer for SeedLink.app (AI talent marketplace with marketplace, Playbook, talent matching). Pillars: Finding AI Talent, Zero to MVP, AI Industry & Trends, SeedLink in Action. Evaluate: pillar_alignment (1-5), audience_targeting (1-5), cta_integration (1-5, are 1-2 SeedLink refs natural?), value_delivery (1-5, actionable insight?). Return JSON: {strategy_score (avg), pillar_alignment: {score, feedback}, audience_targeting: {score, feedback}, cta_integration: {score, feedback}, value_delivery: {score, feedback}, cta_suggestions[], passed (true if avg>=3.5 and no score<2.5)}. Output JSON only.\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Review this blog draft for strategy alignment:\\n\\nAssigned Pillar: {{ $('Set: Prepare Draft Request').item.json.pillar }}\\nTarget Audience: {{ $('Set: Prepare Draft Request').item.json.audience }}\\n\\nDraft:\\n{{ $('Claude: Generate Draft').item.json.content[0].text }}\"}]\n}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":1024,\"system\":\"You are a voice and tone reviewer for SeedLink.app content. Evaluate whether a blog post matches SeedLink's brand voice.\\n\\nVoice Standards:\\n- Founder-to-founder: reads like a peer sharing observations, not a vendor pitching. Uses 'you' and 'we' naturally.\\n- Concrete over abstract: every claim has a specific number, example, or outcome. Flag vague statements.\\n- Accessible technical language: terms defined on first use. No unexplained jargon.\\n- Opinionated but not pushy: clear positions without lecturing.\\n- No corporate speak: no 'thrilled to announce,' 'leverage,' 'synergy,' 'in today's fast-paced world.'\\n- Short paragraphs: 2-3 sentences max. Long blocks fail review.\\n\\nScore 1-5 with specific line-level feedback:\\n- tone_match (1-5): sounds like founder talking to founder?\\n- concreteness (1-5): claims backed by specifics?\\n- accessibility (1-5): smart non-technical founder understands every sentence?\\n- word_choice (1-5): words natural and conversational, not corporate?\\n\\nReturn JSON only:\\n{\\\"voice_score\\\": 4.0, \\\"tone_match\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"concreteness\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"accessibility\\\": {\\\"score\\\": 5, \\\"issues\\\": []}, \\\"word_choice\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"flagged_lines\\\": [], \\\"passed\\\": true}\\n\\nPass threshold: average >= 3.5, no individual score below 2.5.\",\"messages\":[{\"role\":\"user\",\"content\":\"Review the voice and tone of this blog post draft:\\n\\nTarget Keyword: \"+$json.target_keyword+\"\\nContent Pillar: \"+$json.content_pillar+\"\\n\\nDraft:\\n\"+$json.draft_text}]}) }}",
         "options": { "timeout": 60000 }
       },
       "id": "cp-0010-4000-8000-000000000010",
-      "name": "Claude: Strategy Review",
+      "name": "Claude: Voice Review",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2000, 300]
@@ -238,46 +237,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1024,\n  \"system\": \"You are an SEO/AEO specialist for SeedLink.app. Evaluate blog draft for SEO (keyword_placement 1-5, meta_quality 1-5, structure 1-5) and AEO (ai_citability 1-5: standalone definitions? extractable answers?, faq_quality 1-5: self-contained Q&A?, key_takeaways 1-5: complete citable bullets?, verifiable_claims 1-5: specific data?). Also generate: meta_title (50-60 chars with keyword + | SeedLink), meta_description (150-160 chars), og_title, og_description, internal_links [{anchor_text, target, context}], faq_schema (JSON-LD FAQPage). Return JSON: {seo_aeo_score (avg all), seo: {keyword_placement, meta_quality, structure}, aeo: {ai_citability, faq_quality, key_takeaways, verifiable_claims}, metadata: {meta_title, meta_description, og_title, og_description, internal_links, faq_schema}, passed (avg>=3.5, no score<2.5)}. JSON only.\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Review this blog draft for SEO/AEO:\\n\\nTarget Keyword: {{ $('Set: Prepare Draft Request').item.json.keyword }}\\n\\nDraft:\\n{{ $('Claude: Generate Draft').item.json.content[0].text }}\"}]\n}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":1024,\"system\":\"You are a content strategy reviewer for SeedLink.app. Evaluate whether a blog post aligns with business goals, content pillar strategy, and CTA integration.\\n\\nSeedLink products:\\n- Marketplace: AI tools and agents directory for startups\\n- Playbook: Milestone planner with tool recommendations for founders building with AI\\n- Talent Matching: Connecting startups with AI-native builders and fractional experts\\n\\nContent Pillars:\\n- Finding AI Talent: hiring, vetting, fractional teams, costs\\n- Zero to MVP: validating with AI, building fast, co-pilot workflows, Playbook guidance\\n- AI Industry & Trends: agent landscape, tools ecosystem, marketplace dynamics\\n- SeedLink in Action: platform updates, user outcomes, automation insights\\n\\nScore 1-5 with specific feedback:\\n- pillar_alignment (1-5): content clearly serves its assigned pillar?\\n- audience_targeting (1-5): written for founders, startup CEOs, AI-curious teams?\\n- cta_integration (1-5): 1-2 natural SeedLink product references? Helpful not salesy? Right product for context?\\n- value_delivery (1-5): reader walks away with actionable insight?\\n\\nReturn JSON only:\\n{\\\"strategy_score\\\": 4.0, \\\"pillar_alignment\\\": {\\\"score\\\": 4, \\\"feedback\\\": \\\"...\\\"}, \\\"audience_targeting\\\": {\\\"score\\\": 5, \\\"feedback\\\": \\\"...\\\"}, \\\"cta_integration\\\": {\\\"score\\\": 3, \\\"feedback\\\": \\\"...\\\"}, \\\"value_delivery\\\": {\\\"score\\\": 4, \\\"feedback\\\": \\\"...\\\"}, \\\"cta_suggestions\\\": [], \\\"passed\\\": true}\\n\\nPass threshold: average >= 3.5, no individual score below 2.5.\",\"messages\":[{\"role\":\"user\",\"content\":\"Review the strategy alignment of this blog post draft:\\n\\nTarget Keyword: \"+$('Set: Prepare for Review').item.json.target_keyword+\"\\nContent Pillar: \"+$('Set: Prepare for Review').item.json.content_pillar+\"\\nTarget Audience: \"+$('Set: Prepare for Review').item.json.target_audience+\"\\n\\nDraft:\\n\"+$('Set: Prepare for Review').item.json.draft_text}]}) }}",
         "options": { "timeout": 60000 }
       },
       "id": "cp-0011-4000-8000-000000000011",
-      "name": "Claude: SEO/AEO Review",
+      "name": "Claude: Strategy Review",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2250, 300]
-    },
-    {
-      "parameters": {
-        "jsCode": "// Aggregate all 3 agent review responses\nconst voiceRaw = $('Claude: Voice Review').item.json;\nconst strategyRaw = $('Claude: Strategy Review').item.json;\nconst seoRaw = $('Claude: SEO/AEO Review').item.json;\n\nfunction parseAgentResponse(raw) {\n  let text = '';\n  if (raw.content && Array.isArray(raw.content)) {\n    const block = raw.content.find(b => b.type === 'text');\n    if (block) text = block.text;\n  }\n  try {\n    let jsonStr = text.trim();\n    if (jsonStr.startsWith('```json')) jsonStr = jsonStr.replace(/^```json\\s*/, '').replace(/\\s*```$/, '');\n    else if (jsonStr.startsWith('```')) jsonStr = jsonStr.replace(/^```\\s*/, '').replace(/\\s*```$/, '');\n    return JSON.parse(jsonStr);\n  } catch (e) {\n    const match = text.match(/\\{[\\s\\S]*\\}/);\n    if (match) {\n      try { return JSON.parse(match[0]); }\n      catch (e2) { return { passed: false, error: e2.message }; }\n    }\n    return { passed: false, error: 'Failed to parse: ' + e.message };\n  }\n}\n\nconst voice = parseAgentResponse(voiceRaw);\nconst strategy = parseAgentResponse(strategyRaw);\nconst seo = parseAgentResponse(seoRaw);\n\nconst allPassed = voice.passed !== false && strategy.passed !== false && seo.passed !== false;\n\nconst draftContent = $('Claude: Generate Draft').item.json.content[0].text;\nconst rowNumber = $('Set: Prepare Draft Request').item.json.row_number;\nconst revisionCount = $('Set: Prepare Draft Request').item.json.revision_count;\nconst keyword = $('Set: Prepare Draft Request').item.json.keyword;\nconst topic = $('Set: Prepare Draft Request').item.json.topic;\n\nreturn [{\n  json: {\n    all_passed: allPassed,\n    voice_score: voice.voice_score || 0,\n    strategy_score: strategy.strategy_score || 0,\n    seo_aeo_score: seo.seo_aeo_score || 0,\n    voice_report: JSON.stringify(voice),\n    strategy_report: JSON.stringify(strategy),\n    seo_report: JSON.stringify(seo),\n    metadata: seo.metadata || {},\n    draft_content: draftContent,\n    row_number: rowNumber,\n    revision_count: revisionCount,\n    keyword: keyword,\n    topic: topic\n  }\n}];"
-      },
-      "id": "cp-0012-4000-8000-000000000012",
-      "name": "Code: Aggregate Reviews",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [2500, 300]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
-          "conditions": [
-            {
-              "id": "cond-all-passed",
-              "leftValue": "={{$json.all_passed}}",
-              "rightValue": true,
-              "operator": { "type": "boolean", "operation": "equals" }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "cp-0013-4000-8000-000000000013",
-      "name": "IF: All Agents Passed",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [2750, 300]
     },
     {
       "parameters": {
@@ -293,24 +260,79 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 4096,\n  \"system\": \"You are the final editorial agent for SeedLink.app. You receive a blog draft + feedback from Voice, Strategy, and SEO/AEO review agents. Synthesize all feedback, fix flagged issues, apply editorial polish, and produce the final publication-ready version. Maintain founder-to-founder voice. Ensure opening definition, Key Takeaways, and FAQs are self-contained and AI-citable. Return JSON: {final_content (complete revised markdown), revision_summary: {changes_made[], agent_issues_resolved: {voice[], strategy[], seo_aeo[]}, editorial_notes, final_word_count, confidence (0-1)}}. JSON only.\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Draft:\\n{{ $json.draft_content }}\\n\\nVoice Agent Report:\\n{{ $json.voice_report }}\\n\\nStrategy Agent Report:\\n{{ $json.strategy_report }}\\n\\nSEO/AEO Agent Report:\\n{{ $json.seo_report }}\"}]\n}",
-        "options": { "timeout": 120000 }
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":1024,\"system\":\"You are an SEO and Answer Engine Optimization specialist for SeedLink.app. Evaluate blog post drafts for search optimization and AI engine citability, and generate SEO metadata.\\n\\nSEO Evaluation (score 1-5 each):\\n- keyword_placement: target keyword in headline, first paragraph, one H2, closing. Secondary keywords natural.\\n- meta_quality: meta description 150-160 chars, includes keyword, clear value prop.\\n- structure: H2 headings descriptive and keyword-rich. Scannable with short paragraphs and bullets.\\n\\nAEO/GEO Evaluation (score 1-5 each):\\n- ai_citability: clear standalone definitions in opening? Statements an AI would confidently cite?\\n- faq_quality: 3-5 FAQs phrased as real search queries? Answers self-contained and factual?\\n- key_takeaways: Key Takeaways section with complete, citable bullets?\\n- verifiable_claims: claims include specific numbers, dates, or named sources?\\n\\nAlso generate metadata:\\n- meta_title: 50-60 chars, keyword near front, ends with '| SeedLink'\\n- meta_description: 150-160 chars, keyword included, benefit-led\\n- og_title: engaging social sharing version\\n- og_description: 1-2 sentence social card description\\n- schema_markup: JSON-LD Article schema object\\n- faq_schema: JSON-LD FAQPage schema with questions from the post\\n- internal_links: 2-3 natural link suggestions to marketplace, Playbook, or talent matching\\n\\nReturn JSON only:\\n{\\\"seo_aeo_score\\\": 4.0, \\\"seo\\\": {\\\"keyword_placement\\\": {\\\"score\\\": 4, \\\"feedback\\\": \\\"...\\\"}, \\\"meta_quality\\\": {\\\"score\\\": 5, \\\"feedback\\\": \\\"...\\\"}, \\\"structure\\\": {\\\"score\\\": 4, \\\"feedback\\\": \\\"...\\\"}}, \\\"aeo\\\": {\\\"ai_citability\\\": {\\\"score\\\": 4, \\\"feedback\\\": \\\"...\\\"}, \\\"faq_quality\\\": {\\\"score\\\": 3, \\\"feedback\\\": \\\"...\\\"}, \\\"key_takeaways\\\": {\\\"score\\\": 5, \\\"feedback\\\": \\\"...\\\"}, \\\"verifiable_claims\\\": {\\\"score\\\": 3, \\\"feedback\\\": \\\"...\\\"}}, \\\"metadata\\\": {\\\"meta_title\\\": \\\"...\\\", \\\"meta_description\\\": \\\"...\\\", \\\"og_title\\\": \\\"...\\\", \\\"og_description\\\": \\\"...\\\", \\\"schema_markup\\\": {}, \\\"faq_schema\\\": {}, \\\"internal_links\\\": []}, \\\"passed\\\": true}\\n\\nPass threshold: average across all scores >= 3.5, no individual score below 2.5.\",\"messages\":[{\"role\":\"user\",\"content\":\"Review the SEO/AEO optimization and generate metadata for this blog post draft:\\n\\nTarget Keyword: \"+$('Set: Prepare for Review').item.json.target_keyword+\"\\nContent Pillar: \"+$('Set: Prepare for Review').item.json.content_pillar+\"\\n\\nDraft:\\n\"+$('Set: Prepare for Review').item.json.draft_text}]}) }}",
+        "options": { "timeout": 60000 }
       },
-      "id": "cp-0014-4000-8000-000000000014",
-      "name": "Claude: Editor-Unifier",
+      "id": "cp-0012-4000-8000-000000000012",
+      "name": "Claude: SEO/AEO Review",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [3000, 200]
+      "position": [2500, 300]
     },
     {
       "parameters": {
-        "jsCode": "// Parse Editor-Unifier response and extract final content + metadata\nconst raw = $input.first().json;\nlet text = '';\nif (raw.content && Array.isArray(raw.content)) {\n  const block = raw.content.find(b => b.type === 'text');\n  if (block) text = block.text;\n}\n\nlet parsed;\ntry {\n  let jsonStr = text.trim();\n  if (jsonStr.startsWith('```json')) jsonStr = jsonStr.replace(/^```json\\s*/, '').replace(/\\s*```$/, '');\n  else if (jsonStr.startsWith('```')) jsonStr = jsonStr.replace(/^```\\s*/, '').replace(/\\s*```$/, '');\n  parsed = JSON.parse(jsonStr);\n} catch (e) {\n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    try { parsed = JSON.parse(match[0]); }\n    catch (e2) { parsed = { final_content: text, revision_summary: { editorial_notes: 'Could not parse JSON, using raw text' } }; }\n  } else {\n    parsed = { final_content: text, revision_summary: { editorial_notes: 'Could not parse response' } };\n  }\n}\n\nconst aggData = $('Code: Aggregate Reviews').item.json;\n\nreturn [{\n  json: {\n    final_content: parsed.final_content || text,\n    revision_summary: parsed.revision_summary || {},\n    review_notes: (parsed.revision_summary && parsed.revision_summary.editorial_notes) || '',\n    voice_score: aggData.voice_score,\n    strategy_score: aggData.strategy_score,\n    seo_aeo_score: aggData.seo_aeo_score,\n    meta_title: (aggData.metadata && aggData.metadata.meta_title) || '',\n    meta_description: (aggData.metadata && aggData.metadata.meta_description) || '',\n    schema_markup: JSON.stringify(aggData.metadata && aggData.metadata.faq_schema || {}),\n    row_number: aggData.row_number,\n    revision_count: aggData.revision_count,\n    topic: aggData.topic\n  }\n}];"
+        "jsCode": "// Parse all three agent review responses\nfunction parseAgentResponse(responseJson) {\n  const text = responseJson.content[0].text;\n  try {\n    return JSON.parse(text);\n  } catch (e) {\n    const jsonMatch = text.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n    if (jsonMatch) {\n      return JSON.parse(jsonMatch[1].trim());\n    }\n    // Last resort: find first { to last }\n    const braceMatch = text.match(/\\{[\\s\\S]*\\}/);\n    if (braceMatch) {\n      try { return JSON.parse(braceMatch[0]); }\n      catch (e2) { /* fall through */ }\n    }\n    throw new Error('Could not parse agent JSON: ' + text.substring(0, 200));\n  }\n}\n\nconst voiceRaw = $('Claude: Voice Review').first().json;\nconst strategyRaw = $('Claude: Strategy Review').first().json;\nconst seoAeoRaw = $('Claude: SEO/AEO Review').first().json;\n\nconst voice = parseAgentResponse(voiceRaw);\nconst strategy = parseAgentResponse(strategyRaw);\nconst seoAeo = parseAgentResponse(seoAeoRaw);\n\n// Extract individual scores\nconst voiceScores = [\n  voice.tone_match?.score || 0,\n  voice.concreteness?.score || 0,\n  voice.accessibility?.score || 0,\n  voice.word_choice?.score || 0\n];\nconst strategyScores = [\n  strategy.pillar_alignment?.score || 0,\n  strategy.audience_targeting?.score || 0,\n  strategy.cta_integration?.score || 0,\n  strategy.value_delivery?.score || 0\n];\nconst seoScores = [\n  seoAeo.seo?.keyword_placement?.score || 0,\n  seoAeo.seo?.meta_quality?.score || 0,\n  seoAeo.seo?.structure?.score || 0\n];\nconst aeoScores = [\n  seoAeo.aeo?.ai_citability?.score || 0,\n  seoAeo.aeo?.faq_quality?.score || 0,\n  seoAeo.aeo?.key_takeaways?.score || 0,\n  seoAeo.aeo?.verifiable_claims?.score || 0\n];\n\nconst allScores = [...voiceScores, ...strategyScores, ...seoScores, ...aeoScores];\nconst avgScore = allScores.reduce((a, b) => a + b, 0) / allScores.length;\nconst minScore = Math.min(...allScores);\n\n// Pass if average >= 3.5 AND no score below 2.5\nconst allPassed = avgScore >= 3.5 && minScore >= 2.5;\n\n// Per-agent averages\nconst voiceAvg = voiceScores.reduce((a, b) => a + b, 0) / voiceScores.length;\nconst strategyAvg = strategyScores.reduce((a, b) => a + b, 0) / strategyScores.length;\nconst seoAeoAvg = [...seoScores, ...aeoScores].reduce((a, b) => a + b, 0) / (seoScores.length + aeoScores.length);\n\nconst ctx = $('Set: Prepare for Review').first().json;\n\nreturn [{\n  json: {\n    all_passed: allPassed,\n    overall_avg: Math.round(avgScore * 100) / 100,\n    min_score: minScore,\n    voice_avg: Math.round(voiceAvg * 100) / 100,\n    strategy_avg: Math.round(strategyAvg * 100) / 100,\n    seo_aeo_avg: Math.round(seoAeoAvg * 100) / 100,\n    voice_review: voice,\n    strategy_review: strategy,\n    seo_aeo_review: seoAeo,\n    metadata: seoAeo.metadata || {},\n    draft_text: ctx.draft_text,\n    topic: ctx.topic,\n    content_pillar: ctx.content_pillar,\n    target_keyword: ctx.target_keyword,\n    target_audience: ctx.target_audience,\n    content_brief: ctx.content_brief,\n    row_number: ctx.row_number,\n    revision_count: ctx.revision_count\n  }\n}];"
+      },
+      "id": "cp-0013-4000-8000-000000000013",
+      "name": "Code: Aggregate Reviews",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2750, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-all-passed",
+              "leftValue": "={{$json.all_passed}}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cp-0014-4000-8000-000000000014",
+      "name": "IF: All Agents Passed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [3000, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are the final editorial agent for SeedLink.app. You receive a blog post draft with feedback from three review agents (Voice, Strategy, SEO/AEO). Produce the final, publication-ready version.\\n\\nResponsibilities:\\n1. Synthesize all agent feedback. Identify critical issues (scores below 3) vs. suggestions.\\n2. Apply revisions — fix every critical issue and as many improvements as possible without over-editing.\\n3. Editorial quality check: compelling opening hook, logical flow, 1,000-1,500 words, claims supported with specifics, strong closing with natural CTA, no repetition, smooth transitions.\\n4. Preserve founder-to-founder tone throughout. Do not make writing sound more polished at the expense of authenticity.\\n5. Final AEO pass — ensure opening definition, Key Takeaways, and FAQ answers are self-contained and citable by AI systems.\\n\\nRules:\\n- Never add placeholder text. Every sentence must be publication-ready.\\n- If agent feedback conflicts, prioritize the agent with the lower score.\\n- Do not remove CTAs that Strategy Agent approved. Do not add CTAs Strategy Agent did not suggest.\\n- Preserve SEO metadata from SEO/AEO Agent unless there is an error.\\n- If draft is already strong (all agents scored 4+), make minimal edits.\\n\\nReturn JSON only:\\n{\\\"final_content\\\": \\\"Complete revised blog post in markdown with headline, opening, definition, Key Takeaways, body sections, FAQ, closing, and meta description.\\\", \\\"revision_summary\\\": {\\\"changes_made\\\": [], \\\"agent_issues_resolved\\\": {\\\"voice\\\": [], \\\"strategy\\\": [], \\\"seo_aeo\\\": []}, \\\"editorial_notes\\\": \\\"\\\", \\\"final_word_count\\\": 1250, \\\"confidence\\\": 0.92}}\",\"messages\":[{\"role\":\"user\",\"content\":\"Produce the final publication-ready version of this blog post.\\n\\n--- DRAFT ---\\n\"+$json.draft_text+\"\\n\\n--- VOICE AGENT REPORT ---\\n\"+JSON.stringify($json.voice_review)+\"\\n\\n--- STRATEGY AGENT REPORT ---\\n\"+JSON.stringify($json.strategy_review)+\"\\n\\n--- SEO/AEO AGENT REPORT ---\\n\"+JSON.stringify($json.seo_aeo_review)}]}) }}",
+        "options": { "timeout": 120000 }
       },
       "id": "cp-0015-4000-8000-000000000015",
+      "name": "Claude: Editor-Unifier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3250, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the editor-unifier response\nconst raw = $input.first().json;\nlet text = '';\nif (raw.content && Array.isArray(raw.content)) {\n  const block = raw.content.find(b => b.type === 'text');\n  if (block) text = block.text;\n}\n\nlet parsed;\ntry {\n  let jsonStr = text.trim();\n  if (jsonStr.startsWith('```json')) jsonStr = jsonStr.replace(/^```json\\s*/, '').replace(/\\s*```$/, '');\n  else if (jsonStr.startsWith('```')) jsonStr = jsonStr.replace(/^```\\s*/, '').replace(/\\s*```$/, '');\n  parsed = JSON.parse(jsonStr);\n} catch (e) {\n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    try { parsed = JSON.parse(match[0]); }\n    catch (e2) {\n      parsed = {\n        final_content: text,\n        revision_summary: { editorial_notes: 'Could not parse JSON, using raw text' }\n      };\n    }\n  } else {\n    parsed = {\n      final_content: text,\n      revision_summary: { editorial_notes: 'Could not parse response' }\n    };\n  }\n}\n\nconst agg = $('Code: Aggregate Reviews').first().json;\n\nreturn [{\n  json: {\n    final_content: parsed.final_content || text,\n    revision_summary: parsed.revision_summary || {},\n    voice_score: agg.voice_avg,\n    strategy_score: agg.strategy_avg,\n    seo_aeo_score: agg.seo_aeo_avg,\n    overall_score: agg.overall_avg,\n    meta_title: (agg.metadata && agg.metadata.meta_title) || '',\n    meta_description: (agg.metadata && agg.metadata.meta_description) || '',\n    schema_markup: JSON.stringify((agg.metadata && agg.metadata.schema_markup) || {}),\n    faq_schema: JSON.stringify((agg.metadata && agg.metadata.faq_schema) || {}),\n    review_notes: (parsed.revision_summary && parsed.revision_summary.editorial_notes) || '',\n    topic: agg.topic,\n    content_pillar: agg.content_pillar,\n    target_keyword: agg.target_keyword,\n    row_number: agg.row_number,\n    revision_count: agg.revision_count\n  }\n}];"
+      },
+      "id": "cp-0016-4000-8000-000000000016",
       "name": "Code: Parse Final Content",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [3250, 200]
+      "position": [3500, 200]
     },
     {
       "parameters": {
@@ -333,21 +355,22 @@
             "Voice Score": "={{$json.voice_score}}",
             "Strategy Score": "={{$json.strategy_score}}",
             "SEO/AEO Score": "={{$json.seo_aeo_score}}",
-            "Review Notes": "={{$json.review_notes}}",
+            "Overall Score": "={{$json.overall_score}}",
             "Meta Title": "={{$json.meta_title}}",
             "Meta Description": "={{$json.meta_description}}",
             "Schema Markup": "={{$json.schema_markup}}",
+            "Review Notes": "={{$json.review_notes}}",
             "Revision Count": "={{$json.revision_count}}"
           },
           "matchingColumns": ["row_number"]
         },
         "options": {}
       },
-      "id": "cp-0016-4000-8000-000000000016",
+      "id": "cp-0017-4000-8000-000000000017",
       "name": "Sheets: Save Final Content",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [3500, 200],
+      "position": [3750, 200],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
@@ -359,16 +382,22 @@
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \":memo: *SeedLink Content Pipeline — Draft Ready*\\n\\n*Topic:* {{ $json.topic }}\\n*Voice Score:* {{ $json.voice_score }}/5\\n*Strategy Score:* {{ $json.strategy_score }}/5\\n*SEO/AEO Score:* {{ $json.seo_aeo_score }}/5\\n*Revisions:* {{ $json.revision_count }}\\n\\nDraft is ready for human review in the Content Hub.\\n:link: <https://docs.google.com/spreadsheets/d/{{ $env.SEEDLINK_EDITORIAL_CALENDAR_ID }}|Open Content Hub>\"\n}",
+        "jsonBody": "={{ JSON.stringify({\"text\":\":white_check_mark: *SeedLink Content Pipeline — Draft Ready*\\n\\n*Topic:* \"+$('Code: Parse Final Content').item.json.topic+\"\\n*Pillar:* \"+$('Code: Parse Final Content').item.json.content_pillar+\"\\n*Keyword:* \"+$('Code: Parse Final Content').item.json.target_keyword+\"\\n*Scores:* Voice \"+$('Code: Parse Final Content').item.json.voice_score+\" | Strategy \"+$('Code: Parse Final Content').item.json.strategy_score+\" | SEO/AEO \"+$('Code: Parse Final Content').item.json.seo_aeo_score+\" | Overall \"+$('Code: Parse Final Content').item.json.overall_score+\"\\n*Revisions:* \"+$('Code: Parse Final Content').item.json.revision_count+\"\\n\\nDraft is in the Content Hub with status *Ready for Review*. Please review and approve for publishing.\\n:link: <https://docs.google.com/spreadsheets/d/\"+$env.SEEDLINK_EDITORIAL_CALENDAR_ID+\"|Open Content Hub>\"}) }}",
         "options": { "timeout": 10000 }
       },
-      "id": "cp-0017-4000-8000-000000000017",
+      "id": "cp-0018-4000-8000-000000000018",
       "name": "HTTP: Notify Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [3750, 200]
+      "position": [4000, 200]
     },
     {
       "parameters": {
@@ -386,11 +415,11 @@
         },
         "options": {}
       },
-      "id": "cp-0018-4000-8000-000000000018",
+      "id": "cp-0019-4000-8000-000000000019",
       "name": "IF: Max Revisions",
       "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [3000, 500]
+      "typeVersion": 2.2,
+      "position": [3250, 500]
     },
     {
       "parameters": {
@@ -398,23 +427,26 @@
         "duplicateItem": false,
         "assignments": {
           "assignments": [
-            { "id": "r1", "name": "draft_content", "value": "={{$json.draft_content}}", "type": "string" },
-            { "id": "r2", "name": "voice_report", "value": "={{$json.voice_report}}", "type": "string" },
-            { "id": "r3", "name": "strategy_report", "value": "={{$json.strategy_report}}", "type": "string" },
-            { "id": "r4", "name": "seo_report", "value": "={{$json.seo_report}}", "type": "string" },
-            { "id": "r5", "name": "revision_count", "value": "={{$json.revision_count + 1}}", "type": "number" },
-            { "id": "r6", "name": "row_number", "value": "={{$json.row_number}}", "type": "number" },
-            { "id": "r7", "name": "keyword", "value": "={{$json.keyword}}", "type": "string" },
-            { "id": "r8", "name": "topic", "value": "={{$json.topic}}", "type": "string" }
+            { "id": "r1", "name": "revision_count", "value": "={{$json.revision_count + 1}}", "type": "number" },
+            { "id": "r2", "name": "draft_text", "value": "={{$json.draft_text}}", "type": "string" },
+            { "id": "r3", "name": "voice_feedback", "value": "={{JSON.stringify($json.voice_review)}}", "type": "string" },
+            { "id": "r4", "name": "strategy_feedback", "value": "={{JSON.stringify($json.strategy_review)}}", "type": "string" },
+            { "id": "r5", "name": "seo_aeo_feedback", "value": "={{JSON.stringify($json.seo_aeo_review)}}", "type": "string" },
+            { "id": "r6", "name": "topic", "value": "={{$json.topic}}", "type": "string" },
+            { "id": "r7", "name": "content_pillar", "value": "={{$json.content_pillar}}", "type": "string" },
+            { "id": "r8", "name": "target_keyword", "value": "={{$json.target_keyword}}", "type": "string" },
+            { "id": "r9", "name": "target_audience", "value": "={{$json.target_audience}}", "type": "string" },
+            { "id": "r10", "name": "content_brief", "value": "={{$json.content_brief}}", "type": "string" },
+            { "id": "r11", "name": "row_number", "value": "={{$json.row_number}}", "type": "number" }
           ]
         },
         "options": {}
       },
-      "id": "cp-0019-4000-8000-000000000019",
-      "name": "Set: Prepare Revision",
+      "id": "cp-0020-4000-8000-000000000020",
+      "name": "Set: Increment Revision",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [3250, 450]
+      "position": [3500, 450]
     },
     {
       "parameters": {
@@ -430,14 +462,38 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 4096,\n  \"system\": \"You are revising a blog draft for SeedLink.app that did not pass agent review. Apply the agent feedback precisely. Maintain founder-to-founder voice. Fix flagged issues while preserving the draft's strengths. Keep 1000-1500 words with opening definition, Key Takeaways, FAQ section, and natural CTAs. Output the revised blog post in markdown only.\",\n  \"messages\": [{\"role\": \"user\", \"content\": \"Original Draft:\\n{{ $json.draft_content }}\\n\\nVoice Agent Feedback:\\n{{ $json.voice_report }}\\n\\nStrategy Agent Feedback:\\n{{ $json.strategy_report }}\\n\\nSEO/AEO Agent Feedback:\\n{{ $json.seo_report }}\\n\\nRevise the draft to address all flagged issues.\"}]\n}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are a blog writer for SeedLink.app, an AI-augmented talent marketplace connecting founders with AI talent, tools marketplace, and AI Playbook.\\n\\nYou are revising a draft that did not pass multi-agent review. Apply the agent feedback precisely.\\n\\nVoice & Tone: Lead with value. Founder-to-founder tone. Concrete with specific numbers. Accessible language. Opinionated but not pushy.\\n\\nStructure (1,000-1,500 words):\\n1. Opening hook (2-3 sentences) — pain point, stat, or scenario.\\n2. Opening definition (1-2 sentences) — clear, standalone, AI-citable.\\n3. Context paragraph.\\n4. Key Takeaways (3-5 bullets) — complete, citable statements.\\n5. Body sections (3-4 H2s) — short paragraphs, verifiable claims.\\n6. FAQ (3-5 Q&A) — real search queries, self-contained answers.\\n7. Closing — key takeaway + natural CTA.\\n\\nCTA: 1-2 contextual SeedLink references. Playbook for planning, marketplace for tools, talent matching for hiring.\\nSEO: Target keyword in headline, first paragraph, one H2, closing. Meta description after '---'.\\nAEO: Opening definition, Key Takeaways, and FAQ answers must be self-contained.\\n\\nApply ALL agent feedback while maintaining voice. Output clean markdown.\",\"messages\":[{\"role\":\"user\",\"content\":\"Revise this blog post draft based on all agent feedback.\\n\\n--- ORIGINAL DRAFT ---\\n\"+$json.draft_text+\"\\n\\n--- VOICE AGENT FEEDBACK ---\\n\"+$json.voice_feedback+\"\\n\\n--- STRATEGY AGENT FEEDBACK ---\\n\"+$json.strategy_feedback+\"\\n\\n--- SEO/AEO AGENT FEEDBACK ---\\n\"+$json.seo_aeo_feedback+\"\\n\\nTopic: \"+$json.topic+\"\\nTarget Keyword: \"+$json.target_keyword+\"\\nContent Pillar: \"+$json.content_pillar+\"\\nTarget Audience: \"+$json.target_audience}]}) }}",
         "options": { "timeout": 120000 }
       },
-      "id": "cp-0020-4000-8000-000000000020",
+      "id": "cp-0021-4000-8000-000000000021",
       "name": "Claude: Revise Draft",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [3500, 450]
+      "position": [3750, 450]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            { "id": "rv1", "name": "draft_text", "value": "={{$json.content[0].text}}", "type": "string" },
+            { "id": "rv2", "name": "topic", "value": "={{$('Set: Increment Revision').item.json.topic}}", "type": "string" },
+            { "id": "rv3", "name": "content_pillar", "value": "={{$('Set: Increment Revision').item.json.content_pillar}}", "type": "string" },
+            { "id": "rv4", "name": "target_keyword", "value": "={{$('Set: Increment Revision').item.json.target_keyword}}", "type": "string" },
+            { "id": "rv5", "name": "target_audience", "value": "={{$('Set: Increment Revision').item.json.target_audience}}", "type": "string" },
+            { "id": "rv6", "name": "content_brief", "value": "={{$('Set: Increment Revision').item.json.content_brief}}", "type": "string" },
+            { "id": "rv7", "name": "row_number", "value": "={{$('Set: Increment Revision').item.json.row_number}}", "type": "number" },
+            { "id": "rv8", "name": "revision_count", "value": "={{$('Set: Increment Revision').item.json.revision_count}}", "type": "number" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cp-0022-4000-8000-000000000022",
+      "name": "Set: Prepare Revised for Review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [4000, 450]
     },
     {
       "parameters": {
@@ -456,22 +512,23 @@
           "mappingMode": "defineBelow",
           "value": {
             "Status": "Needs Manual Review",
-            "Draft Content": "={{$json.draft_content}}",
-            "Voice Score": "={{$json.voice_score}}",
-            "Strategy Score": "={{$json.strategy_score}}",
-            "SEO/AEO Score": "={{$json.seo_aeo_score}}",
-            "Review Notes": "Agent review failed after max revisions. Voice: {{$json.voice_score}}, Strategy: {{$json.strategy_score}}, SEO/AEO: {{$json.seo_aeo_score}}. Please review and edit manually.",
-            "Revision Count": "={{$json.revision_count}}"
+            "Draft Content": "={{$json.draft_text}}",
+            "Voice Score": "={{$json.voice_avg}}",
+            "Strategy Score": "={{$json.strategy_avg}}",
+            "SEO/AEO Score": "={{$json.seo_aeo_avg}}",
+            "Overall Score": "={{$json.overall_avg}}",
+            "Revision Count": "={{$json.revision_count}}",
+            "Review Notes": "={{('Max revisions reached. Voice: ' + JSON.stringify($json.voice_review?.flagged_lines || []).substring(0, 500) + ' | Strategy: ' + ($json.strategy_review?.cta_integration?.feedback || '') + ' | SEO: ' + ($json.seo_aeo_review?.seo?.keyword_placement?.feedback || '')).substring(0, 1000)}}"
           },
           "matchingColumns": ["row_number"]
         },
         "options": {}
       },
-      "id": "cp-0021-4000-8000-000000000021",
-      "name": "Sheets: Save Needs Review",
+      "id": "cp-0023-4000-8000-000000000023",
+      "name": "Sheets: Save Needs Manual Review",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [3250, 650],
+      "position": [3500, 650],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
@@ -483,27 +540,39 @@
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \":warning: *SeedLink Content Pipeline — Manual Review Needed*\\n\\n*Topic:* {{ $json.topic }}\\nAgent review failed after {{ $json.revision_count }} revision(s).\\nVoice: {{ $json.voice_score }}/5 | Strategy: {{ $json.strategy_score }}/5 | SEO/AEO: {{ $json.seo_aeo_score }}/5\\n\\nPlease review and edit the draft manually in the Content Hub.\"\n}",
+        "jsonBody": "={{ JSON.stringify({\"text\":\":warning: *SeedLink Content Pipeline — Manual Review Needed*\\n\\n*Topic:* \"+$json.topic+\"\\n*Pillar:* \"+$json.content_pillar+\"\\n*Keyword:* \"+$json.target_keyword+\"\\n*Overall Score:* \"+($json.overall_avg || 'N/A')+\"\\n*Revisions Attempted:* \"+$json.revision_count+\"\\n\\nThe draft did not pass multi-agent review after maximum revision attempts. It has been saved with status *Needs Manual Review* in the Content Hub.\"}) }}",
         "options": { "timeout": 10000 }
       },
-      "id": "cp-0022-4000-8000-000000000022",
-      "name": "HTTP: Slack Manual Review Alert",
+      "id": "cp-0024-4000-8000-000000000024",
+      "name": "HTTP: Notify Manual Review Needed",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [3500, 650]
+      "position": [3750, 650]
     },
     {
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "{\"text\": \"SeedLink Content Pipeline: No topics with status 'Queued' found in the Content Hub. Add topics or run the Editorial Calendar workflow.\"}",
-        "options": {}
+        "jsonBody": "{\"text\": \":warning: *SeedLink Content Pipeline* — No queued topics found in Content Hub. Add topics or check the Editorial Calendar Manager workflow.\"}",
+        "options": { "timeout": 10000 }
       },
-      "id": "cp-0023-4000-8000-000000000023",
+      "id": "cp-0025-4000-8000-000000000025",
       "name": "HTTP: No Topics Available",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -511,7 +580,7 @@
     },
     {
       "parameters": {},
-      "id": "cp-0024-4000-8000-000000000024",
+      "id": "cp-0026-4000-8000-000000000026",
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
@@ -521,12 +590,18 @@
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \":rotating_light: *SeedLink Content Pipeline — Error*\\n\\n*Workflow:* {{ $workflow.name }}\\n*Error:* {{ $json.execution.error.message }}\\n*Timestamp:* {{ $now.toISO() }}\\n*Execution ID:* {{ $json.execution.id }}\"\n}",
-        "options": {}
+        "jsonBody": "={{ JSON.stringify({\"text\":\":rotating_light: *SeedLink Content Pipeline — Error Alert*\\n\\n*Workflow:* SeedLink - Content Pipeline\\n*Error Node:* \"+($json.execution?.error?.node || 'Unknown')+\"\\n*Error Message:* \"+($json.execution?.error?.message || 'No error message available')+\"\\n*Execution ID:* \"+($json.execution?.id || 'N/A')+\"\\n*Timestamp:* \"+new Date().toISOString()+\"\\n\\nPlease check the n8n execution log for details.\"}) }}",
+        "options": { "timeout": 10000 }
       },
-      "id": "cp-0025-4000-8000-000000000025",
+      "id": "cp-0027-4000-8000-000000000027",
       "name": "HTTP: Slack Error Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -559,6 +634,9 @@
       "main": [[{ "node": "Claude: Generate Draft", "type": "main", "index": 0 }]]
     },
     "Claude: Generate Draft": {
+      "main": [[{ "node": "Set: Prepare for Review", "type": "main", "index": 0 }]]
+    },
+    "Set: Prepare for Review": {
       "main": [[{ "node": "Claude: Voice Review", "type": "main", "index": 0 }]]
     },
     "Claude: Voice Review": {
@@ -590,18 +668,21 @@
     },
     "IF: Max Revisions": {
       "main": [
-        [{ "node": "Set: Prepare Revision", "type": "main", "index": 0 }],
-        [{ "node": "Sheets: Save Needs Review", "type": "main", "index": 0 }]
+        [{ "node": "Set: Increment Revision", "type": "main", "index": 0 }],
+        [{ "node": "Sheets: Save Needs Manual Review", "type": "main", "index": 0 }]
       ]
     },
-    "Set: Prepare Revision": {
+    "Set: Increment Revision": {
       "main": [[{ "node": "Claude: Revise Draft", "type": "main", "index": 0 }]]
     },
     "Claude: Revise Draft": {
+      "main": [[{ "node": "Set: Prepare Revised for Review", "type": "main", "index": 0 }]]
+    },
+    "Set: Prepare Revised for Review": {
       "main": [[{ "node": "Claude: Voice Review", "type": "main", "index": 0 }]]
     },
-    "Sheets: Save Needs Review": {
-      "main": [[{ "node": "HTTP: Slack Manual Review Alert", "type": "main", "index": 0 }]]
+    "Sheets: Save Needs Manual Review": {
+      "main": [[{ "node": "HTTP: Notify Manual Review Needed", "type": "main", "index": 0 }]]
     },
     "Error Trigger": {
       "main": [[{ "node": "HTTP: Slack Error Alert", "type": "main", "index": 0 }]]
