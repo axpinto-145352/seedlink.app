@@ -1,0 +1,398 @@
+{
+  "name": "SeedLink - SEO Content Optimizer",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "seedlink-seo-optimize",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
+      "name": "Webhook: Blog Draft Approved",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [0, 300],
+      "webhookId": "seedlink-seo-optimize"
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Sheet1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "post_id",
+              "lookupValue": "={{ $json.body.post_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000002",
+      "name": "Sheets: Get Post Content",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [260, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 512,\n  \"system\": \"You are an SEO specialist for SeedLink.app, an AI-augmented talent marketplace. Given a blog post and target keyword, generate: meta_title (50-60 chars with keyword and | SeedLink), meta_description (150-160 chars with keyword and value prop), og_title, og_description. Also suggest 2-3 internal link placements to SeedLink marketplace, Playbook, or talent matching. Output as JSON with fields: meta_title, meta_description, og_title, og_description, internal_links (array of {anchor_text, target, context}).\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Blog Post Content:\\n\\n{{ $json.content }}\\n\\nTarget Keyword: {{ $json.target_keyword }}\"\n    }\n  ]\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000003",
+      "name": "Claude: Generate SEO Metadata",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1024,\n  \"system\": \"You are an SEO specialist for SeedLink.app. Generate JSON-LD structured data for the blog post. Include: 1) Article schema with headline, description, author (Shilpa Kollengode, CEO, SeedLink), publisher (SeedLink, https://seedlink.app). 2) FAQPage schema extracted from the blog's FAQ section. Output as JSON with fields: article_schema (complete JSON-LD object), faq_schema (complete JSON-LD object). Ensure both schemas are valid JSON-LD that can be embedded in HTML.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Blog Post Content:\\n\\n{{ $('Sheets: Get Post Content').item.json.content }}\"\n    }\n  ]\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000004",
+      "name": "Claude: Generate Schema Markup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 300]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "seo-meta-title",
+              "name": "meta_title",
+              "value": "={{ JSON.parse($('Claude: Generate SEO Metadata').item.json.content[0].text).meta_title }}",
+              "type": "string"
+            },
+            {
+              "id": "seo-meta-description",
+              "name": "meta_description",
+              "value": "={{ JSON.parse($('Claude: Generate SEO Metadata').item.json.content[0].text).meta_description }}",
+              "type": "string"
+            },
+            {
+              "id": "seo-og-title",
+              "name": "og_title",
+              "value": "={{ JSON.parse($('Claude: Generate SEO Metadata').item.json.content[0].text).og_title }}",
+              "type": "string"
+            },
+            {
+              "id": "seo-og-description",
+              "name": "og_description",
+              "value": "={{ JSON.parse($('Claude: Generate SEO Metadata').item.json.content[0].text).og_description }}",
+              "type": "string"
+            },
+            {
+              "id": "seo-internal-links",
+              "name": "internal_links",
+              "value": "={{ JSON.parse($('Claude: Generate SEO Metadata').item.json.content[0].text).internal_links }}",
+              "type": "object"
+            },
+            {
+              "id": "seo-article-schema",
+              "name": "article_schema",
+              "value": "={{ JSON.parse($('Claude: Generate Schema Markup').item.json.content[0].text).article_schema }}",
+              "type": "object"
+            },
+            {
+              "id": "seo-faq-schema",
+              "name": "faq_schema",
+              "value": "={{ JSON.parse($('Claude: Generate Schema Markup').item.json.content[0].text).faq_schema }}",
+              "type": "object"
+            },
+            {
+              "id": "seo-schema-markup",
+              "name": "schema_markup",
+              "value": "={{ JSON.stringify({ article: JSON.parse($('Claude: Generate Schema Markup').item.json.content[0].text).article_schema, faq: JSON.parse($('Claude: Generate Schema Markup').item.json.content[0].text).faq_schema }) }}",
+              "type": "string"
+            },
+            {
+              "id": "seo-post-id",
+              "name": "post_id",
+              "value": "={{ $('Sheets: Get Post Content').item.json.post_id }}",
+              "type": "string"
+            },
+            {
+              "id": "seo-title",
+              "name": "post_title",
+              "value": "={{ $('Sheets: Get Post Content').item.json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "seo-target-keyword",
+              "name": "target_keyword",
+              "value": "={{ $('Sheets: Get Post Content').item.json.target_keyword }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000005",
+      "name": "Set: Combine SEO Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $json.post_id }}",
+            "meta_title": "={{ $json.meta_title }}",
+            "meta_description": "={{ $json.meta_description }}",
+            "schema_markup": "={{ $json.schema_markup }}"
+          },
+          "matchingColumns": ["post_id"]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000006",
+      "name": "Sheets: Save SEO Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [1300, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \":white_check_mark: *SEO Optimization Complete*\\n\\n*Post:* {{ $json.post_title }}\\n*Keyword:* {{ $json.target_keyword }}\\n*Meta Title:* {{ $json.meta_title }}\\n*Meta Description:* {{ $json.meta_description }}\\n\\n:link: Internal link suggestions and schema markup have been saved to the editorial calendar.\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000007",
+      "name": "HTTP: Notify Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {},
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000008",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [1040, 560]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \":rotating_light: *SEO Content Optimizer — Error*\\n\\n*Workflow:* SeedLink - SEO Content Optimizer\\n*Error:* {{ $json.execution.error.message }}\\n*Execution ID:* {{ $json.execution.id }}\\n*Timestamp:* {{ $json.execution.lastNodeExecuted }} at {{ new Date().toISOString() }}\\n\\nPlease check the n8n execution log for details.\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000009",
+      "name": "HTTP: Slack Error Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 560]
+    }
+  ],
+  "connections": {
+    "Webhook: Blog Draft Approved": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Get Post Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Get Post Content": {
+      "main": [
+        [
+          {
+            "node": "Claude: Generate SEO Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Generate SEO Metadata": {
+      "main": [
+        [
+          {
+            "node": "Claude: Generate Schema Markup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Generate Schema Markup": {
+      "main": [
+        [
+          {
+            "node": "Set: Combine SEO Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Combine SEO Data": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Save SEO Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Save SEO Data": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "seedlink"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-02-10T00:00:00.000Z",
+  "versionId": "1"
+}

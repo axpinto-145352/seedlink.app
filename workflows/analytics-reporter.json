@@ -1,0 +1,362 @@
+{
+  "name": "SeedLink - Analytics Reporter",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": 5,
+              "triggerAtHour": 16,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Editorial Calendar"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Published"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000002",
+      "name": "Sheets: Get Published Content",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [480, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets - SeedLink"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Analytics"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000003",
+      "name": "Sheets: Get Analytics Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [720, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets - SeedLink"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "rpt-001",
+              "name": "reportDate",
+              "value": "={{ $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "rpt-002",
+              "name": "weekStart",
+              "value": "={{ $now.minus({days: 7}).format('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "rpt-003",
+              "name": "weekEnd",
+              "value": "={{ $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "rpt-004",
+              "name": "publishedContent",
+              "value": "={{ $('Sheets: Get Published Content').all() }}",
+              "type": "string"
+            },
+            {
+              "id": "rpt-005",
+              "name": "analyticsData",
+              "value": "={{ $('Sheets: Get Analytics Data').all() }}",
+              "type": "string"
+            },
+            {
+              "id": "rpt-006",
+              "name": "totalPublished",
+              "value": "={{ $('Sheets: Get Published Content').all().length }}",
+              "type": "number"
+            },
+            {
+              "id": "rpt-007",
+              "name": "totalImpressions",
+              "value": "={{ $('Sheets: Get Analytics Data').all().reduce((sum, item) => sum + (Number(item.json.Impressions) || 0), 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "rpt-008",
+              "name": "totalEngagement",
+              "value": "={{ $('Sheets: Get Analytics Data').all().reduce((sum, item) => sum + (Number(item.json.Engagement) || 0), 0) }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000004",
+      "name": "Set: Compile Report Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [960, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// SeedLink - Weekly Analytics Report Compiler\n// ============================================================\n\nconst publishedItems = $('Sheets: Get Published Content').all();\nconst analyticsItems = $('Sheets: Get Analytics Data').all();\nconst reportDate = $input.first().json.reportDate;\nconst weekStart = $input.first().json.weekStart;\nconst weekEnd = $input.first().json.weekEnd;\n\n// -----------------------------------------------------------\n// 1. Content Published - counts by platform\n// -----------------------------------------------------------\nconst platformCounts = {};\nfor (const item of publishedItems) {\n  const platform = (item.json.Platform || 'Unknown').trim();\n  platformCounts[platform] = (platformCounts[platform] || 0) + 1;\n}\n\nconst totalPosts = publishedItems.length;\n\n// -----------------------------------------------------------\n// 2. Content Published - counts by content type\n// -----------------------------------------------------------\nconst typeCounts = {};\nfor (const item of publishedItems) {\n  const contentType = (item.json['Content Type'] || item.json.Type || 'Other').trim();\n  typeCounts[contentType] = (typeCounts[contentType] || 0) + 1;\n}\n\n// -----------------------------------------------------------\n// 3. Engagement metrics\n// -----------------------------------------------------------\nlet totalImpressions = 0;\nlet totalEngagement = 0;\nlet totalClicks = 0;\nlet totalShares = 0;\n\nfor (const item of analyticsItems) {\n  totalImpressions += Number(item.json.Impressions) || 0;\n  totalEngagement += Number(item.json.Engagement) || 0;\n  totalClicks += Number(item.json.Clicks) || 0;\n  totalShares += Number(item.json.Shares) || 0;\n}\n\nconst engagementRate = totalImpressions > 0\n  ? ((totalEngagement / totalImpressions) * 100).toFixed(2)\n  : '0.00';\n\n// -----------------------------------------------------------\n// 4. Top Performers - sorted by engagement descending\n// -----------------------------------------------------------\nconst sortedByEngagement = [...analyticsItems].sort((a, b) => {\n  return (Number(b.json.Engagement) || 0) - (Number(a.json.Engagement) || 0);\n});\n\nconst topPerformers = sortedByEngagement.slice(0, 5).map((item, idx) => ({\n  rank: idx + 1,\n  title: item.json.Title || item.json['Content Title'] || 'Untitled',\n  platform: item.json.Platform || 'N/A',\n  impressions: Number(item.json.Impressions) || 0,\n  engagement: Number(item.json.Engagement) || 0,\n  clicks: Number(item.json.Clicks) || 0\n}));\n\n// -----------------------------------------------------------\n// 5. Pillar Coverage analysis\n// -----------------------------------------------------------\nconst pillarCounts = {};\nfor (const item of publishedItems) {\n  const pillar = (item.json.Pillar || item.json['Content Pillar'] || 'Uncategorized').trim();\n  pillarCounts[pillar] = (pillarCounts[pillar] || 0) + 1;\n}\n\nconst pillarEntries = Object.entries(pillarCounts);\nconst pillarTotal = pillarEntries.reduce((s, [, c]) => s + c, 0);\nconst pillarDistribution = pillarEntries.map(([pillar, count]) => ({\n  pillar,\n  count,\n  percentage: pillarTotal > 0 ? ((count / pillarTotal) * 100).toFixed(1) : '0.0'\n}));\n\n// Check balance: flag any pillar below 10% or above 50%\nconst imbalancedPillars = pillarDistribution.filter(\n  p => parseFloat(p.percentage) < 10 || parseFloat(p.percentage) > 50\n);\n\n// -----------------------------------------------------------\n// 6. Recommendations\n// -----------------------------------------------------------\nconst recommendations = [];\n\nif (totalPosts === 0) {\n  recommendations.push('No content was published this week. Review editorial calendar and pipeline.');\n}\n\nif (parseFloat(engagementRate) < 2.0) {\n  recommendations.push(`Engagement rate (${engagementRate}%) is below the 2% target. Consider more interactive content formats.`);\n}\n\nfor (const ip of imbalancedPillars) {\n  if (parseFloat(ip.percentage) < 10) {\n    recommendations.push(`Pillar \"${ip.pillar}\" is underrepresented at ${ip.percentage}%. Schedule more content in this area.`);\n  }\n  if (parseFloat(ip.percentage) > 50) {\n    recommendations.push(`Pillar \"${ip.pillar}\" dominates at ${ip.percentage}%. Diversify content across other pillars.`);\n  }\n}\n\nif (topPerformers.length > 0) {\n  const topPlatform = topPerformers[0].platform;\n  recommendations.push(`Top-performing platform this week: ${topPlatform}. Consider increasing cadence there.`);\n}\n\nif (recommendations.length === 0) {\n  recommendations.push('All metrics are within target ranges. Maintain current strategy.');\n}\n\n// -----------------------------------------------------------\n// 7. Build formatted report text (Slack-friendly markdown)\n// -----------------------------------------------------------\nlet report = '';\nreport += `:bar_chart: *SeedLink Weekly Analytics Report*\\n`;\nreport += `_${weekStart} to ${weekEnd}_\\n\\n`;\n\nreport += `*--- Content Published (${totalPosts} total) ---*\\n`;\nfor (const [type, count] of Object.entries(typeCounts)) {\n  report += `  - ${type}: ${count}\\n`;\n}\nreport += `\\n`;\n\nreport += `*--- Platform Breakdown ---*\\n`;\nfor (const [platform, count] of Object.entries(platformCounts)) {\n  report += `  - ${platform}: ${count} post${count !== 1 ? 's' : ''}\\n`;\n}\nreport += `\\n`;\n\nreport += `*--- Key Metrics ---*\\n`;\nreport += `  - Total Impressions: ${totalImpressions.toLocaleString()}\\n`;\nreport += `  - Total Engagement: ${totalEngagement.toLocaleString()}\\n`;\nreport += `  - Engagement Rate: ${engagementRate}%\\n`;\nreport += `  - Total Clicks: ${totalClicks.toLocaleString()}\\n`;\nreport += `  - Total Shares: ${totalShares.toLocaleString()}\\n\\n`;\n\nreport += `*--- Top Performers ---*\\n`;\nfor (const tp of topPerformers) {\n  report += `  ${tp.rank}. \"${tp.title}\" (${tp.platform}) — ${tp.engagement.toLocaleString()} engagements, ${tp.impressions.toLocaleString()} impressions\\n`;\n}\nif (topPerformers.length === 0) {\n  report += `  No analytics data available for this period.\\n`;\n}\nreport += `\\n`;\n\nreport += `*--- Pillar Coverage ---*\\n`;\nfor (const pd of pillarDistribution) {\n  report += `  - ${pd.pillar}: ${pd.count} posts (${pd.percentage}%)\\n`;\n}\nif (pillarDistribution.length === 0) {\n  report += `  No pillar data available.\\n`;\n}\nreport += `\\n`;\n\nreport += `*--- Recommendations ---*\\n`;\nfor (const rec of recommendations) {\n  report += `  :point_right: ${rec}\\n`;\n}\n\n// -----------------------------------------------------------\n// 8. Return structured output\n// -----------------------------------------------------------\nreturn [{\n  json: {\n    reportDate,\n    weekStart,\n    weekEnd,\n    summary: {\n      totalPosts,\n      platformCounts,\n      typeCounts,\n      totalImpressions,\n      totalEngagement,\n      totalClicks,\n      totalShares,\n      engagementRate: parseFloat(engagementRate)\n    },\n    topPerformers,\n    pillarDistribution,\n    recommendations,\n    formattedReport: report,\n    reportSheetRow: {\n      Date: reportDate,\n      'Week Start': weekStart,\n      'Week End': weekEnd,\n      'Total Posts': totalPosts,\n      'Total Impressions': totalImpressions,\n      'Total Engagement': totalEngagement,\n      'Engagement Rate': `${engagementRate}%`,\n      'Total Clicks': totalClicks,\n      'Total Shares': totalShares,\n      'Top Post': topPerformers.length > 0 ? topPerformers[0].title : 'N/A',\n      'Top Platform': topPerformers.length > 0 ? topPerformers[0].platform : 'N/A',\n      Recommendations: recommendations.join(' | ')\n    }\n  }\n}];\n"
+      },
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000005",
+      "name": "Format Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Analytics"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000006",
+      "name": "Sheets: Save Report",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1440, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets - SeedLink"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"SeedLink Weekly Analytics Report\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": {{ JSON.stringify($json.formattedReport) }}\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"Report generated automatically by SeedLink Analytics Reporter | {{ $json.reportDate }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000007",
+      "name": "HTTP: Send Slack Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1680, 300]
+    },
+    {
+      "parameters": {},
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000008",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [240, 560]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":rotating_light: SeedLink Analytics Reporter — Error\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Workflow:* SeedLink - Analytics Reporter\\n*Error:* {{ $json.execution?.error?.message || 'Unknown error' }}\\n*Timestamp:* {{ $now.format('yyyy-MM-dd HH:mm:ss') }} UTC\\n*Execution ID:* {{ $json.execution?.id || 'N/A' }}\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"Check the n8n execution log for full details.\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-1001-4aaa-b001-000000000009",
+      "name": "HTTP: Slack Error Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 560]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Get Published Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Get Published Content": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Get Analytics Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Get Analytics Data": {
+      "main": [
+        [
+          {
+            "node": "Set: Compile Report Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Compile Report Data": {
+      "main": [
+        [
+          {
+            "node": "Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Save Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Save Report": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Send Slack Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "saveExecutionProgress": true
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "seedlink"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-02-10T00:00:00.000Z",
+  "versionId": "1"
+}

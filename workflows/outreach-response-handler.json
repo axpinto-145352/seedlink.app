@@ -1,0 +1,504 @@
+{
+  "name": "SeedLink - Outreach Response Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "outreach-response",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "b2c3d4e5-0001-4000-8000-000000000001",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "outreach-response"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-sender-name",
+              "name": "sender_name",
+              "value": "={{$json.sender_name || $json.body?.sender_name || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-sender-title",
+              "name": "sender_title",
+              "value": "={{$json.sender_title || $json.body?.sender_title || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-sender-company",
+              "name": "sender_company",
+              "value": "={{$json.sender_company || $json.body?.sender_company || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-message-text",
+              "name": "message_text",
+              "value": "={{$json.message_text || $json.body?.message_text || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-response-date",
+              "name": "response_date",
+              "value": "={{$json.response_date || $json.body?.response_date || $now.toISO()}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-profile-source",
+              "name": "profile_source",
+              "value": "={{$json.profile_source || $json.body?.profile_source || 'linkedin'}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0002-4000-8000-000000000002",
+      "name": "Set: Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 256,\n  \"system\": \"You are a lead qualification assistant for SeedLink.app, an AI talent marketplace. Classify LinkedIn outreach responses into: interested (wants to learn more, has relevant need), not_interested (declines, not a fit), question (asks specific question needing human response), meeting_request (wants to schedule call/demo). Output JSON: {classification, confidence (0-1), reasoning, suggested_action, urgency (high|medium|low)}. meeting_request takes priority over other classifications. When ambiguous between interested and question, choose question. Auto-replies/OOO = not_interested.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Classify the following outreach response:\\n\\n{{$json.message_text}}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "b2c3d4e5-0003-4000-8000-000000000003",
+      "name": "Claude: Classify Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the Claude API response and extract classification JSON\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const claudeResponse = item.json;\n  let classificationText = '';\n\n  // Extract text content from Claude's response\n  if (claudeResponse.content && Array.isArray(claudeResponse.content)) {\n    for (const block of claudeResponse.content) {\n      if (block.type === 'text') {\n        classificationText = block.text;\n        break;\n      }\n    }\n  }\n\n  // Parse the JSON from Claude's response text\n  let classification = {};\n  try {\n    // Try direct JSON parse first\n    classification = JSON.parse(classificationText);\n  } catch (e) {\n    // If direct parse fails, extract JSON from markdown code blocks or surrounding text\n    const jsonMatch = classificationText.match(/\\{[\\s\\S]*?\\}/);\n    if (jsonMatch) {\n      try {\n        classification = JSON.parse(jsonMatch[0]);\n      } catch (e2) {\n        classification = {\n          classification: 'question',\n          confidence: 0,\n          reasoning: 'Failed to parse Claude response: ' + classificationText,\n          suggested_action: 'Manual review required',\n          urgency: 'medium'\n        };\n      }\n    } else {\n      classification = {\n        classification: 'question',\n        confidence: 0,\n        reasoning: 'No JSON found in Claude response: ' + classificationText,\n        suggested_action: 'Manual review required',\n        urgency: 'medium'\n      };\n    }\n  }\n\n  // Carry forward the sender data from the previous Set node\n  // Access it via $('Set: Format Response').item\n  const senderData = $('Set: Format Response').item.json;\n\n  results.push({\n    json: {\n      classification: classification.classification || 'question',\n      confidence: classification.confidence || 0,\n      reasoning: classification.reasoning || '',\n      suggested_action: classification.suggested_action || '',\n      urgency: classification.urgency || 'medium',\n      sender_name: senderData.sender_name,\n      sender_title: senderData.sender_title,\n      sender_company: senderData.sender_company,\n      message_text: senderData.message_text,\n      response_date: senderData.response_date,\n      profile_source: senderData.profile_source\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "b2c3d4e5-0004-4000-8000-000000000004",
+      "name": "Code: Parse Classification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "outputIndex": 0,
+              "value": "interested"
+            },
+            {
+              "outputIndex": 1,
+              "value": "not_interested"
+            },
+            {
+              "outputIndex": 2,
+              "value": "question"
+            },
+            {
+              "outputIndex": 3,
+              "value": "meeting_request"
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{$json.classification}}",
+        "fallbackOutput": 2,
+        "options": {}
+      },
+      "id": "b2c3d4e5-0005-4000-8000-000000000005",
+      "name": "Switch: Response Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Hot Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sender Name": "={{$json.sender_name}}",
+            "Title": "={{$json.sender_title}}",
+            "Company": "={{$json.sender_company}}",
+            "Message": "={{$json.message_text}}",
+            "Response Date": "={{$json.response_date}}",
+            "Source": "={{$json.profile_source}}",
+            "Classification": "={{$json.classification}}",
+            "Confidence": "={{$json.confidence}}",
+            "Reasoning": "={{$json.reasoning}}",
+            "Suggested Action": "={{$json.suggested_action}}",
+            "Urgency": "high"
+          }
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0006-4000-8000-000000000006",
+      "name": "Sheets: Add to Hot Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1340, 0],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Archived"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sender Name": "={{$json.sender_name}}",
+            "Title": "={{$json.sender_title}}",
+            "Company": "={{$json.sender_company}}",
+            "Message": "={{$json.message_text}}",
+            "Response Date": "={{$json.response_date}}",
+            "Source": "={{$json.profile_source}}",
+            "Classification": "={{$json.classification}}",
+            "Reason": "={{$json.reasoning}}",
+            "Confidence": "={{$json.confidence}}"
+          }
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0007-4000-8000-000000000007",
+      "name": "Sheets: Log and Archive",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1340, 220],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Questions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sender Name": "={{$json.sender_name}}",
+            "Title": "={{$json.sender_title}}",
+            "Company": "={{$json.sender_company}}",
+            "Message": "={{$json.message_text}}",
+            "Response Date": "={{$json.response_date}}",
+            "Source": "={{$json.profile_source}}",
+            "Classification": "={{$json.classification}}",
+            "Suggested Action": "={{$json.suggested_action}}",
+            "Confidence": "={{$json.confidence}}",
+            "Urgency": "={{$json.urgency}}"
+          }
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0008-4000-8000-000000000008",
+      "name": "Sheets: Flag for Review",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1340, 440],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Meetings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sender Name": "={{$json.sender_name}}",
+            "Title": "={{$json.sender_title}}",
+            "Company": "={{$json.sender_company}}",
+            "Message": "={{$json.message_text}}",
+            "Response Date": "={{$json.response_date}}",
+            "Source": "={{$json.profile_source}}",
+            "Classification": "={{$json.classification}}",
+            "Confidence": "={{$json.confidence}}",
+            "Reasoning": "={{$json.reasoning}}",
+            "Suggested Action": "={{$json.suggested_action}}",
+            "Urgency": "high"
+          }
+        },
+        "options": {}
+      },
+      "id": "b2c3d4e5-0009-4000-8000-000000000009",
+      "name": "Sheets: Add to Meetings",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1340, 660],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \":incoming_envelope: *SeedLink Outreach Response*\\n\\n*Sender:* {{$json.sender_name}} ({{$json.sender_title}} at {{$json.sender_company}})\\n*Classification:* {{$json.classification}}\\n*Confidence:* {{$json.confidence}}\\n*Urgency:* {{$json.urgency}}\\n*Reasoning:* {{$json.reasoning}}\\n*Suggested Action:* {{$json.suggested_action}}\\n*Source:* {{$json.profile_source}}\\n*Date:* {{$json.response_date}}\"\n}",
+        "options": {}
+      },
+      "id": "b2c3d4e5-0010-4000-8000-000000000010",
+      "name": "HTTP: Notify Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1640, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b2c3d4e5-0011-4000-8000-000000000011",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [0, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \":rotating_light: *SeedLink Outreach Response Handler Error*\\n\\n*Workflow:* {{$workflow.name}}\\n*Error:* {{$json.execution.error.message}}\\n*Timestamp:* {{$now.toISO()}}\\n*Execution ID:* {{$json.execution.id}}\"\n}",
+        "options": {}
+      },
+      "id": "b2c3d4e5-0012-4000-8000-000000000012",
+      "name": "HTTP: Slack Error Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [260, 700]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set: Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Format Response": {
+      "main": [
+        [
+          {
+            "node": "Claude: Classify Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Classify Response": {
+      "main": [
+        [
+          {
+            "node": "Code: Parse Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Parse Classification": {
+      "main": [
+        [
+          {
+            "node": "Switch: Response Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch: Response Type": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Add to Hot Leads",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets: Log and Archive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets: Flag for Review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets: Add to Meetings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Add to Hot Leads": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Log and Archive": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Flag for Review": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Add to Meetings": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "seedlink"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-02-10T00:00:00.000Z",
+  "versionId": "1"
+}

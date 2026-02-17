@@ -1,0 +1,421 @@
+{
+  "name": "SeedLink - Editorial Calendar Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": 1,
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Topics Archive"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {
+          "range": "",
+          "dataLocationOnSheet": {
+            "rangeDefinition": "detectAutomatically"
+          }
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000002",
+      "name": "Sheets: Get Recent Topics",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [480, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Editorial Calendar"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {
+          "range": "",
+          "dataLocationOnSheet": {
+            "rangeDefinition": "detectAutomatically"
+          }
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000003",
+      "name": "Sheets: Get Pillar Distribution",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [480, 540],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-recent-topics",
+              "name": "recentTopics",
+              "value": "={{JSON.stringify($('Sheets: Get Recent Topics').all().map(item => item.json))}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-pillar-counts",
+              "name": "pillarDistribution",
+              "value": "={{(() => { const rows = $('Sheets: Get Pillar Distribution').all().map(i => i.json); const now = new Date(); const thirtyDaysAgo = new Date(now.getTime() - 30*24*60*60*1000); const recent = rows.filter(r => r.publish_date && new Date(r.publish_date) >= thirtyDaysAgo); const counts = { 'Finding AI Talent': 0, 'Zero to MVP': 0, 'AI Industry & Trends': 0, 'SeedLink in Action': 0 }; recent.forEach(r => { if (r.pillar && counts.hasOwnProperty(r.pillar)) counts[r.pillar]++; }); return JSON.stringify(counts); })()}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-current-date",
+              "name": "currentDate",
+              "value": "={{new Date().toISOString().split('T')[0]}}",
+              "type": "string"
+            },
+            {
+              "id": "assign-week-start",
+              "name": "upcomingWeekStart",
+              "value": "={{(() => { const d = new Date(); d.setDate(d.getDate() + (7 - d.getDay()) % 7 + 1); return d.toISOString().split('T')[0]; })()}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000004",
+      "name": "Set: Prepare Topic Request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [740, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 1024,\n  \"system\": \"You are a content strategist for SeedLink.app, an AI-augmented talent marketplace connecting founders with AI talent, tools, and an AI Playbook. Generate 5-7 blog topic ideas balanced across 4 pillars: Finding AI Talent (hiring, vetting, fractional teams), Zero to MVP (validating with AI, building fast, Playbook guidance), AI Industry & Trends (agent landscape, tools ecosystem, AI hiring), SeedLink in Action (platform updates, user outcomes, marketplace highlights). Output JSON array with fields: topic, pillar, target_keyword, target_audience, angle, suggested_publish_date (YYYY-MM-DD format for the upcoming week), cta_opportunity (marketplace|playbook|talent_matching), priority (high|medium|low). Avoid repeating any topics from the provided recent topics list. Balance pillars based on gaps shown in pillar distribution data. Be specific — 5 Questions to Ask Before Hiring a Fractional AI Engineer beats How to Hire AI Talent.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Today's date: {{ $json.currentDate }}\\nUpcoming week starts: {{ $json.upcomingWeekStart }}\\n\\nRecent topics from the last 30 days:\\n{{ $json.recentTopics }}\\n\\nPillar distribution (post counts in last 30 days):\\n{{ $json.pillarDistribution }}\\n\\nGenerate 5-7 new blog topic ideas as a JSON array. Output ONLY the JSON array, no other text.\"\n    }\n  ]\n}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000005",
+      "name": "Claude: Generate Topics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude's response to extract the JSON array of topics\nconst claudeResponse = $input.first().json;\n\n// Extract the text content from Claude's message response\nlet textContent = '';\nif (claudeResponse.content && Array.isArray(claudeResponse.content)) {\n  const textBlock = claudeResponse.content.find(block => block.type === 'text');\n  if (textBlock) {\n    textContent = textBlock.text;\n  }\n} else if (typeof claudeResponse.content === 'string') {\n  textContent = claudeResponse.content;\n}\n\nif (!textContent) {\n  throw new Error('No text content found in Claude response');\n}\n\n// Extract JSON array from the response (handle cases where it might be wrapped in markdown code blocks)\nlet jsonString = textContent.trim();\nif (jsonString.startsWith('```json')) {\n  jsonString = jsonString.replace(/^```json\\s*/, '').replace(/\\s*```$/, '');\n} else if (jsonString.startsWith('```')) {\n  jsonString = jsonString.replace(/^```\\s*/, '').replace(/\\s*```$/, '');\n}\n\nlet topics;\ntry {\n  topics = JSON.parse(jsonString);\n} catch (e) {\n  // Try to find a JSON array within the text\n  const arrayMatch = textContent.match(/\\[\\s*\\{[\\s\\S]*\\}\\s*\\]/);\n  if (arrayMatch) {\n    topics = JSON.parse(arrayMatch[0]);\n  } else {\n    throw new Error('Could not parse JSON from Claude response: ' + e.message);\n  }\n}\n\nif (!Array.isArray(topics)) {\n  throw new Error('Parsed content is not an array');\n}\n\n// Validate each topic has required fields\nconst requiredFields = ['topic', 'pillar', 'target_keyword', 'target_audience', 'angle', 'suggested_publish_date', 'cta_opportunity', 'priority'];\nconst validPillars = ['Finding AI Talent', 'Zero to MVP', 'AI Industry & Trends', 'SeedLink in Action'];\nconst validCta = ['marketplace', 'playbook', 'talent_matching'];\nconst validPriority = ['high', 'medium', 'low'];\n\nconst validatedTopics = topics.map((topic, index) => {\n  // Check all required fields exist\n  for (const field of requiredFields) {\n    if (!topic[field]) {\n      throw new Error(`Topic at index ${index} is missing required field: ${field}`);\n    }\n  }\n\n  // Validate date format (YYYY-MM-DD)\n  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(topic.suggested_publish_date)) {\n    throw new Error(`Topic at index ${index} has invalid date format: ${topic.suggested_publish_date}`);\n  }\n\n  // Validate enum fields\n  if (!validCta.includes(topic.cta_opportunity)) {\n    topic.cta_opportunity = 'marketplace'; // default fallback\n  }\n  if (!validPriority.includes(topic.priority)) {\n    topic.priority = 'medium'; // default fallback\n  }\n\n  return { json: topic };\n});\n\nreturn validatedTopics;"
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000006",
+      "name": "Code: Parse Topics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1260, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Dedup Check: Compare generated topics against recent topics list\n// Filter out any topics that are too similar to recently published ones\n\nconst generatedTopics = $input.all().map(item => item.json);\nconst recentTopicsRaw = $('Set: Prepare Topic Request').first().json.recentTopics;\n\nlet recentTopics = [];\ntry {\n  recentTopics = JSON.parse(recentTopicsRaw);\n} catch (e) {\n  // If parsing fails, proceed with empty recent topics (no dedup filtering)\n  recentTopics = [];\n}\n\n// Extract recent topic titles as lowercase for comparison\nconst recentTitles = recentTopics\n  .map(t => (t.topic || t.title || t.Topic || t.Title || '').toLowerCase().trim())\n  .filter(t => t.length > 0);\n\n// Helper: check if two topic titles are too similar\nfunction isTooSimilar(newTitle, existingTitle) {\n  const newLower = newTitle.toLowerCase().trim();\n  const existLower = existingTitle.toLowerCase().trim();\n\n  // Exact match\n  if (newLower === existLower) return true;\n\n  // One contains the other\n  if (newLower.includes(existLower) || existLower.includes(newLower)) return true;\n\n  // Word overlap check: if 60%+ of significant words overlap, consider similar\n  const stopWords = new Set(['the', 'a', 'an', 'is', 'are', 'was', 'were', 'to', 'for', 'of', 'in', 'on', 'at', 'with', 'and', 'or', 'but', 'how', 'what', 'why', 'when', 'your', 'you', 'can', 'do', 'does']);\n\n  const getSignificantWords = (text) => {\n    return text.split(/\\s+/)\n      .map(w => w.replace(/[^a-z0-9]/g, ''))\n      .filter(w => w.length > 2 && !stopWords.has(w));\n  };\n\n  const newWords = getSignificantWords(newLower);\n  const existWords = new Set(getSignificantWords(existLower));\n\n  if (newWords.length === 0) return false;\n\n  const overlapCount = newWords.filter(w => existWords.has(w)).length;\n  const overlapRatio = overlapCount / newWords.length;\n\n  return overlapRatio >= 0.6;\n}\n\n// Filter out duplicates\nconst dedupedTopics = generatedTopics.filter(topic => {\n  const title = topic.topic || '';\n  const isDuplicate = recentTitles.some(recentTitle => isTooSimilar(title, recentTitle));\n\n  if (isDuplicate) {\n    // Log which topic was filtered out (visible in execution data)\n    console.log(`Filtered duplicate topic: \"${title}\"`);\n  }\n\n  return !isDuplicate;\n});\n\nif (dedupedTopics.length === 0) {\n  throw new Error('All generated topics were duplicates of recent topics. Consider running the workflow again or adjusting the time window.');\n}\n\nreturn dedupedTopics.map(topic => ({ json: topic }));"
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000007",
+      "name": "Code: Dedup Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 420]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "Editorial Calendar"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "topic": "={{ $json.topic }}",
+            "pillar": "={{ $json.pillar }}",
+            "target_keyword": "={{ $json.target_keyword }}",
+            "target_audience": "={{ $json.target_audience }}",
+            "angle": "={{ $json.angle }}",
+            "suggested_publish_date": "={{ $json.suggested_publish_date }}",
+            "cta_opportunity": "={{ $json.cta_opportunity }}",
+            "priority": "={{ $json.priority }}",
+            "status": "Queued",
+            "created_date": "={{ new Date().toISOString().split('T')[0] }}",
+            "created_by": "Editorial Calendar Manager Workflow"
+          },
+          "matchingColumns": []
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000008",
+      "name": "Sheets: Write New Topics",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1780, 420],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \":calendar: *SeedLink Editorial Calendar Updated*\\n\\n{{ $('Code: Dedup Check').all().length }} new topic(s) added to the editorial calendar with status \\\"Queued\\\".\\n\\n*Topics added:*\\n{{ $('Code: Dedup Check').all().map((item, i) => `${i+1}. *${item.json.topic}* (${item.json.pillar}) — Priority: ${item.json.priority}`).join('\\n') }}\\n\\n:link: <https://docs.google.com/spreadsheets/d/{{ $env.SEEDLINK_EDITORIAL_CALENDAR_ID }}|View Editorial Calendar>\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000009",
+      "name": "HTTP: Notify Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2040, 420]
+    },
+    {
+      "parameters": {},
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000010",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [240, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \":rotating_light: *SeedLink Editorial Calendar Manager — Error*\\n\\n*Workflow:* {{ $workflow.name }}\\n*Error:* {{ $json.execution.error.message }}\\n*Timestamp:* {{ new Date().toISOString() }}\\n*Execution ID:* {{ $json.execution.id }}\\n\\nPlease investigate and re-run if needed.\"\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000011",
+      "name": "HTTP: Slack Error Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 700]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Get Recent Topics",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sheets: Get Pillar Distribution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Get Recent Topics": {
+      "main": [
+        [
+          {
+            "node": "Set: Prepare Topic Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Get Pillar Distribution": {
+      "main": [
+        [
+          {
+            "node": "Set: Prepare Topic Request",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set: Prepare Topic Request": {
+      "main": [
+        [
+          {
+            "node": "Claude: Generate Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Generate Topics": {
+      "main": [
+        [
+          {
+            "node": "Code: Parse Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Parse Topics": {
+      "main": [
+        [
+          {
+            "node": "Code: Dedup Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Dedup Check": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Write New Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Write New Topics": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "seedlink"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-02-10T00:00:00.000Z",
+  "versionId": "1"
+}

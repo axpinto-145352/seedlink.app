@@ -1,0 +1,1097 @@
+{
+  "name": "SeedLink - Content Pipeline Main",
+  "nodes": [
+    {
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        500
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "sheets-pull-topic",
+      "name": "Sheets: Pull Next Topic",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        500,
+        400
+      ],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Editorial Calendar"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Queued"
+            }
+          ]
+        },
+        "options": {
+          "range": "",
+          "outputFormatting": true,
+          "returnAllMatches": false
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "id": "if-topic-found",
+      "name": "IF: Topic Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        750,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-topic-exists",
+              "leftValue": "={{ $json.Topic }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "set-prepare-brief",
+      "name": "Set: Prepare Topic Brief",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-topic",
+              "name": "topic",
+              "value": "={{ $('Sheets: Pull Next Topic').item.json.Topic }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-pillar",
+              "name": "content_pillar",
+              "value": "={{ $('Sheets: Pull Next Topic').item.json['Content Pillar'] }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-keyword",
+              "name": "target_keyword",
+              "value": "={{ $('Sheets: Pull Next Topic').item.json['Target Keyword'] }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-audience",
+              "name": "target_audience",
+              "value": "={{ $('Sheets: Pull Next Topic').item.json['Target Audience'] }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-row",
+              "name": "row_number",
+              "value": "={{ $('Sheets: Pull Next Topic').item.json['row_number'] }}",
+              "type": "number"
+            },
+            {
+              "id": "assign-revision-count",
+              "name": "revision_count",
+              "value": 0,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "claude-expand-topic",
+      "name": "Claude: Expand Topic",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1250,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 1024, \"system\": \"You are a content strategist for SeedLink.app, an AI-augmented talent marketplace that connects founders and startups with AI talent \u2014 native builders, fractional experts, and AI agent tools. SeedLink also offers an AI tools marketplace and an AI Playbook (a milestone planner with tool recommendations for startup founders).\\n\\nGiven a topic, content pillar, target audience, and target keyword, generate a structured content brief for a blog post.\\n\\nReturn a JSON object with these fields:\\n{\\n  \\\"headline\\\": \\\"Compelling blog post headline (60-70 characters for SEO)\\\",\\n  \\\"angle\\\": \\\"The specific angle or hook \u2014 what makes this piece worth reading now\\\",\\n  \\\"target_keyword\\\": \\\"Primary SEO keyword to optimize for\\\",\\n  \\\"secondary_keywords\\\": [\\\"keyword2\\\", \\\"keyword3\\\", \\\"keyword4\\\"],\\n  \\\"content_pillar\\\": \\\"Finding AI Talent | Zero to MVP | AI Industry & Trends | SeedLink in Action\\\",\\n  \\\"target_audience\\\": \\\"Who this post is written for\\\",\\n  \\\"outline\\\": [\\n    \\\"H2: Section heading \u2014 brief description of what to cover\\\",\\n    \\\"H2: Section heading \u2014 brief description of what to cover\\\",\\n    \\\"H2: Section heading \u2014 brief description of what to cover\\\",\\n    \\\"H2: FAQ \u2014 3 questions readers would ask about this topic\\\"\\n  ],\\n  \\\"cta_type\\\": \\\"marketplace | playbook | talent_matching | combo\\\",\\n  \\\"cta_context\\\": \\\"Where and how to naturally reference SeedLink's marketplace, Playbook, or talent matching\\\",\\n  \\\"word_count_target\\\": 1200,\\n  \\\"reference_notes\\\": \\\"Any specific data points, examples, or angles to include\\\"\\n}\\n\\nContent Pillars Reference:\\n- Finding AI Talent: How to hire AI builders, vetting AI talent, fractional AI teams, cost of AI development\\n- Zero to MVP: Validating ideas with AI, building MVPs fast, co-pilot workflows, when to hire vs. use agents, AI Playbook milestone guidance\\n- AI Industry & Trends: Agent tech landscape, AI tools and agents ecosystem, AI marketplace dynamics, what's changing in AI hiring\\n- SeedLink in Action: Platform updates, match spotlights, user outcomes, AI tools marketplace highlights, Playbook walkthroughs, community milestones\\n\\nGuidelines:\\n- Headlines should be specific and benefit-driven, not clickbait\\n- Angles should address a real pain point or question the target audience has right now\\n- Outlines should flow logically and include an FAQ section for AEO optimization\\n- CTA integration should feel natural \u2014 suggest where SeedLink products fit as genuine solutions, not forced plugs\\n- Target 1,000-1,500 words (suggest ~1,200 as default)\", \"messages\": [{ \"role\": \"user\", \"content\": \"Generate a content brief for the following:\\n\\nTopic: \" + $json.topic + \"\\nContent Pillar: \" + $json.content_pillar + \"\\nTarget Keyword: \" + $json.target_keyword + \"\\nTarget Audience: \" + $json.target_audience }] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "set-prepare-draft",
+      "name": "Set: Prepare Draft Request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1500,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-brief",
+              "name": "content_brief",
+              "value": "={{ $('Claude: Expand Topic').item.json.content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-topic-2",
+              "name": "topic",
+              "value": "={{ $('Set: Prepare Topic Brief').item.json.topic }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-pillar-2",
+              "name": "content_pillar",
+              "value": "={{ $('Set: Prepare Topic Brief').item.json.content_pillar }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-keyword-2",
+              "name": "target_keyword",
+              "value": "={{ $('Set: Prepare Topic Brief').item.json.target_keyword }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-audience-2",
+              "name": "target_audience",
+              "value": "={{ $('Set: Prepare Topic Brief').item.json.target_audience }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-row-2",
+              "name": "row_number",
+              "value": "={{ $('Set: Prepare Topic Brief').item.json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "assign-rev-count-2",
+              "name": "revision_count",
+              "value": "={{ $('Set: Prepare Topic Brief').item.json.revision_count }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "claude-generate-draft",
+      "name": "Claude: Generate Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1750,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 4096, \"system\": \"You are a blog writer for SeedLink.app, an AI-augmented talent marketplace connecting founders and startups with AI talent \u2014 native builders, fractional experts, and AI agent tools. SeedLink also offers an AI tools marketplace and an AI Playbook (a milestone planner with tool recommendations for startup founders).\\n\\nVoice and Tone:\\n- Lead with value, not pitch. Show how others are succeeding, not what SeedLink is selling. Open with a problem, insight, or story \u2014 never a product description.\\n- Founder-to-founder tone. Write as a peer who's building in the same space, not a vendor. Use 'you' and 'we' naturally. Sound like a smart friend giving advice over coffee.\\n- Concrete over abstract. Use specific numbers, examples, and outcomes. Instead of 'AI can help you build faster,' write 'Teams using AI co-pilots ship MVPs in 3 weeks instead of 3 months.'\\n- Accessible technical language. Write for smart non-technical founders who are learning about AI. Define jargon the first time you use it. Avoid acronyms without explanation.\\n- Opinionated but not pushy. Take clear positions on industry trends. Say 'Here's what we think works' rather than 'You should do this.' Never lecture.\\n\\nBlog Post Structure:\\nWrite a 1,000-1,500 word blog post following this structure:\\n1. Opening hook (2-3 sentences) \u2014 Start with a pain point, surprising stat, or relatable scenario. No 'In today's fast-paced world' openings.\\n2. Context/problem (1 paragraph) \u2014 Frame why this topic matters right now for the target audience.\\n3. Body sections (3-4 H2 sections) \u2014 Follow the outline from the content brief. Each section should deliver a clear takeaway. Use short paragraphs (2-3 sentences max).\\n4. FAQ section (H2: 'Frequently Asked Questions') \u2014 3 questions in Q&A format. Questions should be phrased exactly as someone would type them into Google or ask an AI assistant. Answers should be 2-3 sentences, factual, and authoritative.\\n5. Closing (1 paragraph) \u2014 Summarize the key takeaway and include a natural CTA.\\n\\nCTA Integration Rules:\\n- Include 1-2 contextual references to SeedLink products (marketplace, Playbook, or talent matching) where they genuinely solve a problem discussed in the post.\\n- CTAs should read as helpful suggestions, not ads. Example: 'If you're evaluating AI tools for your stack, SeedLink's AI tools marketplace lets you compare options side-by-side.'\\n- Never open or close with a hard sell. The closing CTA should feel like a natural next step.\\n- Reference the Playbook when discussing planning or milestones. Reference the marketplace when discussing tools or agents. Reference talent matching when discussing hiring.\\n\\nSEO Requirements:\\n- Use the target keyword naturally in the headline, first paragraph, one H2, and closing.\\n- Include secondary keywords where they fit naturally \u2014 never force them.\\n- Write a compelling meta description (150-160 characters) at the end of your output.\\n- Use descriptive H2 headings that include relevant keywords.\\n- Write in short paragraphs and use bullet points where appropriate for scannability.\\n\\nAEO/GEO Optimization:\\n- FAQ answers should be self-contained \u2014 each answer should make sense without reading the full article.\\n- Include clear, factual definitions when introducing concepts.\\n- Structure content so key statements can be extracted and cited by AI engines.\\n- Be specific and authoritative \u2014 AI engines prefer content that provides definitive answers.\\n\\nOutput Format: Return the blog post in clean markdown format with headline as H1, body sections as H2, FAQ section, closing, and meta description at the end after a horizontal rule.\", \"messages\": [{ \"role\": \"user\", \"content\": \"Write a blog post based on the following content brief and topic information:\\n\\nTopic: \" + $json.topic + \"\\nContent Pillar: \" + $json.content_pillar + \"\\nTarget Keyword: \" + $json.target_keyword + \"\\nTarget Audience: \" + $json.target_audience + \"\\n\\nContent Brief:\\n\" + $json.content_brief }] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 120000
+        }
+      }
+    },
+    {
+      "id": "claude-review-draft",
+      "name": "Claude: Review Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 1024, \"system\": \"You are an editorial reviewer for SeedLink.app, an AI-augmented talent marketplace connecting founders and startups with AI talent \u2014 native builders, fractional experts, and AI agent tools. SeedLink also offers an AI tools marketplace and an AI Playbook (a milestone planner with tool recommendations for startup founders).\\n\\nYour job is to evaluate blog post drafts against SeedLink's quality standards and provide actionable feedback.\\n\\nEvaluation Criteria \u2014 Score each category from 1-5:\\n\\n1. Voice Consistency (weight: 25%): Founder-to-founder tone (not vendor-to-customer), concrete with specific examples, accessible technical language, leads with value not pitch, opinionated without being pushy.\\n\\n2. CTA Integration (weight: 20%): 1-2 natural SeedLink product references, CTAs feel helpful not salesy, closing CTA is a natural next step, right products referenced for the topic.\\n\\n3. SEO Quality (weight: 20%): Target keyword in headline/first paragraph/one H2/closing, secondary keywords used naturally, descriptive keyword-rich H2 headings, scannable content, valid meta description (150-160 chars).\\n\\n4. AEO/GEO Readiness (weight: 15%): FAQ has 3 questions phrased as real search queries, FAQ answers self-contained and factual, key concepts clearly defined, content extractable by AI engines.\\n\\n5. Editorial Quality (weight: 20%): Compelling opening hook (not generic), logical flow, 1,000-1,500 word target, claims supported with specifics, strong closing.\\n\\nPass/Fail Threshold:\\n- Pass: Overall weighted score >= 3.5 AND no individual category below 2.5\\n- Fail: Overall weighted score < 3.5 OR any individual category below 2.5\\n\\nReturn a JSON object with: overall_score (number), passed (boolean), scores (object with each category's score and feedback), revision_notes (string \u2014 specific actionable instructions if failed, empty if passed), strengths (array), issues (array).\\n\\nWhen a draft fails, revision_notes must contain specific, actionable instructions \u2014 not vague feedback.\", \"messages\": [{ \"role\": \"user\", \"content\": \"Review the following blog post draft:\\n\\nTarget Keyword: \" + $('Set: Prepare Draft Request').item.json.target_keyword + \"\\nContent Pillar: \" + $('Set: Prepare Draft Request').item.json.content_pillar + \"\\n\\nDraft:\\n\" + $('Claude: Generate Draft').item.json.content[0].text }] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "code-parse-review",
+      "name": "Code: Parse Review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2250,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Parse the review response from Claude\nconst reviewText = $input.first().json.content[0].text;\n\nlet review;\ntry {\n  // Try parsing the text directly as JSON\n  review = JSON.parse(reviewText);\n} catch (e) {\n  // If direct parse fails, try to extract JSON from markdown code block\n  const jsonMatch = reviewText.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n  if (jsonMatch) {\n    review = JSON.parse(jsonMatch[1].trim());\n  } else {\n    throw new Error('Could not parse review JSON from Claude response');\n  }\n}\n\n// Carry forward context from previous nodes\nconst draftRequest = $('Set: Prepare Draft Request').first().json;\nconst draftText = $('Claude: Generate Draft').first().json.content[0].text;\n\nreturn [{\n  json: {\n    passed: review.passed === true,\n    overall_score: review.overall_score,\n    revision_notes: review.revision_notes || '',\n    strengths: review.strengths || [],\n    issues: review.issues || [],\n    scores: review.scores || {},\n    draft_text: draftText,\n    topic: draftRequest.topic,\n    content_pillar: draftRequest.content_pillar,\n    target_keyword: draftRequest.target_keyword,\n    target_audience: draftRequest.target_audience,\n    content_brief: draftRequest.content_brief,\n    row_number: draftRequest.row_number,\n    revision_count: draftRequest.revision_count\n  }\n}];"
+      }
+    },
+    {
+      "id": "if-review-passed",
+      "name": "IF: Review Passed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2500,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-passed",
+              "leftValue": "={{ $json.passed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "if-max-revisions",
+      "name": "IF: Max Revisions",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2750,
+        500
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-max-rev",
+              "leftValue": "={{ $json.revision_count }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "set-increment-revision",
+      "name": "Set: Increment Revision",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3000,
+        400
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-rev-inc",
+              "name": "revision_count",
+              "value": "={{ $json.revision_count + 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "assign-draft-rev",
+              "name": "draft_text",
+              "value": "={{ $json.draft_text }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-notes-rev",
+              "name": "revision_notes",
+              "value": "={{ $json.revision_notes }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-topic-rev",
+              "name": "topic",
+              "value": "={{ $json.topic }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-pillar-rev",
+              "name": "content_pillar",
+              "value": "={{ $json.content_pillar }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-keyword-rev",
+              "name": "target_keyword",
+              "value": "={{ $json.target_keyword }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-audience-rev",
+              "name": "target_audience",
+              "value": "={{ $json.target_audience }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-brief-rev",
+              "name": "content_brief",
+              "value": "={{ $json.content_brief }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-row-rev",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "claude-revise-draft",
+      "name": "Claude: Revise Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3250,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 4096, \"system\": \"You are a blog writer for SeedLink.app, an AI-augmented talent marketplace connecting founders and startups with AI talent \u2014 native builders, fractional experts, and AI agent tools. SeedLink also offers an AI tools marketplace and an AI Playbook (a milestone planner with tool recommendations for startup founders).\\n\\nVoice and Tone:\\n- Lead with value, not pitch. Show how others are succeeding, not what SeedLink is selling. Open with a problem, insight, or story \u2014 never a product description.\\n- Founder-to-founder tone. Write as a peer who's building in the same space, not a vendor. Use 'you' and 'we' naturally. Sound like a smart friend giving advice over coffee.\\n- Concrete over abstract. Use specific numbers, examples, and outcomes. Instead of 'AI can help you build faster,' write 'Teams using AI co-pilots ship MVPs in 3 weeks instead of 3 months.'\\n- Accessible technical language. Write for smart non-technical founders who are learning about AI. Define jargon the first time you use it. Avoid acronyms without explanation.\\n- Opinionated but not pushy. Take clear positions on industry trends. Say 'Here's what we think works' rather than 'You should do this.' Never lecture.\\n\\nBlog Post Structure:\\nWrite a 1,000-1,500 word blog post following this structure:\\n1. Opening hook (2-3 sentences) \u2014 Start with a pain point, surprising stat, or relatable scenario. No 'In today's fast-paced world' openings.\\n2. Context/problem (1 paragraph) \u2014 Frame why this topic matters right now for the target audience.\\n3. Body sections (3-4 H2 sections) \u2014 Follow the outline from the content brief. Each section should deliver a clear takeaway. Use short paragraphs (2-3 sentences max).\\n4. FAQ section (H2: 'Frequently Asked Questions') \u2014 3 questions in Q&A format. Questions should be phrased exactly as someone would type them into Google or ask an AI assistant. Answers should be 2-3 sentences, factual, and authoritative.\\n5. Closing (1 paragraph) \u2014 Summarize the key takeaway and include a natural CTA.\\n\\nCTA Integration Rules:\\n- Include 1-2 contextual references to SeedLink products (marketplace, Playbook, or talent matching) where they genuinely solve a problem discussed in the post.\\n- CTAs should read as helpful suggestions, not ads.\\n- Never open or close with a hard sell. The closing CTA should feel like a natural next step.\\n- Reference the Playbook when discussing planning or milestones. Reference the marketplace when discussing tools or agents. Reference talent matching when discussing hiring.\\n\\nSEO Requirements:\\n- Use the target keyword naturally in the headline, first paragraph, one H2, and closing.\\n- Include secondary keywords where they fit naturally \u2014 never force them.\\n- Write a compelling meta description (150-160 characters) at the end of your output.\\n- Use descriptive H2 headings that include relevant keywords.\\n- Write in short paragraphs and use bullet points where appropriate for scannability.\\n\\nAEO/GEO Optimization:\\n- FAQ answers should be self-contained \u2014 each answer should make sense without reading the full article.\\n- Include clear, factual definitions when introducing concepts.\\n- Structure content so key statements can be extracted and cited by AI engines.\\n- Be specific and authoritative \u2014 AI engines prefer content that provides definitive answers.\\n\\nYou are revising a draft that did not pass editorial review. Apply the revision notes precisely while maintaining the overall structure and voice.\", \"messages\": [{ \"role\": \"user\", \"content\": \"Please revise the following blog post draft based on the reviewer's feedback.\\n\\nOriginal Draft:\\n\" + $json.draft_text + \"\\n\\nRevision Notes:\\n\" + $json.revision_notes + \"\\n\\nTopic: \" + $json.topic + \"\\nTarget Keyword: \" + $json.target_keyword + \"\\nContent Pillar: \" + $json.content_pillar }] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 120000
+        }
+      }
+    },
+    {
+      "id": "set-revised-for-review",
+      "name": "Set: Prepare Revised for Review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3500,
+        400
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assign-revised-topic",
+              "name": "topic",
+              "value": "={{ $('Set: Increment Revision').item.json.topic }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-revised-pillar",
+              "name": "content_pillar",
+              "value": "={{ $('Set: Increment Revision').item.json.content_pillar }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-revised-keyword",
+              "name": "target_keyword",
+              "value": "={{ $('Set: Increment Revision').item.json.target_keyword }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-revised-audience",
+              "name": "target_audience",
+              "value": "={{ $('Set: Increment Revision').item.json.target_audience }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-revised-brief",
+              "name": "content_brief",
+              "value": "={{ $('Set: Increment Revision').item.json.content_brief }}",
+              "type": "string"
+            },
+            {
+              "id": "assign-revised-row",
+              "name": "row_number",
+              "value": "={{ $('Set: Increment Revision').item.json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "assign-revised-count",
+              "name": "revision_count",
+              "value": "={{ $('Set: Increment Revision').item.json.revision_count }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "claude-review-revised",
+      "name": "Claude: Review Revised Draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3750,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 1024, \"system\": \"You are an editorial reviewer for SeedLink.app, an AI-augmented talent marketplace connecting founders and startups with AI talent \u2014 native builders, fractional experts, and AI agent tools. SeedLink also offers an AI tools marketplace and an AI Playbook (a milestone planner with tool recommendations for startup founders).\\n\\nYour job is to evaluate blog post drafts against SeedLink's quality standards and provide actionable feedback.\\n\\nEvaluation Criteria \u2014 Score each category from 1-5:\\n\\n1. Voice Consistency (weight: 25%): Founder-to-founder tone (not vendor-to-customer), concrete with specific examples, accessible technical language, leads with value not pitch, opinionated without being pushy.\\n\\n2. CTA Integration (weight: 20%): 1-2 natural SeedLink product references, CTAs feel helpful not salesy, closing CTA is a natural next step, right products referenced for the topic.\\n\\n3. SEO Quality (weight: 20%): Target keyword in headline/first paragraph/one H2/closing, secondary keywords used naturally, descriptive keyword-rich H2 headings, scannable content, valid meta description (150-160 chars).\\n\\n4. AEO/GEO Readiness (weight: 15%): FAQ has 3 questions phrased as real search queries, FAQ answers self-contained and factual, key concepts clearly defined, content extractable by AI engines.\\n\\n5. Editorial Quality (weight: 20%): Compelling opening hook (not generic), logical flow, 1,000-1,500 word target, claims supported with specifics, strong closing.\\n\\nPass/Fail Threshold:\\n- Pass: Overall weighted score >= 3.5 AND no individual category below 2.5\\n- Fail: Overall weighted score < 3.5 OR any individual category below 2.5\\n\\nReturn a JSON object with: overall_score (number), passed (boolean), scores (object with each category's score and feedback), revision_notes (string \u2014 specific actionable instructions if failed, empty if passed), strengths (array), issues (array).\\n\\nWhen a draft fails, revision_notes must contain specific, actionable instructions \u2014 not vague feedback.\", \"messages\": [{ \"role\": \"user\", \"content\": \"Review the following revised blog post draft:\\n\\nTarget Keyword: \" + $('Set: Prepare Revised for Review').item.json.target_keyword + \"\\nContent Pillar: \" + $('Set: Prepare Revised for Review').item.json.content_pillar + \"\\n\\nDraft:\\n\" + $('Claude: Revise Draft').item.json.content[0].text }] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "code-parse-revised-review",
+      "name": "Code: Parse Revised Review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4000,
+        400
+      ],
+      "parameters": {
+        "jsCode": "// Parse the review response from Claude for revised draft\nconst reviewText = $input.first().json.content[0].text;\n\nlet review;\ntry {\n  review = JSON.parse(reviewText);\n} catch (e) {\n  const jsonMatch = reviewText.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n  if (jsonMatch) {\n    review = JSON.parse(jsonMatch[1].trim());\n  } else {\n    throw new Error('Could not parse revised review JSON from Claude response');\n  }\n}\n\nconst context = $('Set: Prepare Revised for Review').first().json;\nconst draftText = $('Claude: Revise Draft').first().json.content[0].text;\n\nreturn [{\n  json: {\n    passed: review.passed === true,\n    overall_score: review.overall_score,\n    revision_notes: review.revision_notes || '',\n    strengths: review.strengths || [],\n    issues: review.issues || [],\n    scores: review.scores || {},\n    draft_text: draftText,\n    topic: context.topic,\n    content_pillar: context.content_pillar,\n    target_keyword: context.target_keyword,\n    target_audience: context.target_audience,\n    content_brief: context.content_brief,\n    row_number: context.row_number,\n    revision_count: context.revision_count\n  }\n}];"
+      }
+    },
+    {
+      "id": "if-revised-review-passed",
+      "name": "IF: Revised Review Passed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4250,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-revised-passed",
+              "leftValue": "={{ $json.passed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "sheets-save-draft",
+      "name": "Sheets: Save Approved Draft",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2750,
+        200
+      ],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Editorial Calendar"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Ready for Review",
+            "Draft Content": "={{ $json.draft_text }}",
+            "Review Score": "={{ $json.overall_score }}",
+            "Review Strengths": "={{ $json.strengths.join('; ') }}",
+            "Revision Count": "={{ $json.revision_count }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "id": "http-notify-slack",
+      "name": "HTTP: Notify Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3000,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":white_check_mark: *SeedLink Content Pipeline \u2014 Draft Ready*\\n\\n*Topic:* \" + $('Sheets: Save Approved Draft').item.json.topic + \"\\n*Pillar:* \" + $('Sheets: Save Approved Draft').item.json.content_pillar + \"\\n*Keyword:* \" + $('Sheets: Save Approved Draft').item.json.target_keyword + \"\\n*Review Score:* \" + $('Sheets: Save Approved Draft').item.json.overall_score + \"/5\\n*Revisions:* \" + $('Sheets: Save Approved Draft').item.json.revision_count + \"\\n\\nThe draft is now in the editorial calendar with status *Ready for Review*. Please review and approve for publishing.\" }) }}",
+        "options": {
+          "timeout": 10000
+        }
+      }
+    },
+    {
+      "id": "error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        700
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "http-slack-error",
+      "name": "HTTP: Slack Error Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        700
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":rotating_light: *SeedLink Content Pipeline \u2014 Error Alert*\\n\\n*Workflow:* SeedLink - Content Pipeline Main\\n*Error Node:* \" + ($json.execution?.error?.node || 'Unknown') + \"\\n*Error Message:* \" + ($json.execution?.error?.message || 'No error message available') + \"\\n*Execution ID:* \" + ($json.execution?.id || 'N/A') + \"\\n*Timestamp:* \" + new Date().toISOString() + \"\\n\\nPlease check the n8n execution log for details.\" }) }}",
+        "options": {
+          "timeout": 10000
+        }
+      }
+    },
+    {
+      "id": "no-topics-slack",
+      "name": "HTTP: No Topics Available",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        600
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"text\": \"SeedLink Content Pipeline: No queued topics found in editorial calendar. Add topics manually or check the Editorial Calendar Manager workflow.\"}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Pull Next Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Pull Next Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Pull Next Topic": {
+      "main": [
+        [
+          {
+            "node": "IF: Topic Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Topic Found": {
+      "main": [
+        [
+          {
+            "node": "Set: Prepare Topic Brief",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP: No Topics Available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Prepare Topic Brief": {
+      "main": [
+        [
+          {
+            "node": "Claude: Expand Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Expand Topic": {
+      "main": [
+        [
+          {
+            "node": "Set: Prepare Draft Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Prepare Draft Request": {
+      "main": [
+        [
+          {
+            "node": "Claude: Generate Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Generate Draft": {
+      "main": [
+        [
+          {
+            "node": "Claude: Review Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Review Draft": {
+      "main": [
+        [
+          {
+            "node": "Code: Parse Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Parse Review": {
+      "main": [
+        [
+          {
+            "node": "IF: Review Passed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Review Passed": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Save Approved Draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF: Max Revisions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Max Revisions": {
+      "main": [
+        [
+          {
+            "node": "Set: Increment Revision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets: Save Approved Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Increment Revision": {
+      "main": [
+        [
+          {
+            "node": "Claude: Revise Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Revise Draft": {
+      "main": [
+        [
+          {
+            "node": "Set: Prepare Revised for Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Prepare Revised for Review": {
+      "main": [
+        [
+          {
+            "node": "Claude: Review Revised Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude: Review Revised Draft": {
+      "main": [
+        [
+          {
+            "node": "Code: Parse Revised Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Parse Revised Review": {
+      "main": [
+        [
+          {
+            "node": "IF: Revised Review Passed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Revised Review Passed": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Save Approved Draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sheets: Save Approved Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Save Approved Draft": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [
+    {
+      "name": "seedlink"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "pinData": {},
+  "versionId": "1",
+  "meta": {
+    "instanceId": ""
+  }
+}
