@@ -222,6 +222,17 @@
       }
     },
     {
+      "id": "merge-claude-derivations",
+      "name": "Merge: Await All Derivations",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [1220, 340],
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      }
+    },
+    {
       "id": "set-merge-social-content",
       "name": "Set: Merge Social Content",
       "type": "n8n-nodes-base.set",
@@ -800,7 +811,7 @@
       "main": [
         [
           {
-            "node": "Set: Merge Social Content",
+            "node": "Merge: Await All Derivations",
             "type": "main",
             "index": 0
           }
@@ -811,14 +822,25 @@
       "main": [
         [
           {
-            "node": "Set: Merge Social Content",
+            "node": "Merge: Await All Derivations",
             "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
     },
     "Claude: Derive Short Posts": {
+      "main": [
+        [
+          {
+            "node": "Merge: Await All Derivations",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge: Await All Derivations": {
       "main": [
         [
           {
