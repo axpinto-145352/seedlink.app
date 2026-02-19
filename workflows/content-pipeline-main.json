@@ -3,6 +3,38 @@
   "nodes": [
     {
       "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Settings"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {
+          "returnAllMatches": true
+        }
+      },
+      "id": "cp-0000-4000-8000-000000000000",
+      "name": "Sheets: Load Client Config",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [125, 400],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
         "rule": {
           "interval": [
             {
@@ -610,9 +642,12 @@
   ],
   "connections": {
     "Schedule Trigger": {
-      "main": [[{ "node": "Sheets: Pull Next Topic", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Sheets: Load Client Config", "type": "main", "index": 0 }]]
     },
     "Manual Trigger": {
+      "main": [[{ "node": "Sheets: Load Client Config", "type": "main", "index": 0 }]]
+    },
+    "Sheets: Load Client Config": {
       "main": [[{ "node": "Sheets: Pull Next Topic", "type": "main", "index": 0 }]]
     },
     "Sheets: Pull Next Topic": {

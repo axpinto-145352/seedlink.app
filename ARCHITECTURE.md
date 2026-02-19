@@ -132,6 +132,8 @@ At 4 pieces/week × 4 weeks = 16 pieces/month × $0.79 = **~$12.64/month** — w
 ```
 Schedule/Manual Trigger
     ↓
+Sheets: Load Client Config (reads Settings tab for brand/voice/pillar config)
+    ↓
 Sheets: Pull Next Topic (Status = "Queued" from Content Hub)
     ↓
 IF: Topic Found → (no) → Slack: No Topics
@@ -228,7 +230,7 @@ SplitInBatches
 Switch: Platform
     ├── LinkedIn → HTTP: Publish to Buffer
     ├── Twitter → HTTP: Publish to Buffer
-    └── Blog → HTTP: Publish to WordPress
+    └── Blog → HTTP: Notify Blog Ready for Framer
     ↓
 Sheets: Update Published Status (+ URL)
     ↓
@@ -334,6 +336,7 @@ The Google Sheets workbook is the single interface for all user interaction:
 | **Analytics** | Performance tracking | Review weekly reports |
 | **Topics Archive** | Historical dedup | Reference only |
 | **Outreach** | Lead management | Review classifications, update follow-up status |
+| **Settings** | Client configuration | Brand name, voice style, pillars, blog platform, LinkedIn accounts |
 
 **Key Design Principle**: Workflows never auto-advance past human checkpoints. The user manually changes Status to "Approved" and "Scheduled" — the system never does this automatically.
 
@@ -362,7 +365,7 @@ The Google Sheets workbook is the single interface for all user interaction:
 |----------------|------|---------|
 | `google_sheets` | OAuth2 | All workflows |
 | `buffer_api` | HTTP Header Auth | Social Engine |
-| `wordpress_api` | HTTP Basic Auth | Social Engine |
+| `wordpress_api` | HTTP Basic Auth | Social Engine (WordPress clients only) |
 
 ## Environment Variables
 
@@ -370,7 +373,7 @@ The Google Sheets workbook is the single interface for all user interaction:
 |----------|---------|
 | `ANTHROPIC_API_KEY` | Claude API authentication |
 | `SEEDLINK_EDITORIAL_CALENDAR_ID` | Google Sheets workbook ID |
-| `SEEDLINK_BLOG_URL` | WordPress blog base URL |
+| `SEEDLINK_BLOG_URL` | Blog base URL (Framer, WordPress, Ghost, etc.) |
 | `NOTIFICATION_SLACK_WEBHOOK` | Slack notification webhook |
 | `BUFFER_LINKEDIN_PROFILE_ID` | Buffer LinkedIn profile |
 | `BUFFER_TWITTER_PROFILE_ID` | Buffer Twitter profile |

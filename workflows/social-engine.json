@@ -653,16 +653,15 @@
       }
     },
     {
-      "id": "http-publish-wordpress",
-      "name": "HTTP: Publish to WordPress",
+      "id": "http-notify-blog-ready-framer",
+      "name": "HTTP: Notify Blog Ready for Framer",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1620, 1120],
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.SEEDLINK_BLOG_URL + '/wp-json/wp/v2/posts' }}",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "httpBasicAuth",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "authentication": "none",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -674,20 +673,9 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ \"title\": $json.Title || $json['Post Title'], \"content\": $json.Content, \"status\": \"publish\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ \"blocks\": [ { \"type\": \"header\", \"text\": { \"type\": \"plain_text\", \"text\": \"Blog Post Ready for Framer\" } }, { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*Title:* \" + ($json.Title || $json['Post Title'] || 'Untitled') + \"\\n\\nThis blog post is ready to publish. The full content is in the *Content Hub* Google Sheet.\\n\\n:point_right: *Action needed:* Copy the content from the Sheet and paste into Framer CMS.\" } }, { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \":link: <https://docs.google.com/spreadsheets/d/\" + $env.SEEDLINK_EDITORIAL_CALENDAR_ID + \"|Open Content Hub>\" } }, { \"type\": \"context\", \"elements\": [{ \"type\": \"mrkdwn\", \"text\": \"SeedLink Social Engine | Blog publishing via Framer (manual paste) | \" + new Date().toISOString().split('T')[0] }] } ] }) }}",
         "options": {
-          "timeout": 30000,
-          "response": {
-            "response": {
-              "responseFormat": "json"
-            }
-          }
-        }
-      },
-      "credentials": {
-        "httpBasicAuth": {
-          "id": "wordpress_api",
-          "name": "WordPress API"
+          "timeout": 10000
         }
       }
     },
@@ -932,7 +920,7 @@
         ],
         [
           {
-            "node": "HTTP: Publish to WordPress",
+            "node": "HTTP: Notify Blog Ready for Framer",
             "type": "main",
             "index": 0
           }
@@ -961,7 +949,7 @@
         ]
       ]
     },
-    "HTTP: Publish to WordPress": {
+    "HTTP: Notify Blog Ready for Framer": {
       "main": [
         [
           {
