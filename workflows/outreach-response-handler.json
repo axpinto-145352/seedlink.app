@@ -103,7 +103,9 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 256,\n  \"system\": \"You are a lead qualification assistant for SeedLink.app, an AI talent marketplace. Classify LinkedIn outreach responses into: interested (wants to learn more, has relevant need), not_interested (declines, not a fit), question (asks specific question needing human response), meeting_request (wants to schedule call/demo). Output JSON: {classification, confidence (0-1), reasoning, suggested_action, urgency (high|medium|low)}. meeting_request takes priority over other classifications. When ambiguous between interested and question, choose question. Auto-replies/OOO = not_interested.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Classify the following outreach response:\\n\\n{{$json.message_text}}\"\n    }\n  ]\n}",
-        "options": {}
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "b2c3d4e5-0003-4000-8000-000000000003",
       "name": "Claude: Classify Response",
@@ -204,6 +206,16 @@
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"text\": \":incoming_envelope: *SeedLink Outreach Response*\\n\\n*Via Account:* {{$json.source_account}}\\n*Sender:* {{$json.sender_name}} ({{$json.sender_title}} at {{$json.sender_company}})\\n*Classification:* {{$json.classification}}\\n*Confidence:* {{$json.confidence}}\\n*Urgency:* {{$json.urgency}}\\n*Reasoning:* {{$json.reasoning}}\\n*Suggested Action:* {{$json.suggested_action}}\\n*Source:* {{$json.profile_source}}\\n*Date:* {{$json.response_date}}\\n*LinkedIn:* {{$json.linkedin_profile_url}}\"\n}",
@@ -227,6 +239,16 @@
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"text\": \":rotating_light: *SeedLink Outreach Response Handler Error*\\n\\n*Workflow:* {{$workflow.name}}\\n*Error:* {{$json.execution.error.message}}\\n*Timestamp:* {{$now.toISO()}}\\n*Execution ID:* {{$json.execution.id}}\"\n}",

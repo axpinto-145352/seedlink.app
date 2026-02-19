@@ -229,7 +229,9 @@
       "position": [1220, 340],
       "parameters": {
         "mode": "append",
-        "options": {}
+        "options": {
+          "numberInputs": 3
+        }
       }
     },
     {
@@ -337,8 +339,7 @@
             "Short Posts Publish Date": "={{ $json.shortPostsPublishDate }}",
             "Social Status": "Ready for Review"
           },
-          "matchingColumns": ["Post ID"],
-          "dataMode": "autoMapInputData"
+          "matchingColumns": ["Post ID"]
         },
         "options": {}
       },
