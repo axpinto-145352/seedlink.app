@@ -1,143 +1,364 @@
-# LINKEDIN GROWTH PROPOSAL
+# GROWTH AUTOMATION PROPOSAL
 
 **Mavera.io**
-AI-Automated LinkedIn Outreach — One-Time Build & Handoff
-
-Prosp AI · Loom Video · Calendly Automation · 1–3 Accounts · Proven 38% Response Rate
+Modular AI-Powered Growth Systems — Pick What Fits, Scale When Ready
 
 *Prepared by Seedlink · In partnership with Veteran Vectors*
 
 ---
 
-## The Bottom Line
+## The Short Version
 
-You were paying $3,500 per month — $42,000 a year — for end-to-end LinkedIn call booking. This programme replaces that with a fully automated system built on Prosp AI, Loom, and Calendly. One-time investment. Your team owns it. Warm leads flow directly into booked demo calls around the clock.
+You've been spending $3,500/month on LinkedIn outreach alone — $42,000 a year — and that's just one channel. This proposal lays out a modular system where you pick the growth levers that matter most to Mavera right now, and add more when you're ready.
 
-Our recommendation: start with 2–3 personal accounts running in parallel for maximum volume. Every sequence ends with a Calendly link — no manual follow-up, no chasing, no missed leads.
+Each module is a standalone system: built once, handed off, owned by your team. No ongoing agency dependency. No black-box retainers. You see every tool, every cost, every result.
 
-This isn't a theory. These are real numbers from live campaigns using this exact system — Prosp AI plus personalised Loom video outreach:
+Here's what's on the table:
 
-- Text-only outreach averages 2% response. With Loom video embedded in the sequence, this system consistently hits 35–40%.
-- 9 out of 10 touchpoints happen automatically. The only manual step is recording a short personalised video — everything else runs on autopilot.
-- One account is a solid start. Two to three running in parallel is where pipeline really builds — and where the savings vs your old model become impossible to ignore.
+| Module | What It Does | One-Time Build |
+|--------|-------------|---------------|
+| **A. LinkedIn Outreach** | Automated prospecting via Prosp.AI + Loom + Calendly | $1,500 – $3,000 |
+| **B. Content Creation** | AI content engine for LinkedIn posts, blog, YouTube scripts | $1,500 – $3,000 |
+| **C. Email Outreach** | Automated email sequences with CRM integration | $1,500 – $3,000 |
+| **D. SEO / GEO** | AI-optimized blog content + search visibility engine | $1,500 – $3,000 |
 
-*Estimates based on proven campaign data: 72% acceptance, 38% response rate, 25% call booking rate.*
+Pick one. Pick all four. Each works independently — and they work better together.
 
 ---
 
-## 01 | Proven Results — Real Campaign Numbers
+## Module A: LinkedIn Outreach via Prosp.AI
+
+**What you get:** A fully automated LinkedIn prospecting system that replaces manual outreach with a repeatable, measurable pipeline.
+
+### Proven Numbers (From Live Campaigns)
 
 | Metric | Value |
-|---|---|
+|--------|-------|
 | Connection acceptance rate | 72% |
 | Response rate with Loom video | 38% |
 | Calls booked from video recipients | 25% |
-| Average time saving for clients | 90%+ |
+| Time saving for your team | 90%+ |
 
-### From a Single Campaign Using This System
+### From a Single Campaign
 
-- 740 prospects reached → 532 connections accepted (72% acceptance)
+- 740 prospects reached → 532 connections accepted
 - 372 Loom videos sent → 142 responses (38.2% response rate)
-- 249 engaged prospects — 67% of all connections became conversations
 - 92 calls booked — 25% of everyone who received a video
 - Video outreach generates 4x higher response than text-only messages
 
----
-
-## 02 | How the System Works
+### How It Works
 
 | Step | What Happens |
-|---|---|
-| 01 Intelligent Targeting | Prosp AI sources ICP-matched leads, visits profiles, and sends personalised connection requests automatically |
-| 02 Loom Video Touch | After connection, a personalised 60-second Loom video is sent referencing their specific role and company — this is what drives the 38% response rate |
-| 03 Automated Follow-Up | A 5-message follow-up sequence runs automatically — no lead falls through the cracks, 100% consistency |
-| 04 Calendly Booking | Every sequence ends with a direct Calendly link — prospects self-book demo calls 24/7, no manual scheduling needed |
-| 05 Tracking & Optimisation | A/B tested messaging, performance dashboard, and monthly optimisation to continuously improve results |
+|------|-------------|
+| 01 Intelligent Targeting | Prosp.AI sources ICP-matched leads, visits profiles, sends personalised connection requests |
+| 02 Loom Video Touch | After connection, a personalised 60-second Loom video referencing their role and company |
+| 03 Automated Follow-Up | 5-message sequence runs automatically — no lead falls through the cracks |
+| 04 Calendly Booking | Every sequence ends with a Calendly link — prospects self-book demos 24/7 |
+| 05 Tracking & Optimisation | A/B tested messaging, performance dashboard, ongoing refinement |
 
----
-
-## 03 | Why 2–3 Accounts Maximises Results
+### Why 2–3 Accounts Gets Serious
 
 | Accounts | Monthly Connections | Est. Responses/Mo | Est. Calls Booked/Mo |
-|---|---|---|---|
+|----------|--------------------|--------------------|---------------------|
 | 1 Account | ~900 | ~315–360 | ~90 calls |
-| 2 Accounts ★ Recommended | ~1,800 | ~630–720 | ~180 calls |
-| 3 Accounts ★ Best Volume | ~2,700 | ~945–1,080 | ~270 calls |
+| 2 Accounts ★ | ~1,800 | ~630–720 | ~180 calls |
+| 3 Accounts ★ | ~2,700 | ~945–1,080 | ~270 calls |
 
----
-
-## 04 | ROI — What You Save
-
-| | Old Model | This Model |
-|---|---|---|
-| Monthly Cost | $3,500/mo | $250/mo (Lite support) |
-| One-Time Setup | — | $1,500 – $3,000 |
-| Year 1 Total | $42,000 | ~$4,500 (1 account + Lite) |
-| Annual Saving | Baseline | $37,500 saved |
-| Cost Reduction | Baseline | 89% cheaper |
-| Accounts Active | 1 person, 1 account | 1–3 accounts in parallel |
-| Call Booking | Manual follow-up | Automated via Calendly 24/7 |
-| Response Rate | ~10–15% | 35–40% (with Loom video) |
-| Monthly Connections | ~1,200 | Up to 2,700 (3 accounts) |
-
-### The Build Pays for Itself Almost Immediately
-
-- At $3,500/month you were spending $875 per week
-- The 1-account build at $1,500 is recovered in under 2 weeks vs the old model
-- Year 1 saving of $37,500 even with Lite support running all 12 months
-- On 3 accounts: up to 270 demo calls per month booked automatically via Calendly
-
----
-
-## 05 | One-Time Build Pricing
+### Module A Pricing
 
 | | 1 Account | 2 Accounts ★ | 3 Accounts ★ |
-|---|---|---|---|
-| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
-| Prosp AI Setup & Config | ✓ | ✓ | ✓ |
-| Loom Video Framework | ✓ | ✓ | ✓ |
-| Calendly Setup & Integration | ✓ | ✓ | ✓ |
-| ICP List Build & Segmentation | ✓ | ✓ | ✓ |
-| A/B Tested Message Templates | ✓ | ✓ | ✓ |
-| 5-Touch Follow-Up Sequences | ✓ | ✓ | ✓ |
-| Profile Optimisation | ✓ | ✓ | ✓ |
-| 2 Training Sessions | ✓ | ✓ | ✓ |
-| 2 Weeks Monitoring | ✓ | ✓ | ✓ |
-| Full Handoff & Documentation | ✓ | ✓ | ✓ |
-| Break-Even vs Old Model | < 2 weeks | < 3 weeks | < 4 weeks |
+|---|----------|-------------|-------------|
+| **One-Time Build** | **$1,500** | **$2,200** | **$3,000** |
+| Prosp.AI setup & configuration | ✓ | ✓ | ✓ |
+| Loom video framework & scripts | ✓ | ✓ | ✓ |
+| Calendly setup & integration | ✓ | ✓ | ✓ |
+| ICP list build & segmentation | ✓ | ✓ | ✓ |
+| A/B tested message templates | ✓ | ✓ | ✓ |
+| 5-touch follow-up sequences | ✓ | ✓ | ✓ |
+| Profile optimisation | ✓ | ✓ | ✓ |
+| 2 training sessions | ✓ | ✓ | ✓ |
+| 2 weeks monitoring | ✓ | ✓ | ✓ |
+| Full handoff & documentation | ✓ | ✓ | ✓ |
 
-*All pricing includes commission. No hidden fees.*
+**Your ongoing costs:** Prosp.AI (~$59/mo per account) + LinkedIn Premium
+
+### Where This Works Best
+
+This system is built for B2B teams with a clearly defined ICP and a product that benefits from demo-style selling. If your audience is broad or your sales cycle is entirely inbound, the ROI picture changes — happy to talk through whether this is the right fit before you commit.
 
 ---
 
-## 06 | Optional Lite Support — $250/month
+## Module B: Content Creation (LinkedIn, Blog, YouTube)
+
+**What you get:** An AI-powered content engine that generates, reviews, and schedules content across LinkedIn, your blog, and optionally YouTube — all from a single editorial calendar.
+
+### How It Works
+
+| Stage | What Happens |
+|-------|-------------|
+| 01 Topic Generation | AI generates weekly topic ideas balanced across your content pillars, checked against recent posts to avoid repetition |
+| 02 Draft Creation | AI drafts full blog posts in your brand voice with built-in CTA placement |
+| 03 Agentic Review | 3 specialised AI reviewers check voice consistency, strategy alignment, and SEO quality — with a scoring rubric |
+| 04 Social Derivation | Approved blog content is automatically repurposed into LinkedIn posts, X/Twitter threads, and short-form social posts |
+| 05 Scheduling | Posts queue into your editorial calendar with suggested publish dates |
+
+### Content Types Included
+
+| Type | Output | Frequency |
+|------|--------|-----------|
+| Blog posts | Full-length, SEO-optimised articles | 4–12/month depending on tier |
+| LinkedIn posts | Hook + insight + CTA to full article | 1 per blog post + standalone |
+| X/Twitter threads | 3–5 tweet threads | 1 per blog post |
+| YouTube scripts | Outline + talking points from blog content | Optional add-on at Standard+ |
+
+### Module B Pricing
+
+| | Basic | Standard ★ | Premium |
+|---|-------|-----------|---------|
+| **One-Time Build** | **$1,500** | **$2,200** | **$3,000** |
+| Content pillars | 1 pillar | 2 pillars | 3+ pillars |
+| Blog posts/month | 4 | 8 | 12+ |
+| Platforms | 1 (LinkedIn or blog) | 2 (LinkedIn + blog) | 2 + X/Twitter + YT scripts |
+| Social derivation | Blog-to-social only | Blog-to-social + standalone | Full social suite + scheduling |
+| Editorial calendar | ✓ | ✓ | ✓ |
+| AI review system | ✓ | ✓ | ✓ |
+| Human approval workflow | ✓ | ✓ | ✓ |
+| Training & handoff | ✓ | ✓ | ✓ |
+
+**Your ongoing costs:** Claude API (~$13–50/mo based on volume) + Buffer or Typefully ($6–39/mo)
+
+### What This Replaces
+
+| Approach | Typical Cost | What You Get |
+|----------|-------------|-------------|
+| Hire a freelance content writer | $500–$2,000/mo ongoing | 4–8 posts/mo, no automation, no social derivation |
+| Social media manager (freelancer) | $500–$2,500/mo ongoing | Manual posting, no AI review, no editorial calendar |
+| Agency content retainer | $2,000–$8,000/mo ongoing | Full service but you own nothing when you leave |
+| Jasper / ChatGPT (DIY) | $39–$99/mo + your time | Draft generation only — no pipeline, no review, no scheduling |
+| **This system (Standard)** | **$2,200 one-time + ~$50/mo tools** | **Full pipeline: ideation → drafting → AI review → social derivation → scheduling** |
+
+**Time saved:** A content manager typically spends 15–20 hours/week on topic research, writing, editing, and scheduling across platforms. This system reduces that to ~3–5 hours/week (review and approval only). That's roughly **60–75% of content operations time back**.
+
+### What Makes This Different From Jasper or ChatGPT
+
+This isn't a "paste a topic, get a draft" tool. It's a full pipeline — topic ideation, drafting, multi-agent review, revision loops, social derivation, and scheduling — all connected and running on your infrastructure. Your team approves; the system handles everything else.
+
+---
+
+## Module C: Email Outreach Automation
+
+**What you get:** Automated email sequences with personalisation, CRM integration, and performance tracking — built to nurture leads and book meetings.
+
+### How It Works
+
+| Stage | What Happens |
+|-------|-------------|
+| 01 Sequence Design | AI-crafted email sequences tailored to your ICP segments |
+| 02 Personalisation | Dynamic fields (name, company, role, pain points) pulled from your CRM |
+| 03 Automated Sending | Sequences trigger based on lead status, timing rules, and engagement signals |
+| 04 Response Handling | Replies classified and routed — interested leads flagged, meetings booked |
+| 05 Performance Dashboard | Open rates, reply rates, booking rates tracked in real-time |
+
+### Module C Pricing
+
+| | Basic | Standard ★ | Premium |
+|---|-------|-----------|---------|
+| **One-Time Build** | **$1,500** | **$2,200** | **$3,000** |
+| Email sequences | 2 sequences | 4 sequences | 6+ sequences |
+| Emails per sequence | 3–5 | 3–5 | 3–5 |
+| CRM integration | Basic (1 CRM) | Advanced personalisation | Multi-segment targeting |
+| A/B testing | — | — | ✓ |
+| Response classification | ✓ | ✓ | ✓ |
+| Performance dashboard | ✓ | ✓ | ✓ |
+| Training & handoff | ✓ | ✓ | ✓ |
+
+**Your ongoing costs:** Email platform (Saleshandy/Pipedrive/HubSpot, ~$25–90/mo) + Claude API (~$13/mo)
+
+### What This Replaces
+
+| Approach | Typical Cost | What You Get |
+|----------|-------------|-------------|
+| HubSpot full implementation | $8,000–$25,000 one-time | Enterprise-grade, but overkill and expensive for most SMBs |
+| Agency email setup (sequences + CRM) | $2,000–$8,000 one-time | Professional sequences, but agency-dependent for changes |
+| Freelancer sequence build | $1,500–$4,000 one-time | Basic sequences, usually no CRM integration or dashboards |
+| DIY (Saleshandy/Mailchimp) | $25–$90/mo + your time | Template emails, manual segmentation, no AI personalisation |
+| **This system (Standard)** | **$2,200 one-time + ~$50/mo tools** | **4 AI-crafted sequences, CRM integration, response classification, performance dashboard** |
+
+**Time saved:** Manual email outreach — writing sequences, segmenting lists, tracking responses, updating CRM — typically takes 8–12 hours/week. This system automates the send/track/classify loop and reduces hands-on time to ~2–3 hours/week (reviewing flagged responses and approving new sequences). That's roughly **70–80% of outreach operations time back**.
+
+### Where This Works Best
+
+Email outreach pairs well with Module A (LinkedIn). Running both channels in parallel — LinkedIn for warm engagement, email for scaled follow-up — is where response rates compound. But either works standalone.
+
+---
+
+## Module D: SEO / GEO Optimisation Engine
+
+**What you get:** An AI-powered SEO and GEO (Generative Engine Optimisation) system that makes your content discoverable in both traditional search and AI-powered search tools (ChatGPT, Perplexity, Claude).
+
+### How It Works
+
+| Stage | What Happens |
+|-------|-------------|
+| 01 Keyword Strategy | AI identifies target keywords based on your content pillars and competitive gaps |
+| 02 Content Optimisation | Blog posts structured for both Google and AI citation — clear definitions, FAQ sections, verifiable claims |
+| 03 Technical SEO | Auto-generated meta titles, descriptions, and JSON-LD schema markup |
+| 04 Internal Linking | Suggestions for cross-linking to your key pages (marketplace, product, signup) |
+| 05 Performance Monitoring | Weekly ranking and traffic reports compiled automatically |
+
+### Module D Pricing
+
+| | Basic | Standard ★ | Premium |
+|---|-------|-----------|---------|
+| **One-Time Build** | **$1,500** | **$2,200** | **$3,000** |
+| Content pillars | 1 pillar | 2 pillars | 3+ pillars |
+| Posts optimised/month | 4 | 8 | 12+ |
+| Meta titles & descriptions | ✓ | ✓ | ✓ |
+| JSON-LD schema markup | — | ✓ | ✓ |
+| Internal link suggestions | ✓ | ✓ | ✓ |
+| WordPress integration | — | ✓ | ✓ |
+| Weekly performance reports | — | ✓ | ✓ |
+| GEO optimisation (AI search) | — | — | ✓ |
+| Training & handoff | ✓ | ✓ | ✓ |
+
+**Your ongoing costs:** Claude API (~$13–50/mo) + WordPress hosting ($0–25/mo)
+
+### What This Replaces
+
+| Approach | Typical Cost | What You Get |
+|----------|-------------|-------------|
+| SMB SEO agency retainer | $1,000–$3,500/mo ongoing | Keyword research, on-page optimization, reporting — but ongoing cost never stops |
+| AI SEO agency retainer | $2,500–$5,000/mo ongoing | AI-assisted content + SEO, but you own nothing |
+| Custom AI content engine build | $5,000–$15,000 one-time | Similar to this system, but typically 3–5x the price |
+| DIY tools (Ahrefs + Surfer + VA) | ~$965/mo ongoing | Powerful tools, but requires 10+ hours/week of manual work |
+| **This system (Standard)** | **$2,200 one-time + ~$50/mo tools** | **Automated keyword strategy, content optimisation, schema markup, weekly performance reports** |
+
+**Time saved:** SEO typically requires 10–15 hours/week of keyword research, content optimization, meta tag writing, schema markup, and performance monitoring. This system automates the technical SEO work and reduces hands-on time to ~2–4 hours/week (reviewing keyword strategy and approving content changes). That's roughly **70–80% of SEO operations time back**.
+
+**ROI context:** An SMB SEO agency at $2,000/mo costs $24,000/year. This system costs $2,200 once + ~$600/year in tools = $2,800 in Year 1. That's an **88% cost reduction** with the same core optimization capabilities — and you own the system.
+
+### Why GEO Matters Now
+
+SEO gets you into Google. GEO gets you cited by ChatGPT, Perplexity, and Claude when people ask questions your product answers. This is early-stage — ROI data is still building across the industry — but structuring content for AI citation now is low-cost insurance with asymmetric upside.
+
+---
+
+## Bundle Pricing — When You Want More Than One Module
+
+Each module works on its own. But combining them adds integration complexity (shared data flows, cross-channel triggers, unified reporting). Bundle pricing reflects this additional work.
+
+### Recommended Bundles
+
+| Bundle | What's Included | Standard Tier Price |
+|--------|----------------|-------------------|
+| **Outreach Engine** | LinkedIn (A) + Email (C) | **$4,600** |
+| **Content Engine** | Content Creation (B) + SEO/GEO (D) | **$4,600** |
+| **Full Funnel** | LinkedIn (A) + Content (B) + Email (C) | **$6,800** |
+| **Everything** | All 4 modules (A + B + C + D) | **$9,200** |
+
+*Bundle pricing shown at Standard tier. Basic and Premium bundles available — ask us.*
+
+| Tier | Any 2 Modules | Any 3 Modules | All 4 Modules |
+|------|--------------|--------------|--------------|
+| **Basic** | $3,200 | $4,700 | $6,400 |
+| **Standard** | $4,600 | $6,800 | $9,200 |
+| **Premium** | $6,200 | $9,200 | $12,400 |
+
+### Why Not Discount Bundles?
+
+Integration between modules is additional work, not less work. Shared editorial calendars, cross-channel analytics, and unified CRM flows add 15–25 hours to a multi-module build. The bundle prices reflect that — no hidden costs, no surprises.
+
+---
+
+## ROI — What You Save vs. the Old Model
+
+### LinkedIn Only (Module A)
+
+| | Old Model | Module A (2 Accounts) |
+|---|-----------|---------------------|
+| Monthly cost | $3,500/mo | $250/mo (Lite Support) |
+| One-time setup | — | $2,200 |
+| Year 1 total | $42,000 | ~$5,200 |
+| Annual saving | Baseline | **$36,800 saved** |
+| Response rate | ~10–15% | 35–40% (with Loom) |
+
+### Full Stack (All 4 Modules at Standard)
+
+| | Typical Agency Retainer | DIY (Tools + In-House) | Seedlink Full Stack |
+|---|------------------------|----------------------|-------------------|
+| Monthly cost | $8,000–$15,000/mo | ~$1,200/mo (tools + 30 hrs/wk staff time) | ~$1,100/mo (Lite Support + tool subscriptions) |
+| One-time setup | — | — | $9,200 |
+| Year 1 total | $96,000–$180,000 | ~$14,400 + staff salary | ~$22,400 |
+| Staff hours/week | 0 (agency handles) | 30–40 hrs/wk | 5–10 hrs/wk (review & approve) |
+| What you own | Nothing (agency leaves, system stops) | Everything, but manual | Everything, automated |
+
+### Time Saved Across All Modules
+
+| Function | Without Automation | With This System | Time Back |
+|----------|--------------------|-----------------|-----------|
+| LinkedIn outreach | 15–20 hrs/wk | 1–2 hrs/wk (Loom videos only) | ~90% |
+| Content creation & publishing | 15–20 hrs/wk | 3–5 hrs/wk (review & approve) | ~70% |
+| Email outreach | 8–12 hrs/wk | 2–3 hrs/wk | ~75% |
+| SEO optimization | 10–15 hrs/wk | 2–4 hrs/wk | ~75% |
+| **Total** | **48–67 hrs/wk** | **8–14 hrs/wk** | **~80%** |
+
+That's the equivalent of **1–1.5 full-time employees** worth of marketing operations reduced to a few hours of review per week.
+
+The build pays for itself quickly. On the LinkedIn module alone, the 2-account build at $2,200 is recovered in under 3 weeks vs the old model.
+
+---
+
+## Optional Lite Support — Monthly Retainer
 
 *Optional. No lock-in. Cancel any time.*
 
-- ✓ Monthly ICP list refresh — stay targeting the freshest, most relevant prospects
-- ✓ Sequence performance review and A/B test analysis
-- ✓ Prosp AI and Calendly health check — make sure everything is running clean
-- ✓ Support for scaling to additional profiles when you're ready
-- ✓ Email support — our team on hand if anything needs attention
+| Module | Monthly Rate |
+|--------|-------------|
+| LinkedIn Outreach (A) | $250/mo |
+| Content Creation (B) | $350/mo |
+| Email Outreach (C) | $350/mo |
+| SEO/GEO (D) | $350/mo |
+| **Multi-module discount (3+)** | **10% off total** |
 
-Based on your previous spend of $3,500/month:
+### What Lite Support Includes
 
-With Lite support on 2 accounts all year: ~$5,200 total vs $42,000 — saving $36,800 in year one.
+- Monthly performance review and optimisation
+- ICP/keyword/sequence refresh as your market evolves
+- Tool health checks — making sure everything runs clean
+- Support for scaling (additional accounts, pillars, sequences)
+- Email support — our team on hand when something needs attention
 
 ---
 
-## 07 | What's Included in the Build
+## What the Build Includes (Every Module)
 
 | Area | Deliverables |
-|---|---|
-| Profile Configuration | Prosp AI account setup, lead list import, ICP segmentation, automated connection sequences, multi-touch follow-up flows |
-| Messaging & Templates | A/B tested connection messages, 5-message follow-up sequence, Loom video script framework, persona-specific message tracks |
-| Calendly Integration | Full setup and connection to all sequences, confirmation and reminder automation, booking flow tested end-to-end |
-| Training & Handoff | 2 Prosp AI dashboard training sessions, video recording best practices guide, performance tracking spreadsheet, 2 weeks monitoring and adjustment |
+|------|-------------|
+| System Configuration | Full tool setup, API connections, workflow automation, data flows |
+| AI Prompt Engineering | Custom system prompts tuned to Mavera's voice, ICP, and goals |
+| Training & Handoff | 2 training sessions, performance tracking setup, complete documentation |
+| Monitoring Period | 2 weeks of active monitoring and adjustment post-launch |
 
 ---
 
-## 08 | Sample Outreach Sequences
+## Third-Party Tool Costs (Your Subscriptions)
+
+These are tools you subscribe to and manage directly. No markup, no middleman.
+
+| Tool | Purpose | Approx. Cost | Modules |
+|------|---------|-------------|---------|
+| Prosp.AI | LinkedIn outreach | ~$59/mo per account | A |
+| Claude API (Anthropic) | AI content generation | ~$13–50/mo | B, C, D |
+| Buffer or Typefully | Social scheduling | $6–39/mo | B |
+| Email platform (Saleshandy etc.) | Email sequences | $25–90/mo | C |
+| WordPress hosting | Blog/CMS | $0–25/mo | B, D |
+| n8n (self-hosted or cloud) | Workflow engine | $0–25/mo | All |
+
+**Typical total: ~$110–$200/mo** depending on which modules you use and how many accounts you run.
+
+---
+
+## Sample Outreach Sequences (Module A)
 
 ### Account 1 — Targeting CMOs & Marketing Leaders
 
@@ -165,31 +386,36 @@ With Lite support on 2 accounts all year: ~$5,200 total vs $42,000 — saving $3
 
 ---
 
-## 09 | Launch Timeline — 3 to 4 Weeks
+## How We'd Recommend Starting
 
-| Phase | Focus | Deliverables |
-|---|---|---|
-| Days 1–3 | Rapid Setup | Prosp AI configured, accounts connected, ICP lists imported, Calendly set up and integrated |
-| Week 2 | Sequences & Video | Loom video scripts written, A/B message templates loaded, follow-up flows live, test sends completed |
-| Week 3 | Launch & Monitor | All accounts live, outreach running, replies monitored, leads routed to Calendly, performance tracked |
-| Week 4 | Optimise & Handoff | A/B results reviewed, sequences refined, full handoff and 2 training sessions, documentation delivered |
+If Mavera is ready to move on all four modules, the **Everything** bundle at Standard ($9,200) is the most efficient path — we build all the integrations at once and everything talks to everything from day one.
+
+If you'd rather start focused and expand, here's the sequence we'd suggest:
+
+1. **Start with LinkedIn Outreach (Module A)** — Fastest time-to-pipeline. You'll see booked calls within weeks, not months. This is the system that replaces your $3,500/mo spend immediately.
+
+2. **Add Content Creation (Module B)** — Once the outreach engine is running, a steady stream of LinkedIn posts and blog content builds the brand presence that makes outreach even more effective.
+
+3. **Layer in SEO/GEO (Module D)** — As blog content accumulates, the SEO engine ensures it compounds over time in both Google and AI search.
+
+4. **Add Email (Module C)** — When you have enough leads flowing through LinkedIn + content, email sequences nurture the ones who aren't ready to book yet.
+
+Each module typically takes 2–3 weeks from kickoff to handoff.
 
 ---
 
-## 10 | Book a Discovery Call
+## Next Step
 
-Ready to see it in action?
+If any of this looks like it fits where Mavera is headed, we're happy to walk through the system live — 30 minutes, no pressure, just a look at how everything connects.
 
-Book a 30-minute discovery call — we'll walk you through the full system live.
+**[YOUR CALENDLY LINK]**
 
-**Book Your Call → [YOUR CALENDLY LINK]**
+### Questions Worth Thinking About
 
-### Questions to Have Ready
-
-- Which 1–3 profiles will we activate first?
-- Do you have existing lead lists, or should we source fresh?
-- What is your ideal ICP — role, company stage, geography?
-- Any messaging angles or sequences already working that we should carry over?
+- Which 1–2 modules feel most urgent for where Mavera is right now?
+- For LinkedIn: which 1–3 profiles should we activate first?
+- Do you have existing lead lists or content, or are we starting fresh?
+- What's your ideal ICP — role, company stage, geography?
 
 ---
 
@@ -199,12 +425,16 @@ Book a 30-minute discovery call — we'll walk you through the full system live.
 
 ## Revision Notes
 
-**Pricing updated per CEO direction (2026-03-06):**
+**v3.0 — 2026-03-06:**
+- Expanded from LinkedIn-only to modular 4-service proposal
+- Added Content Creation (B), Email Outreach (C), and SEO/GEO (D) modules
+- Added bundle pricing with integration premium
+- Added per-module Lite Support rates ($250–$350/mo)
+- Incorporated voice review feedback: softened urgency language, added trade-offs context, reworked CTA
+- Added third-party tool cost transparency table
 
-| | Previous | Revised |
-|---|---|---|
-| 1 Account | $2,500 | $1,500 (commission included) |
-| 2 Accounts | $4,500 | $2,200 (commission included) |
-| 3 Accounts | $6,000 | $3,000 (commission included) |
+**v2.0 — 2026-03-06:**
+- Pricing updated per CEO direction: $1,500 / $2,200 / $3,000 (commission included)
 
-ROI calculations, break-even timelines, and Year 1 savings figures updated to reflect new pricing.
+**v1.0 — 2026-03-06:**
+- Original LinkedIn-only proposal at $2,500 / $4,500 / $6,000

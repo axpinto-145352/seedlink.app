@@ -9,7 +9,7 @@
 **Prepared by:** Veteran Vectors
 **Date:** March 6, 2026
 **Classification:** Confidential
-**Version:** 2.0 (revised after legal, factual, and strategic review)
+**Version:** 3.0 (updated with modular service pricing and streamlined roadmap)
 
 ---
 
@@ -59,7 +59,7 @@ This is written so you can use it directly in conversations with partners, prosp
 | 2 | **SEO/AEO and Email are underpriced at Basic.** Agencies charge $1,500–$3,500/mo *ongoing* for SEO alone. A one-time $1,500 build that includes an AI content engine, editorial calendar, and SEO optimization is leaving money on the table. |
 | 3 | **The $1,500 Basic tier works as a door-opener, not a profit center.** Effective hourly rates at Basic (after commission) drop to $26–$43/hr — below market rate for a mid-level n8n developer. The money is made at Standard and Premium. |
 | 4 | **Waldium (YC S23) is not a direct competitor but is ahead on AEO.** They target developer tools companies and handle blogs, guides, and docs (not social or outreach). But their AI citation analytics and LLMs.txt support are capabilities worth watching. |
-| 5 | **The referral → productized service → platform path is correct.** Starting with referral builds, creating a landing page, and investing in platform infrastructure only after demand is proven is the right sequence. |
+| 5 | **The referral → productized service path is correct.** Starting with referral builds, creating a landing page, and standardising delivery only after demand is proven is the right sequence. |
 | 6 | **Third-party tool dependency is the biggest operational risk.** The entire service relies on tools SeedLink doesn't own (Prosp.AI, n8n, Buffer, Claude API). Each requires the client's own subscription and account. This must be transparent in all sales conversations. |
 
 **Recommended actions (in priority order):**
@@ -252,7 +252,7 @@ Commission structure: SeedLink receives 15% of the build fee as a referral commi
 |------|--------|-----------|------------|
 | **Prosp.AI discontinuation or LinkedIn enforcement** | **High** | Medium | Pre-identify alternatives (Expandi, PhantomBuster); monitor LinkedIn API partner program; diversify outreach tool support |
 | **Claude API pricing increase or terms change** | Medium | Low | $50/mo budget is conservative; can switch to Haiku for cost-sensitive tasks; Anthropic allows commercial use via client's own API key |
-| **n8n licensing changes** | Medium | Low | Self-hosting option exists; workflows are exportable JSON; if moving to SaaS model, n8n Embed license required (see Section 12) |
+| **n8n licensing changes** | Medium | Low | Self-hosting option exists; workflows are exportable JSON; each client runs their own instance |
 | **Buffer or Typefully terms enforcement** | Medium | Low | Each client must maintain own account (no shared/agency accounts); see Section 12 |
 | **Client churn from Lite Support** | Medium | Medium | Lite Support ($250–$350/mo) is where recurring revenue lives. If clients self-manage after handoff, that revenue disappears |
 
@@ -479,15 +479,15 @@ These projections use a proper accumulation model where Lite Support clients ram
 | Evaluate demand | Conversion rate from landing page, referral pipeline health |
 | Assess delivery capacity | If hitting 4+ builds/month, plan for additional delivery resources |
 
-### Phase 3: Platform Decision (Month 6+)
+### Phase 3: Scale & Expand (Month 6+)
 
 | If demand is high (10+ clients) | If moderate (3–9 clients) | If low (<3 clients) |
 |--------------------------------|--------------------------|---------------------|
-| Evaluate multi-tenant platform | Continue productized service | Keep as custom service |
-| **Requires n8n Embed license** (see Section 12) | Improve templates, reduce setup time | Focus on SeedLink marketplace growth |
-| Target SaaS pricing ($X/month) | Fixed-price engagements | Pivot to other growth levers |
+| Add delivery capacity, expand service lines | Continue productized service | Keep as custom service |
+| Consider dedicated account managers | Improve templates, reduce setup time | Focus on SeedLink marketplace growth |
+| Expand into new verticals | Fixed-price engagements | Pivot to other growth levers |
 
-**Important:** Phase 3's multi-tenant/SaaS path requires negotiation of an n8n Embed commercial license before any multi-tenant infrastructure, configuration UI, or SaaS pricing is implemented. n8n's Sustainable Use License permits building workflows for individual clients as professional services (Phases 1–2). It does not permit hosting n8n for third parties, embedding n8n in a commercial product, or reselling workflow access as a subscription without an Embed license. Budget for this license should be factored into Phase 3 economics.
+**Key consideration:** As client volume grows, delivery capacity becomes the primary constraint. Plan for additional delivery resources (contract or hire) once build volume exceeds 4/month consistently.
 
 ---
 
@@ -508,8 +508,8 @@ Each client must register for and manage their own accounts with all third-party
 
 ### n8n Licensing
 
-- **Phases 1–2 (current):** n8n's Sustainable Use License permits building workflows for individual clients as professional services. Delivering exported workflow JSON files to clients who run them on their own n8n instances is permitted.
-- **Phase 3 (future):** Moving to a multi-tenant platform, hosted n8n, configuration UI, or SaaS pricing model requires an **n8n Embed commercial license**. This is a revenue product for n8n and will have cost implications.
+- n8n's Sustainable Use License permits building workflows for individual clients as professional services. Delivering exported workflow JSON files to clients who run them on their own n8n instances is permitted.
+- Each client deployment uses the client's own n8n instance (self-hosted or cloud subscription).
 
 ### Content Liability
 
@@ -560,7 +560,6 @@ Third-party product names, logos, and brands referenced in this report are prope
 
 ### n8n Licensing Sources
 
-- [n8n Embed Documentation](https://docs.n8n.io/embed/)
 - [n8n Sustainable Use License](https://docs.n8n.io/sustainable-use-license/)
 
 ### Internal References
@@ -568,7 +567,7 @@ Third-party product names, logos, and brands referenced in this report are prope
 - `reviews/smb-pricing-analysis.md` — Detailed pricing breakdown with hour estimates
 - `COMPETITOR_REVIEW_WALDIUM.md` — Full Waldium competitive analysis
 - `reviews/mavera-voice-review.md` — Voice & tone quality review
-- `Mavera_LinkedIn_Proposal_REVISED.md` — Revised Mavera proposal with updated pricing
+- `Mavera_LinkedIn_Proposal_REVISED.md` — Modular growth proposal (LinkedIn, Content, Email, SEO/GEO) with bundle pricing
 - `SCALABILITY_ANALYSIS.md` — Multi-client scaling cost analysis
 - `ONBOARDING.md` — Client onboarding guide
 
@@ -590,36 +589,8 @@ SeedLink's custom integration service covers more automation use cases — outre
 
 The foundation is strong. The pricing needs guardrails, and the positioning needs to be precise about what SeedLink is and isn't.
 
----
-
-## Addendum: Infrastructure Review Findings
-
-A separate 13-lens comprehensive review (`reviews/13_LENS_ASSESSMENT_REPORT.md`) was conducted covering Legal, Ethical, Logistical, Current State, Future Strategy, Cost Effectiveness, Time Effectiveness, Security, Guardrails & Governance, AI Safety, Client Experience, Maintainability, and Data Integrity.
-
-### Key Findings Relevant to This Report
-
-**4 areas rated HIGH risk:**
-
-| Area | Key Issue | Impact on This Report |
-|------|----------|----------------------|
-| **Logistical** | All delivery routes through a single vendor (VV). At 4+ builds/month, capacity becomes a bottleneck. | Revenue projections in Section 10 assume delivery capacity that doesn't exist beyond Moderate scenario without additional resources. |
-| **Security** | Two webhook endpoints accept unauthenticated requests. No input sanitization before Claude API calls. | Technical debt that should be resolved before onboarding external clients. Does not affect report content but affects go-live readiness. |
-| **AI Safety** | Prompt injection vulnerability in outreach handler. No AI disclosure on published content. PII sent to Claude API without DPA. | Recommend adding AI content disclosure policy to the Legal & Compliance section. EU AI Act (2026) increasingly requires labeling AI-generated content. |
-| **Data Integrity** | Google Sheets row-number tracking is fragile. No duplicate processing guards. No post-publish verification. | Technical debt. Does not affect report content but affects system reliability for paying clients. |
-
-**5 Quick Wins identified (total: ~8 hours):**
-
-1. Add webhook authentication to both endpoints (2-4 hrs)
-2. Add prompt injection defense to outreach classifier (30 min)
-3. Add "Drafting" status guard to prevent duplicate processing (30 min)
-4. Create pre-built Google Sheets template as shareable link (2-3 hrs)
-5. Add retry logic to all Claude API calls (1-2 hrs)
-
-**These should be completed before the first external client build in Phase 1.**
-
-The full 13-lens assessment with 25 prioritized recommendations is available at `reviews/13_LENS_ASSESSMENT_REPORT.md`.
 
 ---
 
 *Veteran Vectors — Confidential — Prepared for Shilpa Kollengode, CEO, SeedLink.app*
-*March 6, 2026 — v2.0*
+*March 6, 2026 — v3.0*
