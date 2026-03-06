@@ -51,7 +51,7 @@
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
-          "name": "Google Sheets - SeedLink"
+          "name": "Google Sheets"
         }
       }
     },
@@ -78,7 +78,7 @@
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
-          "name": "Google Sheets - SeedLink"
+          "name": "Google Sheets"
         }
       }
     },
@@ -196,7 +196,7 @@
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
-          "name": "Google Sheets - SeedLink"
+          "name": "Google Sheets"
         }
       }
     },

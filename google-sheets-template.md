@@ -151,10 +151,48 @@ All outreach responses in one sheet, categorized by Type. Replaces the old 4-she
    - Analytics
    - Topics Archive
    - Outreach
+   - Settings
 3. Add header rows to each sheet matching the column definitions above
 4. Share the workbook with the n8n Google Sheets service account email (edit access)
 5. Copy the Sheet ID from the URL (the long string between `/d/` and `/edit`)
 6. Set `SEEDLINK_EDITORIAL_CALENDAR_ID` environment variable in n8n to this Sheet ID
+
+## Sheet 6: "Settings" (Client Configuration)
+
+Stores client-specific configuration that workflows read at startup. This enables multi-client deployments — change the Settings sheet to customize the entire system for a different brand.
+
+### Column Definitions
+
+| Column | Header | Data Type | Description |
+|--------|--------|-----------|-------------|
+| A | Setting | Text | Setting name (key) |
+| B | Value | Text | Setting value |
+| C | Description | Text | What this setting controls |
+
+### Required Settings Rows
+
+| Setting | Default Value | Description |
+|---------|--------------|-------------|
+| `brand_name` | SeedLink.app | The client's brand name used in all content |
+| `brand_description` | AI-augmented talent marketplace connecting founders with AI talent, tools, and Playbook | One-line brand description for system prompts |
+| `voice_style` | founder-to-founder, practical, non-salesy, opinionated but not pushy | Voice guidelines injected into all writing prompts |
+| `content_pillars` | Finding AI Talent, Zero to MVP, AI Industry & Trends, SeedLink in Action | Comma-separated list of content pillars |
+| `cta_products` | marketplace, playbook, talent_matching | Comma-separated list of products to reference in CTAs |
+| `blog_platform` | framer | Blog platform (framer, wordpress, ghost, webflow) — controls publishing behavior |
+| `blog_url` | https://seedlink.app/blog | Base URL for the blog |
+| `linkedin_accounts` | Shilpa Kollengode, Karthik, Shashank | Comma-separated list of LinkedIn accounts managed |
+| `target_audience` | Founders and teams building with AI | Primary audience description |
+| `ai_model` | claude-sonnet-4-20250514 | AI model to use for content generation |
+| `max_tokens_blog` | 4096 | Max tokens for blog post generation |
+| `max_tokens_social` | 1024 | Max tokens for social post derivation |
+
+### Notes
+
+- Workflows read all settings at the start of each execution
+- Changing a setting takes effect on the next workflow run — no restart needed
+- This is the primary mechanism for deploying the system to a new client: clone the Google Sheet, update the Settings tab, configure credentials in n8n
+
+---
 
 ## Formatting Recommendations
 
