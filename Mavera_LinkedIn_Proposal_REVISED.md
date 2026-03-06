@@ -127,6 +127,18 @@ This system is built for B2B teams with a clearly defined ICP and a product that
 
 **Your ongoing costs:** Claude API (~$13–50/mo based on volume) + Buffer or Typefully ($6–39/mo)
 
+### What This Replaces
+
+| Approach | Typical Cost | What You Get |
+|----------|-------------|-------------|
+| Hire a freelance content writer | $500–$2,000/mo ongoing | 4–8 posts/mo, no automation, no social derivation |
+| Social media manager (freelancer) | $500–$2,500/mo ongoing | Manual posting, no AI review, no editorial calendar |
+| Agency content retainer | $2,000–$8,000/mo ongoing | Full service but you own nothing when you leave |
+| Jasper / ChatGPT (DIY) | $39–$99/mo + your time | Draft generation only — no pipeline, no review, no scheduling |
+| **This system (Standard)** | **$2,200 one-time + ~$50/mo tools** | **Full pipeline: ideation → drafting → AI review → social derivation → scheduling** |
+
+**Time saved:** A content manager typically spends 15–20 hours/week on topic research, writing, editing, and scheduling across platforms. This system reduces that to ~3–5 hours/week (review and approval only). That's roughly **60–75% of content operations time back**.
+
 ### What Makes This Different From Jasper or ChatGPT
 
 This isn't a "paste a topic, get a draft" tool. It's a full pipeline — topic ideation, drafting, multi-agent review, revision loops, social derivation, and scheduling — all connected and running on your infrastructure. Your team approves; the system handles everything else.
@@ -161,6 +173,18 @@ This isn't a "paste a topic, get a draft" tool. It's a full pipeline — topic i
 | Training & handoff | ✓ | ✓ | ✓ |
 
 **Your ongoing costs:** Email platform (Saleshandy/Pipedrive/HubSpot, ~$25–90/mo) + Claude API (~$13/mo)
+
+### What This Replaces
+
+| Approach | Typical Cost | What You Get |
+|----------|-------------|-------------|
+| HubSpot full implementation | $8,000–$25,000 one-time | Enterprise-grade, but overkill and expensive for most SMBs |
+| Agency email setup (sequences + CRM) | $2,000–$8,000 one-time | Professional sequences, but agency-dependent for changes |
+| Freelancer sequence build | $1,500–$4,000 one-time | Basic sequences, usually no CRM integration or dashboards |
+| DIY (Saleshandy/Mailchimp) | $25–$90/mo + your time | Template emails, manual segmentation, no AI personalisation |
+| **This system (Standard)** | **$2,200 one-time + ~$50/mo tools** | **4 AI-crafted sequences, CRM integration, response classification, performance dashboard** |
+
+**Time saved:** Manual email outreach — writing sequences, segmenting lists, tracking responses, updating CRM — typically takes 8–12 hours/week. This system automates the send/track/classify loop and reduces hands-on time to ~2–3 hours/week (reviewing flagged responses and approving new sequences). That's roughly **70–80% of outreach operations time back**.
 
 ### Where This Works Best
 
@@ -198,6 +222,20 @@ Email outreach pairs well with Module A (LinkedIn). Running both channels in par
 | Training & handoff | ✓ | ✓ | ✓ |
 
 **Your ongoing costs:** Claude API (~$13–50/mo) + WordPress hosting ($0–25/mo)
+
+### What This Replaces
+
+| Approach | Typical Cost | What You Get |
+|----------|-------------|-------------|
+| SMB SEO agency retainer | $1,000–$3,500/mo ongoing | Keyword research, on-page optimization, reporting — but ongoing cost never stops |
+| AI SEO agency retainer | $2,500–$5,000/mo ongoing | AI-assisted content + SEO, but you own nothing |
+| Custom AI content engine build | $5,000–$15,000 one-time | Similar to this system, but typically 3–5x the price |
+| DIY tools (Ahrefs + Surfer + VA) | ~$965/mo ongoing | Powerful tools, but requires 10+ hours/week of manual work |
+| **This system (Standard)** | **$2,200 one-time + ~$50/mo tools** | **Automated keyword strategy, content optimisation, schema markup, weekly performance reports** |
+
+**Time saved:** SEO typically requires 10–15 hours/week of keyword research, content optimization, meta tag writing, schema markup, and performance monitoring. This system automates the technical SEO work and reduces hands-on time to ~2–4 hours/week (reviewing keyword strategy and approving content changes). That's roughly **70–80% of SEO operations time back**.
+
+**ROI context:** An SMB SEO agency at $2,000/mo costs $24,000/year. This system costs $2,200 once + ~$600/year in tools = $2,800 in Year 1. That's an **88% cost reduction** with the same core optimization capabilities — and you own the system.
 
 ### Why GEO Matters Now
 
@@ -246,12 +284,25 @@ Integration between modules is additional work, not less work. Shared editorial 
 
 ### Full Stack (All 4 Modules at Standard)
 
-| | Typical Agency Retainer | Seedlink Full Stack |
-|---|------------------------|-------------------|
-| Monthly cost | $8,000–$15,000/mo | ~$1,100/mo (Lite Support + tool subscriptions) |
-| One-time setup | — | $9,200 |
-| Year 1 total | $96,000–$180,000 | ~$22,400 |
-| What you own | Nothing (agency leaves, system stops) | Everything (your tools, your workflows) |
+| | Typical Agency Retainer | DIY (Tools + In-House) | Seedlink Full Stack |
+|---|------------------------|----------------------|-------------------|
+| Monthly cost | $8,000–$15,000/mo | ~$1,200/mo (tools + 30 hrs/wk staff time) | ~$1,100/mo (Lite Support + tool subscriptions) |
+| One-time setup | — | — | $9,200 |
+| Year 1 total | $96,000–$180,000 | ~$14,400 + staff salary | ~$22,400 |
+| Staff hours/week | 0 (agency handles) | 30–40 hrs/wk | 5–10 hrs/wk (review & approve) |
+| What you own | Nothing (agency leaves, system stops) | Everything, but manual | Everything, automated |
+
+### Time Saved Across All Modules
+
+| Function | Without Automation | With This System | Time Back |
+|----------|--------------------|-----------------|-----------|
+| LinkedIn outreach | 15–20 hrs/wk | 1–2 hrs/wk (Loom videos only) | ~90% |
+| Content creation & publishing | 15–20 hrs/wk | 3–5 hrs/wk (review & approve) | ~70% |
+| Email outreach | 8–12 hrs/wk | 2–3 hrs/wk | ~75% |
+| SEO optimization | 10–15 hrs/wk | 2–4 hrs/wk | ~75% |
+| **Total** | **48–67 hrs/wk** | **8–14 hrs/wk** | **~80%** |
+
+That's the equivalent of **1–1.5 full-time employees** worth of marketing operations reduced to a few hours of review per week.
 
 The build pays for itself quickly. On the LinkedIn module alone, the 2-account build at $2,200 is recovered in under 3 weeks vs the old model.
 
