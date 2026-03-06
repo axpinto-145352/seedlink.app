@@ -213,18 +213,18 @@ Each module works on its own. But combining them adds integration complexity (sh
 
 | Bundle | What's Included | Standard Tier Price |
 |--------|----------------|-------------------|
-| **Outreach Engine** | LinkedIn (A) + Email (C) | **$4,000** |
-| **Content Engine** | Content Creation (B) + SEO/GEO (D) | **$4,000** |
-| **Full Funnel** | LinkedIn (A) + Content (B) + Email (C) | **$6,200** |
-| **Everything** | All 4 modules (A + B + C + D) | **$8,000** |
+| **Outreach Engine** | LinkedIn (A) + Email (C) | **$4,600** |
+| **Content Engine** | Content Creation (B) + SEO/GEO (D) | **$4,600** |
+| **Full Funnel** | LinkedIn (A) + Content (B) + Email (C) | **$6,800** |
+| **Everything** | All 4 modules (A + B + C + D) | **$9,200** |
 
 *Bundle pricing shown at Standard tier. Basic and Premium bundles available — ask us.*
 
 | Tier | Any 2 Modules | Any 3 Modules | All 4 Modules |
 |------|--------------|--------------|--------------|
-| **Basic** | $2,800 | $4,200 | $5,500 |
-| **Standard** | $4,000 | $6,200 | $8,000 |
-| **Premium** | $5,500 | $8,200 | $10,500 |
+| **Basic** | $3,200 | $4,700 | $6,400 |
+| **Standard** | $4,600 | $6,800 | $9,200 |
+| **Premium** | $6,200 | $9,200 | $12,400 |
 
 ### Why Not Discount Bundles?
 
@@ -249,8 +249,8 @@ Integration between modules is additional work, not less work. Shared editorial 
 | | Typical Agency Retainer | Seedlink Full Stack |
 |---|------------------------|-------------------|
 | Monthly cost | $8,000–$15,000/mo | ~$1,100/mo (Lite Support + tool subscriptions) |
-| One-time setup | — | $8,000 |
-| Year 1 total | $96,000–$180,000 | ~$21,200 |
+| One-time setup | — | $9,200 |
+| Year 1 total | $96,000–$180,000 | ~$22,400 |
 | What you own | Nothing (agency leaves, system stops) | Everything (your tools, your workflows) |
 
 The build pays for itself quickly. On the LinkedIn module alone, the 2-account build at $2,200 is recovered in under 3 weeks vs the old model.
@@ -337,7 +337,7 @@ These are tools you subscribe to and manage directly. No markup, no middleman.
 
 ## How We'd Recommend Starting
 
-If Mavera is ready to move on all four modules, the **Everything** bundle at Standard ($8,000) is the most efficient path — we build all the integrations at once and everything talks to everything from day one.
+If Mavera is ready to move on all four modules, the **Everything** bundle at Standard ($9,200) is the most efficient path — we build all the integrations at once and everything talks to everything from day one.
 
 If you'd rather start focused and expand, here's the sequence we'd suggest:
 
