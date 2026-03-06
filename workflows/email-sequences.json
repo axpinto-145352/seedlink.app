@@ -1,0 +1,654 @@
+{
+  "name": "SeedLink - Email Sequence Engine",
+  "nodes": [
+    {
+      "id": "em-webhook-trigger",
+      "name": "Webhook: New Contact",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "parameters": {
+        "path": "seedlink-email-sequence",
+        "httpMethod": "POST",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "webhookId": "seedlink-email-sequence"
+    },
+    {
+      "id": "em-auth-check",
+      "name": "IF: Auth Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [460, 300],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-auth",
+              "leftValue": "={{ $json.headers?.['x-webhook-secret'] || $json.body?.webhook_secret }}",
+              "rightValue": "={{$env.SEEDLINK_WEBHOOK_SECRET}}",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "em-set-contact",
+      "name": "Set: Format Contact",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [700, 300],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c-email",
+              "name": "contactEmail",
+              "value": "={{ $json.body.email || $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "c-name",
+              "name": "contactName",
+              "value": "={{ $json.body.name || $json.name || $json.body.first_name || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c-company",
+              "name": "company",
+              "value": "={{ $json.body.company || $json.company || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c-sequence",
+              "name": "sequenceType",
+              "value": "={{ $json.body.sequence_type || $json.sequence_type || 'welcome' }}",
+              "type": "string"
+            },
+            {
+              "id": "c-source",
+              "name": "source",
+              "value": "={{ $json.body.source || $json.source || 'website' }}",
+              "type": "string"
+            },
+            {
+              "id": "c-context",
+              "name": "context",
+              "value": "={{ $json.body.context || $json.context || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "em-sheets-check-dup",
+      "name": "Sheets: Check Duplicate",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [940, 300],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Email Contacts"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json.contactEmail }}"
+            }
+          ]
+        },
+        "options": { "returnAllMatches": false }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "id": "em-if-new",
+      "name": "IF: New Contact",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1180, 300],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-new",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "isEmpty" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "em-sheets-add-contact",
+      "name": "Sheets: Add Contact",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1420, 300],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Email Contacts"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Set: Format Contact').item.json.contactEmail }}",
+            "Name": "={{ $('Set: Format Contact').item.json.contactName }}",
+            "Company": "={{ $('Set: Format Contact').item.json.company }}",
+            "Sequence": "={{ $('Set: Format Contact').item.json.sequenceType }}",
+            "Source": "={{ $('Set: Format Contact').item.json.source }}",
+            "Status": "Active",
+            "Current Step": "0",
+            "Enrolled Date": "={{ new Date().toISOString().split('T')[0] }}",
+            "Next Send Date": "={{ new Date().toISOString().split('T')[0] }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "id": "em-claude-generate",
+      "name": "Claude: Generate Email Sequence",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1660, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 2048, \"system\": \"You are an email sequence writer for SeedLink.app, an AI talent marketplace. Generate a multi-step email sequence. Voice: founder-to-founder, direct, concise, value-first. No corporate speak. Subject lines: max 50 chars. Body: 80-150 words max. One CTA per email. Reference SeedLink marketplace, Playbook, or talent matching naturally. Output as JSON: { sequence_name, sequence_type, total_emails, emails: [{ email_number, send_delay_days, subject, preview_text, body_html, body_plain, cta_text, cta_url }] }\", \"messages\": [{ \"role\": \"user\", \"content\": \"Generate a \" + $('Set: Format Contact').item.json.sequenceType + \" email sequence for:\\n\\nName: \" + $('Set: Format Contact').item.json.contactName + \"\\nCompany: \" + $('Set: Format Contact').item.json.company + \"\\nSource: \" + $('Set: Format Contact').item.json.source + \"\\nContext: \" + $('Set: Format Contact').item.json.context + \"\\n\\nOutput ONLY the JSON object, no other text.\" }] }) }}",
+        "options": {
+          "response": { "response": { "responseFormat": "json" } },
+          "timeout": 60000,
+          "retry": { "maxRetries": 3, "retryInterval": 2000 }
+        }
+      }
+    },
+    {
+      "id": "em-code-parse",
+      "name": "Code: Parse Sequence",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1900, 300],
+      "parameters": {
+        "jsCode": "// Parse Claude's response to extract the email sequence JSON\nconst claudeResponse = $input.first().json;\n\nlet textContent = '';\nif (claudeResponse.content && Array.isArray(claudeResponse.content)) {\n  const textBlock = claudeResponse.content.find(block => block.type === 'text');\n  if (textBlock) textContent = textBlock.text;\n} else if (typeof claudeResponse.content === 'string') {\n  textContent = claudeResponse.content;\n}\n\nif (!textContent) {\n  throw new Error('No text content found in Claude response');\n}\n\n// Extract JSON\nlet jsonString = textContent.trim();\nif (jsonString.startsWith('```json')) {\n  jsonString = jsonString.replace(/^```json\\s*/, '').replace(/\\s*```$/, '');\n} else if (jsonString.startsWith('```')) {\n  jsonString = jsonString.replace(/^```\\s*/, '').replace(/\\s*```$/, '');\n}\n\nlet sequence;\ntry {\n  sequence = JSON.parse(jsonString);\n} catch (e) {\n  const objMatch = textContent.match(/\\{[\\s\\S]*\\}/);\n  if (objMatch) {\n    sequence = JSON.parse(objMatch[0]);\n  } else {\n    throw new Error('Could not parse JSON from Claude response: ' + e.message);\n  }\n}\n\nif (!sequence.emails || !Array.isArray(sequence.emails)) {\n  throw new Error('Parsed content does not contain emails array');\n}\n\n// Get contact info from upstream\nconst contact = $('Set: Format Contact').first().json;\n\n// Return each email as a separate item for saving\nconst results = sequence.emails.map((email, idx) => {\n  const sendDate = new Date();\n  sendDate.setDate(sendDate.getDate() + (email.send_delay_days || idx * 2));\n  \n  return {\n    json: {\n      contactEmail: contact.contactEmail,\n      contactName: contact.contactName,\n      company: contact.company,\n      sequenceName: sequence.sequence_name,\n      sequenceType: sequence.sequence_type,\n      emailNumber: email.email_number || idx + 1,\n      totalEmails: sequence.total_emails || sequence.emails.length,\n      sendDate: sendDate.toISOString().split('T')[0],\n      subject: email.subject,\n      previewText: email.preview_text || '',\n      bodyHtml: email.body_html,\n      bodyPlain: email.body_plain,\n      ctaText: email.cta_text || '',\n      ctaUrl: email.cta_url || '',\n      status: 'Queued'\n    }\n  };\n});\n\nreturn results;"
+      }
+    },
+    {
+      "id": "em-sheets-save-emails",
+      "name": "Sheets: Save Email Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2140, 300],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Email Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Contact Email": "={{ $json.contactEmail }}",
+            "Contact Name": "={{ $json.contactName }}",
+            "Company": "={{ $json.company }}",
+            "Sequence Name": "={{ $json.sequenceName }}",
+            "Email Number": "={{ $json.emailNumber }}",
+            "Total Emails": "={{ $json.totalEmails }}",
+            "Send Date": "={{ $json.sendDate }}",
+            "Subject": "={{ $json.subject }}",
+            "Preview Text": "={{ $json.previewText }}",
+            "Body HTML": "={{ $json.bodyHtml }}",
+            "Body Plain": "={{ $json.bodyPlain }}",
+            "CTA Text": "={{ $json.ctaText }}",
+            "CTA URL": "={{ $json.ctaUrl }}",
+            "Status": "Queued",
+            "Created At": "={{ new Date().toISOString() }}"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "id": "em-notify-enrolled",
+      "name": "HTTP: Notify Slack — Enrolled",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2380, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":email: *SeedLink Email Engine — Contact Enrolled*\\n\\n*Contact:* \" + $('Set: Format Contact').item.json.contactName + \" (\" + $('Set: Format Contact').item.json.contactEmail + \")\\n*Company:* \" + $('Set: Format Contact').item.json.company + \"\\n*Sequence:* \" + $('Set: Format Contact').item.json.sequenceType + \"\\n*Source:* \" + $('Set: Format Contact').item.json.source + \"\\n*Emails queued:* \" + $input.all().length + \"\\n\\nFirst email will send today. Review in the Email Queue sheet.\" }) }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "em-schedule-trigger",
+      "name": "Schedule: Daily Email Sender",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 800],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "em-sheets-due-emails",
+      "name": "Sheets: Get Due Emails",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [500, 800],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Email Queue"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Send Date",
+              "lookupValue": "={{ new Date().toISOString().split('T')[0] }}"
+            },
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Queued"
+            }
+          ]
+        },
+        "options": { "returnAllMatches": true }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "id": "em-if-due",
+      "name": "IF: Emails Due",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [740, 800],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-due",
+              "leftValue": "={{ $json['Contact Email'] }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "isNotEmpty" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "em-split-emails",
+      "name": "SplitInBatches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [980, 800],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "em-send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1220, 800],
+      "parameters": {
+        "fromEmail": "={{$env.SEEDLINK_FROM_EMAIL || 'shilpa@seedlink.app'}}",
+        "toEmail": "={{ $json['Contact Email'] }}",
+        "subject": "={{ $json.Subject }}",
+        "emailType": "html",
+        "html": "={{ $json['Body HTML'] }}",
+        "options": {
+          "replyTo": "={{$env.SEEDLINK_REPLY_TO || 'shilpa@seedlink.app'}}"
+        }
+      },
+      "credentials": {
+        "smtp": {
+          "id": "smtp_credentials",
+          "name": "SMTP Credentials"
+        }
+      }
+    },
+    {
+      "id": "em-update-sent",
+      "name": "Sheets: Mark Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1460, 800],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Email Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Sent",
+            "Sent At": "={{ new Date().toISOString() }}"
+          },
+          "matchingColumns": ["Contact Email", "Email Number", "Sequence Name"]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "id": "em-wait-rate-limit",
+      "name": "Wait: Rate Limit",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1700, 800],
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "em-daily-summary",
+      "name": "HTTP: Daily Send Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1940, 800],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":email: *SeedLink Email Engine — Daily Send Complete*\\n\\n*Date:* \" + new Date().toISOString().split('T')[0] + \"\\n*Emails sent:* Check Email Queue sheet for today's 'Sent' entries.\\n\\n:link: <https://docs.google.com/spreadsheets/d/\" + $env.SEEDLINK_EDITORIAL_CALENDAR_ID + \"|Open Email Queue>\" }) }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "em-no-emails",
+      "name": "NoOp: No Emails Due",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [980, 1000],
+      "parameters": {}
+    },
+    {
+      "id": "em-error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [240, 1200],
+      "parameters": {}
+    },
+    {
+      "id": "em-error-slack",
+      "name": "HTTP: Slack Error Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 1200],
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":rotating_light: *SeedLink Email Engine — Error*\\n\\n*Error Node:* \" + ($json.execution?.error?.node || 'Unknown') + \"\\n*Error:* \" + ($json.execution?.error?.message || 'No error message') + \"\\n*Execution ID:* \" + ($json.execution?.id || 'N/A') + \"\\n*Time:* \" + new Date().toISOString() }) }}",
+        "options": { "timeout": 10000 }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook: New Contact": {
+      "main": [
+        [
+          { "node": "IF: Auth Valid", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "IF: Auth Valid": {
+      "main": [
+        [
+          { "node": "Set: Format Contact", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Set: Format Contact": {
+      "main": [
+        [
+          { "node": "Sheets: Check Duplicate", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Sheets: Check Duplicate": {
+      "main": [
+        [
+          { "node": "IF: New Contact", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "IF: New Contact": {
+      "main": [
+        [
+          { "node": "Sheets: Add Contact", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Sheets: Add Contact": {
+      "main": [
+        [
+          { "node": "Claude: Generate Email Sequence", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Claude: Generate Email Sequence": {
+      "main": [
+        [
+          { "node": "Code: Parse Sequence", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Code: Parse Sequence": {
+      "main": [
+        [
+          { "node": "Sheets: Save Email Queue", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Sheets: Save Email Queue": {
+      "main": [
+        [
+          { "node": "HTTP: Notify Slack — Enrolled", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Schedule: Daily Email Sender": {
+      "main": [
+        [
+          { "node": "Sheets: Get Due Emails", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Sheets: Get Due Emails": {
+      "main": [
+        [
+          { "node": "IF: Emails Due", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "IF: Emails Due": {
+      "main": [
+        [
+          { "node": "SplitInBatches", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "NoOp: No Emails Due", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "SplitInBatches": {
+      "main": [
+        [
+          { "node": "Send Email", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          { "node": "Sheets: Mark Sent", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Sheets: Mark Sent": {
+      "main": [
+        [
+          { "node": "Wait: Rate Limit", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Wait: Rate Limit": {
+      "main": [
+        [
+          { "node": "SplitInBatches", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          { "node": "HTTP: Slack Error Alert", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [
+    { "name": "seedlink" },
+    { "name": "production" },
+    { "name": "white-label" }
+  ],
+  "pinData": {},
+  "versionId": "1",
+  "meta": { "instanceId": "" }
+}
