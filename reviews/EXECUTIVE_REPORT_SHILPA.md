@@ -268,7 +268,7 @@ Commission structure: SeedLink receives 15% of the build fee as a referral commi
 
 | Advantage | Why It Matters |
 |-----------|---------------|
-| **Repeatable templates** | Once configured for one client, the next client is 60–70% faster |
+| **Repeatable templates** | Once configured for one client, subsequent clients should be significantly faster (estimated 60–70% — to be validated after first 3 builds) |
 | **Full-funnel integration** | Few service providers configure outreach + content + social + scheduling + analytics in a single engagement |
 | **Human-in-the-loop** | Quality control that autonomous platforms can't match |
 | **Cost transparency** | Clients see exactly what each tool costs — builds trust vs. opaque agency retainers |
@@ -589,6 +589,35 @@ SeedLink's custom integration service covers more automation use cases — outre
 8. Add legal protections (data processing agreements, content liability clauses, credential architecture documentation) before scaling
 
 The foundation is strong. The pricing needs guardrails, and the positioning needs to be precise about what SeedLink is and isn't.
+
+---
+
+## Addendum: Infrastructure Review Findings
+
+A separate 13-lens comprehensive review (`reviews/13_LENS_ASSESSMENT_REPORT.md`) was conducted covering Legal, Ethical, Logistical, Current State, Future Strategy, Cost Effectiveness, Time Effectiveness, Security, Guardrails & Governance, AI Safety, Client Experience, Maintainability, and Data Integrity.
+
+### Key Findings Relevant to This Report
+
+**4 areas rated HIGH risk:**
+
+| Area | Key Issue | Impact on This Report |
+|------|----------|----------------------|
+| **Logistical** | All delivery routes through a single vendor (VV). At 4+ builds/month, capacity becomes a bottleneck. | Revenue projections in Section 10 assume delivery capacity that doesn't exist beyond Moderate scenario without additional resources. |
+| **Security** | Two webhook endpoints accept unauthenticated requests. No input sanitization before Claude API calls. | Technical debt that should be resolved before onboarding external clients. Does not affect report content but affects go-live readiness. |
+| **AI Safety** | Prompt injection vulnerability in outreach handler. No AI disclosure on published content. PII sent to Claude API without DPA. | Recommend adding AI content disclosure policy to the Legal & Compliance section. EU AI Act (2026) increasingly requires labeling AI-generated content. |
+| **Data Integrity** | Google Sheets row-number tracking is fragile. No duplicate processing guards. No post-publish verification. | Technical debt. Does not affect report content but affects system reliability for paying clients. |
+
+**5 Quick Wins identified (total: ~8 hours):**
+
+1. Add webhook authentication to both endpoints (2-4 hrs)
+2. Add prompt injection defense to outreach classifier (30 min)
+3. Add "Drafting" status guard to prevent duplicate processing (30 min)
+4. Create pre-built Google Sheets template as shareable link (2-3 hrs)
+5. Add retry logic to all Claude API calls (1-2 hrs)
+
+**These should be completed before the first external client build in Phase 1.**
+
+The full 13-lens assessment with 25 prioritized recommendations is available at `reviews/13_LENS_ASSESSMENT_REPORT.md`.
 
 ---
 
