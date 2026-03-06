@@ -16,9 +16,9 @@ This is a standardized proposal template for Seedlink automation packages.
 Replace all [BRACKETED] placeholders with client-specific information.
 
 STANDARD PRICE TIERS (commission included):
-  - Tier 1 (Basic):   $1,250 – $1,500
-  - Tier 2 (Standard): $1,500 – $2,200
-  - Tier 3 (Premium):  $2,000 – $3,000
+  - Tier 1 (Basic):    $1,500
+  - Tier 2 (Standard): $2,200
+  - Tier 3 (Premium):  $3,000
 
 SUPPORTED SERVICE TYPES:
   - LinkedIn Outreach Automation
@@ -113,7 +113,7 @@ LITE SUPPORT: $250/month standard across all packages
 
 | | [Tier 1 Name] | [Tier 2 Name] ★ | [Tier 3 Name] ★ |
 |---|---|---|---|
-| **One-Time Build Fee** | **$[1,250–1,500]** | **$[1,500–2,200]** | **$[2,000–3,000]** |
+| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
 | [Deliverable 1] | ✓ | ✓ | ✓ |
 | [Deliverable 2] | ✓ | ✓ | ✓ |
 | [Deliverable 3] | ✓ | ✓ | ✓ |

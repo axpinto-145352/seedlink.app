@@ -47,7 +47,7 @@ Most companies spend $[AMOUNT]/month on social media management — and still po
 
 | | Basic | Standard ★ | Premium |
 |---|---|---|---|
-| **One-Time Build Fee** | **$1,250** | **$1,500** | **$2,000** |
+| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
 | n8n Social Pipeline Setup | ✓ | ✓ | ✓ |
 | Claude AI Prompt Engineering | ✓ | ✓ | ✓ |
 | Blog-to-Social Derivation Workflow | ✓ | ✓ | ✓ |

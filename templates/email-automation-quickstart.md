@@ -46,7 +46,7 @@ Claude AI · n8n Automation · [Email Platform] · CRM Integration
 
 | | Basic | Standard ★ | Premium |
 |---|---|---|---|
-| **One-Time Build Fee** | **$1,250** | **$1,500** | **$2,000** |
+| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
 | n8n Email Pipeline Setup | ✓ | ✓ | ✓ |
 | Claude AI Prompt Engineering | ✓ | ✓ | ✓ |
 | Email Sequence Content | 2 sequences | 4 sequences | 6+ sequences |

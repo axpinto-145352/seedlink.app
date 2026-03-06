@@ -4,9 +4,9 @@
 
 | Tier | LinkedIn Outreach | SEO/AEO Engine | Social Content | Email Automation |
 |---|---|---|---|---|
-| Basic (1 account/channel) | $1,500 | $1,250 | $1,250 | $1,250 |
-| Standard (2 accounts/channels) ★ | $2,200 | $1,500 | $1,500 | $1,500 |
-| Premium (3 accounts/channels) | $3,000 | $2,000 | $2,000 | $2,000 |
+| Basic (1 account/channel) | $1,500 | $1,500 | $1,500 | $1,500 |
+| Standard (2 accounts/channels) ★ | $2,200 | $2,200 | $2,200 | $2,200 |
+| Premium (3 accounts/channels) | $3,000 | $3,000 | $3,000 | $3,000 |
 | Lite Support (monthly) | $250 | $250 | $250 | $250 |
 
 *All pricing includes Seedlink referral commission. Adjust tiers as needed for combined packages.*

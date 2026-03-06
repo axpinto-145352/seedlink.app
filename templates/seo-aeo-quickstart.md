@@ -48,7 +48,7 @@ One-time build. Your team owns the system. Content flows from topic idea to publ
 
 | | Basic | Standard ★ | Premium |
 |---|---|---|---|
-| **One-Time Build Fee** | **$1,250** | **$1,500** | **$2,000** |
+| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
 | n8n Content Pipeline Setup | ✓ | ✓ | ✓ |
 | Claude AI Prompt Engineering | ✓ | ✓ | ✓ |
 | SEO Meta Generation Workflow | ✓ | ✓ | ✓ |
