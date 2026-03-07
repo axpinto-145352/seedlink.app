@@ -204,8 +204,8 @@ This is the key architectural insight: **the workflows don't change per client �
 | **Platform connection wizard** | P1 | 2 weeks | OAuth flows for: Google Sheets, Buffer, Slack; API key input for Claude |
 | **Analytics dashboard** | P1 | 2 weeks | Content performance, social engagement, publishing cadence, pillar balance |
 | **Billing integration** | P1 | 1 week | Stripe subscriptions, plan enforcement, usage display |
-| **Onboarding wizard** | P2 | 1 week | Guided setup: brand info → voice calibration → platform connections → first topic generation |
-| **Brand voice calibration** | P2 | 1 week | Upload 3-5 example posts → AI extracts voice characteristics → generates voice guidelines |
+| **Onboarding wizard** | P2 | 1 week | Guided setup: brand info → voice calibration (Voice Builder or content analysis) → platform connections → first topic generation |
+| **Brand voice calibration** | P2 | 1 week | Two paths: (1) Upload 3-5 example posts → AI extracts voice via `voice-extractor.md` → generates Voice Profile; (2) No existing content → Voice Builder flow (preference pairs, archetypes, quick-fire questions) → AI generates Voice Profile via `voice-builder.md`. Both paths output identical Voice Profile format stored in Voice Profile tab. |
 
 **Revenue target**: 10-15 clients × $197-$397/mo = $1,970-$5,955/mo recurring
 
@@ -266,9 +266,10 @@ This is the key architectural insight: **the workflows don't change per client �
 ```
 Day 0: Client signs up via landing page
     ↓
-Day 1: Onboarding call (30 min)
+Day 1: Onboarding call or questionnaire (30 min)
     ├── Brand name, description, URL
-    ├── Voice examples (3-5 existing posts/articles they like)
+    ├── Voice path A: 3-5 existing posts/articles → voice-extractor.md
+    ├── Voice path B (no content): Voice Builder → preference pairs, archetypes, quick-fire questions → voice-builder.md
     ├── Content pillars (3-5 themes they want to cover)
     ├── Target audience / ICP
     ├── Platforms used (LinkedIn, X, Blog, Instagram, etc.)
@@ -286,10 +287,11 @@ Day 2: System setup (automated with script)
     └── Test all workflows end-to-end
 
 Day 3: Voice calibration
-    ├── AI analyzes 3-5 voice examples → extracts style characteristics
-    ├── Generate voice guidelines document
-    ├── Generate 2 sample blog post drafts
-    └── Client reviews, provides feedback
+    ├── Path A: AI analyzes 3-5 voice examples via voice-extractor.md → generates Voice Profile
+    ├── Path B: AI processes Voice Builder responses via voice-builder.md → generates Voice Profile
+    ├── Voice Profile saved to dedicated tab in client Google Sheet
+    ├── Generate 2 sample blog post drafts using Voice Profile
+    └── Client reviews, rates voice fit (1-5), provides feedback
 
 Day 4: Prompt refinement + first real content
     ├── Adjust prompts based on voice feedback
@@ -311,7 +313,9 @@ Day 5-7: Go live
 Sign up → Onboarding wizard in web app
     ↓
 Step 1: Brand info (name, URL, description)
-Step 2: Upload voice examples → AI calibrates voice
+Step 2: Voice calibration (two paths):
+    ├── Path A: Upload voice examples → AI extracts voice via voice-extractor.md → Voice Profile
+    └── Path B: No content? → Voice Builder (preference pairs, archetypes, quick-fire Qs) → voice-builder.md → Voice Profile
 Step 3: Define content pillars (guided suggestions based on industry)
 Step 4: Connect platforms (OAuth for Sheets, Buffer; API key for Claude)
 Step 5: Configure CMS (Framer/WordPress/Ghost URL)
@@ -339,7 +343,7 @@ Total time: 30-60 minutes self-serve
 | **Sprint 8** | Week 17-20 | Content approval UI + dashboard overview | 60 hrs |
 | **Sprint 9** | Week 21-24 | Settings panel + platform connection wizard | 40 hrs |
 | **Sprint 10** | Week 25-28 | Analytics dashboard + billing (Stripe) | 40 hrs |
-| **Sprint 11** | Week 29-32 | Onboarding wizard + voice calibration UI | 32 hrs |
+| **Sprint 11** | Week 29-32 | Onboarding wizard + voice calibration UI (both Voice Builder and content analysis paths) | 32 hrs |
 | **Sprint 12** | Week 33-36 | Testing, security audit, beta launch | 40 hrs |
 
 ### Milestone Summary
