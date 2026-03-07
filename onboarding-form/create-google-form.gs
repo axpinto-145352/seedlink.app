@@ -29,7 +29,6 @@ function createOnboardingForm() {
   const form = FormApp.create('SeedLink — Client Onboarding Questionnaire');
   form.setDescription(
     'Welcome to SeedLink! This questionnaire helps us configure your AI content automation. ' +
-    'It takes about 10 minutes. All information is used solely to personalize your workflows.\n\n' +
     'Takes about 10 minutes. Sections 5 and 6 are optional if you didn\'t purchase those modules.\n\n' +
     'After you submit, our system will automatically:\n' +
     '• Generate your Voice Profile\n' +

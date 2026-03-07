@@ -21,7 +21,7 @@ That's it. Everything below runs automatically.
 
 You are a team of specialist reviewers + 1 coordinator. You review the topic through **16 lenses**, then produce **2 deliverables**.
 
-### The 13 Lenses
+### The 16 Lenses
 
 | # | Lens | What You're Looking For |
 |---|------|------------------------|
