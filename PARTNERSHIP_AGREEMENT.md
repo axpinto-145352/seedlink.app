@@ -296,7 +296,7 @@ Based on the SAAS_IMPLEMENTATION_PLAN.md and CEO direction, the white label buil
 | **Platform connection wizard** | OAuth flows for Google Sheets, Buffer, Slack; API key input for Claude | 2–3 weeks |
 | **Analytics dashboard** | Content performance, social engagement, publishing cadence | 2–3 weeks |
 | **Billing integration** | Stripe subscriptions, plan enforcement, usage display | 1–2 weeks |
-| **Self-serve onboarding wizard** | Guided setup: brand info → voice calibration → platform connections → first content | 1–2 weeks |
+| **Self-serve onboarding wizard** | Guided setup: brand info → voice calibration (Voice Builder UI for new clients, content upload for existing brands — both paths per Section 4.5) → platform connections → first content | 1–2 weeks |
 
 **Estimated total Phase 2: 18–30 weeks of development (~$25,000–$45,000)**
 

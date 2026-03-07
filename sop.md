@@ -70,9 +70,23 @@ Standard operating procedures for ongoing content operations and outreach manage
 
 ### Voice Quality Audit
 1. Read the last 4 published blog posts end-to-end
-2. Check: Does the voice still feel authentic and founder-to-founder?
+2. Check: Does the voice still match the client's Voice Profile (see "Voice Profile" tab in Google Sheet)?
 3. Check: Are CTAs feeling natural or forced?
 4. If voice has drifted, update the Notes column on upcoming topics with specific guidance
+5. If drift is persistent (3+ posts), re-run the voice-builder or voice-extractor prompt with updated input and regenerate the Voice Profile
+
+### Voice Calibration Protocol (Onboarding — First 2 Weeks)
+
+This runs during the monitoring period for every new client:
+
+1. **Round 1 (after first content piece):** Client rates voice fit 1-5 and highlights what sounds right/wrong
+2. **If score ≥ 4/5:** Voice Profile is locked. Set `calibration_status` to "Locked" in the Voice Profile tab.
+3. **If score < 4/5:** Re-run the voice prompt (voice-builder.md or voice-extractor.md) with the original inputs PLUS the client's calibration feedback. Update the Voice Profile tab.
+4. **Round 2 (after second content piece):** Client rates again.
+5. **If score ≥ 4/5 after Round 2:** Lock the profile.
+6. **If score still < 4/5 after Round 2:** Schedule a 15-minute voice alignment call with the client to identify specific mismatches. Produce a final revised profile manually. If still unresolved, escalate via change order ($400 full voice workshop).
+
+**Key rule:** Never lock a Voice Profile the client hasn't approved. Never skip calibration — even if the first draft scores well, get explicit client sign-off.
 
 ### Agent Review Score Trends
 1. In Content Hub, review the Voice, Strategy, and SEO/AEO scores over the past month
