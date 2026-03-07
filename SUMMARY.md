@@ -85,17 +85,18 @@ Founder requested:
 | `topic-generator.md` | Weekly topic ideation with dedup | Editorial Calendar |
 | `response-classifier.md` | Outreach response classification | Outreach Handler |
 
-### n8n Workflows (5 files in `workflows/`)
+### n8n Workflows (6 files in `workflows/`)
 
 | File | Nodes | Trigger | Purpose |
 |------|-------|---------|---------|
-| `content-pipeline-main.json` | 25 | Daily schedule + manual | Topic → brief → draft → Voice/Strategy/SEO-AEO review → Editor-Unifier → save with scores + metadata |
+| `content-pipeline-main.json` | 27 | Daily schedule + manual | Loads Voice Profile + Settings → Topic → brief → draft → Voice/Strategy/SEO-AEO review → Editor-Unifier → save with scores + metadata. Voice Profile dynamically injected into all Claude prompts. |
+| `voice-profile-generator.json` | 14 | Webhook (onboarding) | Routes to Voice Extractor or Voice Builder path → Claude API → parses structured Voice Profile → clears + writes Voice Profile tab → Slack notification. Webhook returns profile summary. |
 | `social-engine.json` | 21 | Webhook + daily schedule | Path A: derive LinkedIn + Twitter + short posts from approved blog. Path B: publish scheduled posts via Buffer/WordPress |
 | `editorial-calendar-manager.json` | 11 | Weekly (Monday) | Generate 5-7 topics balanced across pillars, dedup against last 30 days |
 | `analytics-reporter.json` | 9 | Weekly (Friday) | Compile performance report to Google Sheets + Slack |
 | `outreach-response-handler.json` | 9 | Webhook (Prosp.AI) | Classify responses → log to single Outreach sheet with Type column |
 
-**Total**: 75 nodes across 5 workflows (down from 85 nodes across 7 workflows)
+**Total**: 91 nodes across 6 workflows
 
 ### Multi-Agent Review Pipeline
 
@@ -212,7 +213,8 @@ seedlink.app/
 ├── SeedLink_Combined_Proposal_VeteranVectors_Updated.pdf
 ├── SeedLink_SOW_Combined_VeteranVectors_Updated.pdf
 ├── workflows/
-│   ├── content-pipeline-main.json         (25 nodes — multi-agent review)
+│   ├── content-pipeline-main.json         (27 nodes — multi-agent review + Voice Profile auto-load)
+│   ├── voice-profile-generator.json       (14 nodes — onboarding: voice extraction/building → Sheet)
 │   ├── social-engine.json                 (21 nodes — derive + publish)
 │   ├── editorial-calendar-manager.json    (11 nodes)
 │   ├── analytics-reporter.json            (9 nodes)
@@ -220,7 +222,9 @@ seedlink.app/
 └── prompts/
     ├── content-brief-generator.md
     ├── blog-writer.md                     (AEO-enhanced)
-    ├── voice-agent.md                     (NEW)
+    ├── voice-agent.md                     (dynamic — evaluates against client Voice Profile)
+    ├── voice-builder.md                   (questionnaire → Voice Profile)
+    ├── voice-extractor.md                 (content samples → Voice Profile)
     ├── strategy-agent.md                  (NEW)
     ├── seo-aeo-agent.md                   (NEW)
     ├── editor-unifier-agent.md            (NEW)

@@ -324,11 +324,13 @@ editorial-calendar-manager ──▶ content-pipeline-main ──▶ social-engi
 analytics-reporter (standalone — runs weekly on Fridays)
 outreach-response-handler (standalone — triggered by Prosp.AI webhooks)
 
-Voice onboarding (runs once during build, before content pipeline goes live):
-    Client has content? ──▶ voice-extractor.md ──▶ Voice Profile tab
-    Client has no content? ──▶ voice-builder.md ──▶ Voice Profile tab
-    Voice Profile tab ──▶ feeds into all content-pipeline + social-engine prompts via {{voice_style}}
-    Calibration: first 3 content pieces → client rates → re-run voice prompt if needed → lock profile
+Voice onboarding (voice-profile-generator.json — webhook-triggered, runs during build phase):
+    POST /voice-profile-generate with client onboarding data
+    ├── Has content_samples? ──▶ Claude: Extract Voice (voice-extractor.md) ──▶ Parse ──▶ Write to Voice Profile tab
+    └── No content_samples? ──▶ Claude: Build Voice (voice-builder.md) ──▶ Parse ──▶ Write to Voice Profile tab
+    Voice Profile tab ──▶ auto-loaded by content-pipeline at runtime via Sheets: Load Voice Profile node
+    ──▶ injected into Claude: Generate Draft, Claude: Voice Review, Claude: Revise Draft, Claude: Editor-Unifier
+    Calibration: first 2-3 content pieces → client rates → re-run voice-profile-generator if needed → lock profile
 ```
 
 ## Google Sheets as Primary UI
