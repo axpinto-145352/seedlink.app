@@ -146,11 +146,84 @@ This runs during the monitoring period for every new client:
 
 ---
 
+## New Client Onboarding (VV — Per New Sale)
+
+Most of the onboarding process is automated by the `client-onboarding-orchestrator.json` workflow. VV receives a Slack notification when a new client has paid and submitted their questionnaire. The following steps are VV's manual responsibilities:
+
+### When Slack Notification Arrives (within 24 hours)
+
+1. Open the client's auto-provisioned Google Sheet (link in Slack message)
+2. Verify Settings tab was populated correctly by the orchestrator
+3. Verify Voice Profile tab was populated by the voice-profile-generator workflow
+4. Review the Claude-generated client config (setup checklist, risk flags, customization notes)
+
+### Build Phase (per SLA timeline — Basic: 5-7 days, Standard: 7-10 days, Premium: 10-15 days)
+
+1. Set client-specific n8n environment variables:
+   - `{CLIENT_ID}_SHEET_ID` — from the auto-provisioned Google Sheet
+   - `{CLIENT_ID}_BLOG_URL` — from questionnaire
+   - `{CLIENT_ID}_SLACK_WEBHOOK` — from questionnaire (if provided)
+2. Import per-client workflows (editorial-calendar-manager, content-pipeline-main, social-engine, etc.) based on purchased modules
+3. Update workflow nodes to reference client-specific env vars
+4. Handle any customization notes from the config (e.g., Ghost CMS instead of WordPress, non-standard CRM)
+5. Run all 6 manual tests per `setup-guide.md` Step 6
+6. Activate scheduled triggers
+
+### Delivery (when build is complete)
+
+1. Fire the build-complete webhook: `POST {N8N_BASE_URL}/webhook/client-build-complete` with client details
+   - The orchestrator auto-emails the client with a handoff booking link
+   - The orchestrator auto-updates the Sales Pipeline
+2. Conduct the 30-minute handoff call with the client
+3. Begin 2-week monitoring period
+4. Run Voice Calibration Protocol (see Monthly Operations → Voice Calibration above)
+
+### After Monitoring Ends
+
+The orchestrator auto-sends the Lite Support offer email and updates the Sales Pipeline. No VV action needed unless the client subscribes to Lite Support.
+
+---
+
 ## Roles & Responsibilities
+
+### SeedLink Responsibilities
+
+| Area | Responsibility |
+|------|---------------|
+| **Sales & Marketing** | Drive traffic to seedlink.app/automation, manage pricing page, run ads |
+| **Stripe & Payments** | Maintain Stripe checkout, Stripe Connect setup, product catalog (29 products) |
+| **Client Communication (Pre-Sale)** | Answer prospect questions, sales calls (optional), demos |
+| **Landing Page** | Build and maintain /automation page with trust signals, case studies, FAQ |
+| **Onboarding Form** | Maintain Typeform/Google Form questionnaire, ensure webhook fires to orchestrator |
+| **Brand & Legal** | Client contracts, AI content disclaimers, data processing agreements |
+
+### VV Responsibilities
+
+| Area | Responsibility |
+|------|---------------|
+| **Technical Delivery** | Import, configure, and test all n8n workflows per client |
+| **Voice Calibration** | Run calibration protocol during monitoring period, lock voice profile |
+| **Build QA** | End-to-end testing before handoff |
+| **Handoff Calls** | 30-minute walkthrough with each client |
+| **Monitoring** | 2-week post-delivery monitoring, fix any issues |
+| **Lite Support** | Monthly maintenance for subscribed clients (content QA, keyword refresh, prompt tuning) |
+| **Infrastructure** | Maintain onboarding orchestrator, voice profile generator, and master n8n instance |
+| **Prompt Optimization** | Refine Claude prompts based on review scores and client feedback |
+
+### Shared Responsibilities
+
+| Area | Responsibility |
+|------|---------------|
+| **Sales Pipeline** | Both parties have visibility via shared Google Sheet (auto-populated by orchestrator) |
+| **Content Strategy** | VV handles technical execution, SeedLink/client handles strategic direction |
+| **Escalations** | SeedLink escalates client issues to VV; VV escalates payment issues to SeedLink |
+| **Quarterly Reviews** | Joint review of partnership metrics, pricing, and capacity planning |
+
+### Per-Client Roles
 
 | Role | Person | Responsibilities |
 |------|--------|-----------------|
-| **Content Approver** | Shilpa (CEO) | Daily: review and approve drafts, review social content |
-| **Content Strategy** | Shilpa + VeteranVectors | Monthly: pillar performance, keyword strategy, voice audit |
+| **Content Approver** | Client (e.g., Shilpa for SeedLink) | Daily: review and approve drafts, review social content |
+| **Content Strategy** | Client + VeteranVectors | Monthly: pillar performance, keyword strategy, voice audit |
 | **Technical Ops** | VeteranVectors | Monthly: maintenance, credential checks, prompt tuning |
-| **Outreach Manager** | Shilpa | Daily: follow up on hot leads, respond to questions, book meetings |
+| **Outreach Manager** | Client | Daily: follow up on hot leads, respond to questions, book meetings |
