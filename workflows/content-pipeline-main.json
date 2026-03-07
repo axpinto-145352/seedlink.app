@@ -35,7 +35,39 @@
     },
     {
       "parameters": {
-        "jsCode": "// Transform Settings sheet rows [{Setting, Value}] into a single config object\nconst items = $input.all();\nconst config = {};\nfor (const item of items) {\n  const key = item.json.Setting || item.json.setting || '';\n  const val = item.json.Value || item.json.value || '';\n  if (key) config[key] = val;\n}\n\n// Build a brand context string for Claude API calls\nconst brandContext = [\n  config.brand_name ? 'Brand: ' + config.brand_name : '',\n  config.brand_description ? 'Description: ' + config.brand_description : '',\n  config.voice_style ? 'Voice Style: ' + config.voice_style : '',\n  config.content_pillars ? 'Content Pillars: ' + config.content_pillars : '',\n  config.cta_products ? 'CTA Products: ' + config.cta_products : '',\n  config.target_audience ? 'Target Audience: ' + config.target_audience : ''\n].filter(Boolean).join('\\n');\n\nreturn [{ json: { ...config, brand_context: brandContext } }];"
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_EDITORIAL_CALENDAR_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Voice Profile"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {
+          "returnAllMatches": true
+        }
+      },
+      "id": "cp-0000-4000-8000-000000000050",
+      "name": "Sheets: Load Voice Profile",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [125, 250],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transform Settings sheet rows [{Setting, Value}] into a single config object\nconst settingsItems = $('Sheets: Load Client Config').all();\nconst config = {};\nfor (const item of settingsItems) {\n  const key = item.json.Setting || item.json.setting || '';\n  const val = item.json.Value || item.json.value || '';\n  if (key) config[key] = val;\n}\n\n// Build Voice Profile from the Voice Profile tab\nconst vpItems = $('Sheets: Load Voice Profile').all();\nconst vpData = {};\nfor (const item of vpItems) {\n  const attr = item.json.Attribute || item.json.attribute || '';\n  const val = item.json.Value || item.json.value || '';\n  if (attr) vpData[attr] = val;\n}\n\n// Build a structured voice_profile string for injection into Claude prompts\nlet voiceProfile = '';\nif (Object.keys(vpData).length > 0 && vpData.tone) {\n  voiceProfile = 'Voice & Tone (from client Voice Profile):\\n';\n  if (vpData.tone) voiceProfile += '- Tone: ' + vpData.tone + '\\n';\n  if (vpData.formality) voiceProfile += '- Formality: ' + vpData.formality + '\\n';\n  if (vpData.energy) voiceProfile += '- Energy: ' + vpData.energy + '\\n';\n  if (vpData.humor) voiceProfile += '- Humor: ' + vpData.humor + '\\n';\n  if (vpData.perspective) voiceProfile += '- Perspective: ' + vpData.perspective + '\\n';\n  voiceProfile += '\\nWriting Rules:\\n';\n  if (vpData.sentence_style) voiceProfile += '- Sentence style: ' + vpData.sentence_style + '\\n';\n  if (vpData.paragraph_length) voiceProfile += '- Paragraph length: ' + vpData.paragraph_length + '\\n';\n  if (vpData.vocabulary) voiceProfile += '- Vocabulary: ' + vpData.vocabulary + '\\n';\n  if (vpData.person) voiceProfile += '- Person: ' + vpData.person + '\\n';\n  if (vpData.reference_blend) voiceProfile += '- Reference blend: ' + vpData.reference_blend + '\\n';\n  voiceProfile += '\\nContent Patterns:\\n';\n  if (vpData.opening_style) voiceProfile += '- Opening style: ' + vpData.opening_style + '\\n';\n  if (vpData.cta_style) voiceProfile += '- CTA style: ' + vpData.cta_style + '\\n';\n  if (vpData.closing_style) voiceProfile += '- Closing style: ' + vpData.closing_style + '\\n';\n  voiceProfile += '\\nGuardrails:\\n';\n  if (vpData.always_use) voiceProfile += '- Always use: ' + vpData.always_use + '\\n';\n  if (vpData.never_use) voiceProfile += '- Never use: ' + vpData.never_use + '\\n';\n  if (vpData.sensitive_topics) voiceProfile += '- Sensitive topics: ' + vpData.sensitive_topics + '\\n';\n  if (vpData.sample_opening_1) voiceProfile += '\\nSample openings for voice calibration:\\n1. ' + vpData.sample_opening_1 + '\\n';\n  if (vpData.sample_opening_2) voiceProfile += '2. ' + vpData.sample_opening_2 + '\\n';\n  if (vpData.sample_opening_3) voiceProfile += '3. ' + vpData.sample_opening_3 + '\\n';\n} else {\n  // Fallback: use legacy voice_style from Settings tab\n  voiceProfile = config.voice_style || 'Founder-to-founder, practical, non-salesy';\n}\n\n// Build a brand context string for Claude API calls\nconst brandContext = [\n  config.brand_name ? 'Brand: ' + config.brand_name : '',\n  config.brand_description ? 'Description: ' + config.brand_description : '',\n  config.content_pillars ? 'Content Pillars: ' + config.content_pillars : '',\n  config.cta_products ? 'CTA Products: ' + config.cta_products : '',\n  config.target_audience ? 'Target Audience: ' + config.target_audience : ''\n].filter(Boolean).join('\\n');\n\nreturn [{ json: { ...config, brand_context: brandContext, voice_profile: voiceProfile } }];"
       },
       "id": "cp-0000-4000-8000-000000000100",
       "name": "Code: Build Config",
@@ -139,7 +171,8 @@
             { "id": "a4", "name": "target_audience", "value": "={{$json['Target Audience']}}", "type": "string" },
             { "id": "a5", "name": "row_number", "value": "={{$json.row_number || $itemIndex + 2}}", "type": "number" },
             { "id": "a6", "name": "revision_count", "value": 0, "type": "number" },
-            { "id": "a7", "name": "brand_context", "value": "={{$('Code: Build Config').item.json.brand_context}}", "type": "string" }
+            { "id": "a7", "name": "brand_context", "value": "={{$('Code: Build Config').item.json.brand_context}}", "type": "string" },
+            { "id": "a8", "name": "voice_profile", "value": "={{$('Code: Build Config').item.json.voice_profile}}", "type": "string" }
           ]
         },
         "options": {}
@@ -186,7 +219,8 @@
             { "id": "b5", "name": "target_audience", "value": "={{$('Set: Prepare Topic Brief').item.json.target_audience}}", "type": "string" },
             { "id": "b6", "name": "row_number", "value": "={{$('Set: Prepare Topic Brief').item.json.row_number}}", "type": "number" },
             { "id": "b7", "name": "revision_count", "value": "={{$('Set: Prepare Topic Brief').item.json.revision_count}}", "type": "number" },
-            { "id": "b8", "name": "brand_context", "value": "={{$('Set: Prepare Topic Brief').item.json.brand_context}}", "type": "string" }
+            { "id": "b8", "name": "brand_context", "value": "={{$('Set: Prepare Topic Brief').item.json.brand_context}}", "type": "string" },
+            { "id": "b9", "name": "voice_profile", "value": "={{$('Set: Prepare Topic Brief').item.json.voice_profile}}", "type": "string" }
           ]
         },
         "options": {}
@@ -211,7 +245,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are a blog writer for SeedLink.app, an AI-augmented talent marketplace connecting founders with AI talent, tools marketplace, and AI Playbook.\\n\\nVoice & Tone:\\n- Lead with value, not pitch. Open with a problem, insight, or story — never a product description.\\n- Founder-to-founder tone. Write as a peer building in the same space. Use 'you' and 'we' naturally.\\n- Concrete over abstract. Use specific numbers and outcomes. Example: 'Teams using AI co-pilots ship MVPs in 3 weeks instead of 3 months.'\\n- Accessible technical language. Define jargon on first use. No unexplained acronyms.\\n- Opinionated but not pushy. Take clear positions. Say 'Here is what we think works' not 'You should do this.'\\n\\nStructure (1,000-1,500 words):\\n1. Opening hook (2-3 sentences) — pain point, surprising stat, or relatable scenario. Never 'In today's fast-paced world.'\\n2. Opening definition (1-2 sentences) — clear, standalone definition of the core concept. Must make sense if extracted by an AI system on its own.\\n3. Context paragraph — why this matters now for the target audience.\\n4. Key Takeaways (bullet list) — 3-5 bullets summarizing main insights. Each bullet must be a complete, citable statement. Place before body sections.\\n5. Body sections (3-4 H2s) — follow the brief outline. Short paragraphs (2-3 sentences). Include at least one verifiable claim with a specific number, date, or data point per section.\\n6. FAQ section (H2: 'Frequently Asked Questions') — 3-5 Q&A pairs. Questions phrased as real search queries. Answers are 2-3 sentences, factual, self-contained.\\n7. Closing (1 paragraph) — key takeaway + natural CTA.\\n\\nCTA Rules:\\n- 1-2 contextual SeedLink product references where they genuinely solve a discussed problem.\\n- CTAs read as helpful suggestions, not ads.\\n- Never open or close with a hard sell.\\n- Reference Playbook for planning/milestones, marketplace for tools/agents, talent matching for hiring.\\n\\nSEO: Use target keyword in headline, first paragraph, one H2, and closing. Include secondary keywords naturally. End with meta description (150-160 chars) after a horizontal rule.\\n\\nAEO/GEO: Opening definition must be a clear, self-contained statement AI systems can extract. FAQ answers must be standalone. Key Takeaways must be complete, authoritative. Include specific numbers, dates, or named sources for verifiable claims.\\n\\nOutput: Clean markdown — H1 headline, H2 sections, FAQ, closing, then meta description after '---'.\",\"messages\":[{\"role\":\"user\",\"content\":\"Write a blog post based on:\\n\\nTopic: \"+$json.topic+\"\\nContent Pillar: \"+$json.content_pillar+\"\\nTarget Keyword: \"+$json.target_keyword+\"\\nTarget Audience: \"+$json.target_audience+($json.brand_context ? \"\\n\\nClient Context:\\n\"+$json.brand_context : \"\")+\"\\n\\nContent Brief:\\n\"+$json.content_brief}]}) }}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are a blog writer for an AI-focused brand.\\n\\n\"+$json.voice_profile+\"\\n\\nStructure (1,000-1,500 words):\\n1. Opening hook (2-3 sentences) — pain point, surprising stat, or relatable scenario. Never 'In today's fast-paced world.'\\n2. Opening definition (1-2 sentences) — clear, standalone definition of the core concept. Must make sense if extracted by an AI system on its own.\\n3. Context paragraph — why this matters now for the target audience.\\n4. Key Takeaways (bullet list) — 3-5 bullets summarizing main insights. Each bullet must be a complete, citable statement. Place before body sections.\\n5. Body sections (3-4 H2s) — follow the brief outline. Short paragraphs (2-3 sentences). Include at least one verifiable claim with a specific number, date, or data point per section.\\n6. FAQ section (H2: 'Frequently Asked Questions') — 3-5 Q&A pairs. Questions phrased as real search queries. Answers are 2-3 sentences, factual, self-contained.\\n7. Closing (1 paragraph) — key takeaway + natural CTA.\\n\\nCTA Rules:\\n- 1-2 contextual product references where they genuinely solve a discussed problem.\\n- CTAs read as helpful suggestions, not ads.\\n- Never open or close with a hard sell.\\n\\nSEO: Use target keyword in headline, first paragraph, one H2, and closing. Include secondary keywords naturally. End with meta description (150-160 chars) after a horizontal rule.\\n\\nAEO/GEO: Opening definition must be a clear, self-contained statement AI systems can extract. FAQ answers must be standalone. Key Takeaways must be complete, authoritative. Include specific numbers, dates, or named sources for verifiable claims.\\n\\nOutput: Clean markdown — H1 headline, H2 sections, FAQ, closing, then meta description after '---'.\",\"messages\":[{\"role\":\"user\",\"content\":\"Write a blog post based on:\\n\\nTopic: \"+$json.topic+\"\\nContent Pillar: \"+$json.content_pillar+\"\\nTarget Keyword: \"+$json.target_keyword+\"\\nTarget Audience: \"+$json.target_audience+($json.brand_context ? \"\\n\\nClient Context:\\n\"+$json.brand_context : \"\")+\"\\n\\nContent Brief:\\n\"+$json.content_brief}]}) }}",
         "options": { "timeout": 120000 }
       },
       "id": "cp-0008-4000-8000-000000000008",
@@ -233,7 +267,8 @@
             { "id": "c5", "name": "target_audience", "value": "={{$('Set: Prepare Draft Request').item.json.target_audience}}", "type": "string" },
             { "id": "c6", "name": "content_brief", "value": "={{$('Set: Prepare Draft Request').item.json.content_brief}}", "type": "string" },
             { "id": "c7", "name": "row_number", "value": "={{$('Set: Prepare Draft Request').item.json.row_number}}", "type": "number" },
-            { "id": "c8", "name": "revision_count", "value": "={{$('Set: Prepare Draft Request').item.json.revision_count}}", "type": "number" }
+            { "id": "c8", "name": "revision_count", "value": "={{$('Set: Prepare Draft Request').item.json.revision_count}}", "type": "number" },
+            { "id": "c9", "name": "voice_profile", "value": "={{$('Set: Prepare Draft Request').item.json.voice_profile}}", "type": "string" }
           ]
         },
         "options": {}
@@ -258,7 +293,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":1024,\"system\":\"You are a voice and tone reviewer for SeedLink.app content. Evaluate whether a blog post matches SeedLink's brand voice.\\n\\nVoice Standards:\\n- Founder-to-founder: reads like a peer sharing observations, not a vendor pitching. Uses 'you' and 'we' naturally.\\n- Concrete over abstract: every claim has a specific number, example, or outcome. Flag vague statements.\\n- Accessible technical language: terms defined on first use. No unexplained jargon.\\n- Opinionated but not pushy: clear positions without lecturing.\\n- No corporate speak: no 'thrilled to announce,' 'leverage,' 'synergy,' 'in today's fast-paced world.'\\n- Short paragraphs: 2-3 sentences max. Long blocks fail review.\\n\\nScore 1-5 with specific line-level feedback:\\n- tone_match (1-5): sounds like founder talking to founder?\\n- concreteness (1-5): claims backed by specifics?\\n- accessibility (1-5): smart non-technical founder understands every sentence?\\n- word_choice (1-5): words natural and conversational, not corporate?\\n\\nReturn JSON only:\\n{\\\"voice_score\\\": 4.0, \\\"tone_match\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"concreteness\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"accessibility\\\": {\\\"score\\\": 5, \\\"issues\\\": []}, \\\"word_choice\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"flagged_lines\\\": [], \\\"passed\\\": true}\\n\\nPass threshold: average >= 3.5, no individual score below 2.5.\",\"messages\":[{\"role\":\"user\",\"content\":\"Review the voice and tone of this blog post draft:\\n\\nTarget Keyword: \"+$json.target_keyword+\"\\nContent Pillar: \"+$json.content_pillar+\"\\n\\nDraft:\\n\"+$json.draft_text}]}) }}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":1024,\"system\":\"You are a voice and tone reviewer. Evaluate whether a blog post matches the client's Voice Profile.\\n\\nClient Voice Profile (the standard to evaluate against):\\n\"+$json.voice_profile+\"\\n\\nScore 1-5 with specific line-level feedback:\\n- tone_match (1-5): does the draft match the tone, formality, and energy described in the Voice Profile?\\n- concreteness (1-5): claims backed by specifics?\\n- accessibility (1-5): target audience understands every sentence?\\n- word_choice (1-5): words match the vocabulary level, person, and guardrails in the Voice Profile?\\n\\nReturn JSON only:\\n{\\\"voice_score\\\": 4.0, \\\"tone_match\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"concreteness\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"accessibility\\\": {\\\"score\\\": 5, \\\"issues\\\": []}, \\\"word_choice\\\": {\\\"score\\\": 4, \\\"issues\\\": []}, \\\"flagged_lines\\\": [], \\\"passed\\\": true}\\n\\nPass threshold: average >= 3.5, no individual score below 2.5.\",\"messages\":[{\"role\":\"user\",\"content\":\"Review the voice and tone of this blog post draft:\\n\\nTarget Keyword: \"+$json.target_keyword+\"\\nContent Pillar: \"+$json.content_pillar+\"\\n\\nDraft:\\n\"+$json.draft_text}]}) }}",
         "options": { "timeout": 60000 }
       },
       "id": "cp-0010-4000-8000-000000000010",
@@ -359,7 +394,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are the final editorial agent for SeedLink.app. You receive a blog post draft with feedback from three review agents (Voice, Strategy, SEO/AEO). Produce the final, publication-ready version.\\n\\nResponsibilities:\\n1. Synthesize all agent feedback. Identify critical issues (scores below 3) vs. suggestions.\\n2. Apply revisions — fix every critical issue and as many improvements as possible without over-editing.\\n3. Editorial quality check: compelling opening hook, logical flow, 1,000-1,500 words, claims supported with specifics, strong closing with natural CTA, no repetition, smooth transitions.\\n4. Preserve founder-to-founder tone throughout. Do not make writing sound more polished at the expense of authenticity.\\n5. Final AEO pass — ensure opening definition, Key Takeaways, and FAQ answers are self-contained and citable by AI systems.\\n\\nRules:\\n- Never add placeholder text. Every sentence must be publication-ready.\\n- If agent feedback conflicts, prioritize the agent with the lower score.\\n- Do not remove CTAs that Strategy Agent approved. Do not add CTAs Strategy Agent did not suggest.\\n- Preserve SEO metadata from SEO/AEO Agent unless there is an error.\\n- If draft is already strong (all agents scored 4+), make minimal edits.\\n\\nReturn JSON only:\\n{\\\"final_content\\\": \\\"Complete revised blog post in markdown with headline, opening, definition, Key Takeaways, body sections, FAQ, closing, and meta description.\\\", \\\"revision_summary\\\": {\\\"changes_made\\\": [], \\\"agent_issues_resolved\\\": {\\\"voice\\\": [], \\\"strategy\\\": [], \\\"seo_aeo\\\": []}, \\\"editorial_notes\\\": \\\"\\\", \\\"final_word_count\\\": 1250, \\\"confidence\\\": 0.92}}\",\"messages\":[{\"role\":\"user\",\"content\":\"Produce the final publication-ready version of this blog post.\\n\\n--- DRAFT ---\\n\"+$json.draft_text+\"\\n\\n--- VOICE AGENT REPORT ---\\n\"+JSON.stringify($json.voice_review)+\"\\n\\n--- STRATEGY AGENT REPORT ---\\n\"+JSON.stringify($json.strategy_review)+\"\\n\\n--- SEO/AEO AGENT REPORT ---\\n\"+JSON.stringify($json.seo_aeo_review)}]}) }}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are the final editorial agent. You receive a blog post draft with feedback from three review agents (Voice, Strategy, SEO/AEO). Produce the final, publication-ready version.\\n\\nResponsibilities:\\n1. Synthesize all agent feedback. Identify critical issues (scores below 3) vs. suggestions.\\n2. Apply revisions — fix every critical issue and as many improvements as possible without over-editing.\\n3. Editorial quality check: compelling opening hook, logical flow, 1,000-1,500 words, claims supported with specifics, strong closing with natural CTA, no repetition, smooth transitions.\\n4. Preserve the client's voice profile throughout. Do not make writing sound more polished at the expense of authenticity. The Voice Agent's report tells you whether voice matched — trust it.\\n5. Final AEO pass — ensure opening definition, Key Takeaways, and FAQ answers are self-contained and citable by AI systems.\\n\\nRules:\\n- Never add placeholder text. Every sentence must be publication-ready.\\n- If agent feedback conflicts, prioritize the agent with the lower score.\\n- Do not remove CTAs that Strategy Agent approved. Do not add CTAs Strategy Agent did not suggest.\\n- Preserve SEO metadata from SEO/AEO Agent unless there is an error.\\n- If draft is already strong (all agents scored 4+), make minimal edits.\\n\\nReturn JSON only:\\n{\\\"final_content\\\": \\\"Complete revised blog post in markdown with headline, opening, definition, Key Takeaways, body sections, FAQ, closing, and meta description.\\\", \\\"revision_summary\\\": {\\\"changes_made\\\": [], \\\"agent_issues_resolved\\\": {\\\"voice\\\": [], \\\"strategy\\\": [], \\\"seo_aeo\\\": []}, \\\"editorial_notes\\\": \\\"\\\", \\\"final_word_count\\\": 1250, \\\"confidence\\\": 0.92}}\",\"messages\":[{\"role\":\"user\",\"content\":\"Produce the final publication-ready version of this blog post.\\n\\n--- DRAFT ---\\n\"+$json.draft_text+\"\\n\\n--- VOICE AGENT REPORT ---\\n\"+JSON.stringify($json.voice_review)+\"\\n\\n--- STRATEGY AGENT REPORT ---\\n\"+JSON.stringify($json.strategy_review)+\"\\n\\n--- SEO/AEO AGENT REPORT ---\\n\"+JSON.stringify($json.seo_aeo_review)}]}) }}",
         "options": { "timeout": 120000 }
       },
       "id": "cp-0015-4000-8000-000000000015",
@@ -481,7 +516,8 @@
             { "id": "r8", "name": "target_keyword", "value": "={{$json.target_keyword}}", "type": "string" },
             { "id": "r9", "name": "target_audience", "value": "={{$json.target_audience}}", "type": "string" },
             { "id": "r10", "name": "content_brief", "value": "={{$json.content_brief}}", "type": "string" },
-            { "id": "r11", "name": "row_number", "value": "={{$json.row_number}}", "type": "number" }
+            { "id": "r11", "name": "row_number", "value": "={{$json.row_number}}", "type": "number" },
+            { "id": "r12", "name": "voice_profile", "value": "={{$('Set: Prepare for Review').item.json.voice_profile}}", "type": "string" }
           ]
         },
         "options": {}
@@ -506,7 +542,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are a blog writer for SeedLink.app, an AI-augmented talent marketplace connecting founders with AI talent, tools marketplace, and AI Playbook.\\n\\nYou are revising a draft that did not pass multi-agent review. Apply the agent feedback precisely.\\n\\nVoice & Tone: Lead with value. Founder-to-founder tone. Concrete with specific numbers. Accessible language. Opinionated but not pushy.\\n\\nStructure (1,000-1,500 words):\\n1. Opening hook (2-3 sentences) — pain point, stat, or scenario.\\n2. Opening definition (1-2 sentences) — clear, standalone, AI-citable.\\n3. Context paragraph.\\n4. Key Takeaways (3-5 bullets) — complete, citable statements.\\n5. Body sections (3-4 H2s) — short paragraphs, verifiable claims.\\n6. FAQ (3-5 Q&A) — real search queries, self-contained answers.\\n7. Closing — key takeaway + natural CTA.\\n\\nCTA: 1-2 contextual SeedLink references. Playbook for planning, marketplace for tools, talent matching for hiring.\\nSEO: Target keyword in headline, first paragraph, one H2, closing. Meta description after '---'.\\nAEO: Opening definition, Key Takeaways, and FAQ answers must be self-contained.\\n\\nApply ALL agent feedback while maintaining voice. Output clean markdown.\",\"messages\":[{\"role\":\"user\",\"content\":\"Revise this blog post draft based on all agent feedback.\\n\\n--- ORIGINAL DRAFT ---\\n\"+$json.draft_text+\"\\n\\n--- VOICE AGENT FEEDBACK ---\\n\"+$json.voice_feedback+\"\\n\\n--- STRATEGY AGENT FEEDBACK ---\\n\"+$json.strategy_feedback+\"\\n\\n--- SEO/AEO AGENT FEEDBACK ---\\n\"+$json.seo_aeo_feedback+\"\\n\\nTopic: \"+$json.topic+\"\\nTarget Keyword: \"+$json.target_keyword+\"\\nContent Pillar: \"+$json.content_pillar+\"\\nTarget Audience: \"+$json.target_audience}]}) }}",
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":4096,\"system\":\"You are a blog writer revising a draft that did not pass multi-agent review. Apply the agent feedback precisely.\\n\\n\"+$json.voice_profile+\"\\n\\nStructure (1,000-1,500 words):\\n1. Opening hook (2-3 sentences) — pain point, stat, or scenario.\\n2. Opening definition (1-2 sentences) — clear, standalone, AI-citable.\\n3. Context paragraph.\\n4. Key Takeaways (3-5 bullets) — complete, citable statements.\\n5. Body sections (3-4 H2s) — short paragraphs, verifiable claims.\\n6. FAQ (3-5 Q&A) — real search queries, self-contained answers.\\n7. Closing — key takeaway + natural CTA.\\n\\nSEO: Target keyword in headline, first paragraph, one H2, closing. Meta description after '---'.\\nAEO: Opening definition, Key Takeaways, and FAQ answers must be self-contained.\\n\\nApply ALL agent feedback while maintaining the client's voice. Output clean markdown.\",\"messages\":[{\"role\":\"user\",\"content\":\"Revise this blog post draft based on all agent feedback.\\n\\n--- ORIGINAL DRAFT ---\\n\"+$json.draft_text+\"\\n\\n--- VOICE AGENT FEEDBACK ---\\n\"+$json.voice_feedback+\"\\n\\n--- STRATEGY AGENT FEEDBACK ---\\n\"+$json.strategy_feedback+\"\\n\\n--- SEO/AEO AGENT FEEDBACK ---\\n\"+$json.seo_aeo_feedback+\"\\n\\nTopic: \"+$json.topic+\"\\nTarget Keyword: \"+$json.target_keyword+\"\\nContent Pillar: \"+$json.content_pillar+\"\\nTarget Audience: \"+$json.target_audience}]}) }}",
         "options": { "timeout": 120000 }
       },
       "id": "cp-0021-4000-8000-000000000021",
@@ -528,7 +564,8 @@
             { "id": "rv5", "name": "target_audience", "value": "={{$('Set: Increment Revision').item.json.target_audience}}", "type": "string" },
             { "id": "rv6", "name": "content_brief", "value": "={{$('Set: Increment Revision').item.json.content_brief}}", "type": "string" },
             { "id": "rv7", "name": "row_number", "value": "={{$('Set: Increment Revision').item.json.row_number}}", "type": "number" },
-            { "id": "rv8", "name": "revision_count", "value": "={{$('Set: Increment Revision').item.json.revision_count}}", "type": "number" }
+            { "id": "rv8", "name": "revision_count", "value": "={{$('Set: Increment Revision').item.json.revision_count}}", "type": "number" },
+            { "id": "rv9", "name": "voice_profile", "value": "={{$('Set: Increment Revision').item.json.voice_profile}}", "type": "string" }
           ]
         },
         "options": {}
@@ -654,12 +691,21 @@
   ],
   "connections": {
     "Schedule Trigger": {
-      "main": [[{ "node": "Sheets: Load Client Config", "type": "main", "index": 0 }]]
+      "main": [[
+        { "node": "Sheets: Load Client Config", "type": "main", "index": 0 },
+        { "node": "Sheets: Load Voice Profile", "type": "main", "index": 0 }
+      ]]
     },
     "Manual Trigger": {
-      "main": [[{ "node": "Sheets: Load Client Config", "type": "main", "index": 0 }]]
+      "main": [[
+        { "node": "Sheets: Load Client Config", "type": "main", "index": 0 },
+        { "node": "Sheets: Load Voice Profile", "type": "main", "index": 0 }
+      ]]
     },
     "Sheets: Load Client Config": {
+      "main": [[{ "node": "Code: Build Config", "type": "main", "index": 0 }]]
+    },
+    "Sheets: Load Voice Profile": {
       "main": [[{ "node": "Code: Build Config", "type": "main", "index": 0 }]]
     },
     "Code: Build Config": {

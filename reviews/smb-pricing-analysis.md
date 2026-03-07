@@ -82,6 +82,8 @@ The standardized pricing ($1,500 / $2,200 / $3,000) is **aggressively low** comp
 | Email | Standard | $2,200 | 40–60h | $37–$55 | $330 | $31–$47 |
 | Email | Premium | $3,000 | 50–75h | $40–$60 | $450 | $34–$51 |
 
+> **Note (Updated March 7, 2026):** Commission is now handled via **Stripe Connect automatic split**, not manual invoicing. Stripe routes 85% directly to VV's connected account and 15% to SeedLink's platform account at checkout. Stripe processing fees (2.9% + $0.30) are absorbed proportionally (85% VV, 15% SeedLink). Net $/hr figures above remain accurate — the change is in payment mechanism, not split percentage. See `REVENUE_STRUCTURE.md` for full details.
+
 **Key takeaway:** At Basic tier across non-LinkedIn services, the net effective rate drops to **$26–$43/hr**. That's below market rate for a mid-level n8n developer ($30–$50/hr). The Premium tier is where margins become healthy.
 
 ---

@@ -3,7 +3,7 @@
 **Date:** March 6, 2026
 **Prepared for:** Shilpa Kollengode, CEO — SeedLink.app
 **Classification:** Confidential
-**Version:** 1.0
+**Version:** 1.1 (Updated March 7, 2026 — Stripe Connect payment terms, onboarding orchestrator)
 
 ---
 
@@ -206,13 +206,17 @@ Month 6:  Becomes multi-module client or converts to Lite Support
 
 ### Revenue Split: What SeedLink Earns vs. What VV Earns
 
-#### Track A Revenue Split (85/15)
+> **Payment mechanism (Updated March 7, 2026):** All payments now processed via **Stripe Connect** with automatic split at checkout. SeedLink does not hold VV's funds — Stripe routes 85% directly to VV's connected account on the next business day. Both parties have full real-time visibility into all transactions via their Stripe dashboards. No manual invoicing required. See `REVENUE_STRUCTURE.md` for setup details and `sales-pipeline-template.md` for the shared financial dashboard.
 
-| Volume | Monthly Build Revenue | SeedLink (15%) | VV (85%) | Lite Support Revenue | SeedLink (15%) | VV (85%) |
-|--------|----------------------|----------------|----------|---------------------|----------------|----------|
-| 2 builds/mo | $4,400 | $660 | $3,740 | $900 | $135 | $765 |
-| 4 builds/mo | $8,800 | $1,320 | $7,480 | $2,400 | $360 | $2,040 |
-| 6 builds/mo | $15,000 | $2,250 | $12,750 | $5,400 | $810 | $4,590 |
+#### Track A Revenue Split (85/15 via Stripe Connect auto-split)
+
+| Volume | Monthly Build Revenue | Stripe Fee (~2.9%) | SeedLink (15% net) | VV (85% net) | Lite Support Revenue | SeedLink (15%) | VV (85%) |
+|--------|----------------------|-------------------|---------------------|--------------|---------------------|----------------|----------|
+| 2 builds/mo | $4,400 | ~$128 | $641 | $3,631 | $900 | $131 | $741 |
+| 4 builds/mo | $8,800 | ~$256 | $1,282 | $7,262 | $2,400 | $350 | $1,982 |
+| 6 builds/mo | $15,000 | ~$436 | $2,185 | $12,379 | $5,400 | $787 | $4,459 |
+
+> **Note:** Stripe processing fees (2.9% + $0.30 per transaction) are absorbed proportionally — 85% by VV, 15% by SeedLink. Numbers above reflect net-of-fees payouts.
 
 #### Track B Revenue Split (Option A: 75-80% SeedLink / 20-25% VV)
 

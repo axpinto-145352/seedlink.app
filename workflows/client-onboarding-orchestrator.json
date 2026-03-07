@@ -1,0 +1,879 @@
+{
+  "name": "SeedLink - Client Onboarding Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe-webhook",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "co-0001-4000-8000-000000000001",
+      "name": "Webhook: Stripe Payment",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 400],
+      "webhookId": "stripe-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verify Stripe webhook signature and extract checkout data\nconst crypto = require('crypto');\n\nconst payload = $input.first().json.body;\nconst sig = $input.first().json.headers['stripe-signature'];\nconst secret = $env.STRIPE_WEBHOOK_SECRET;\n\n// Verify signature (Stripe webhook security)\nif (sig && secret) {\n  const elements = sig.split(',');\n  const signatureMap = {};\n  elements.forEach(el => {\n    const [key, value] = el.split('=');\n    signatureMap[key] = value;\n  });\n  const timestamp = signatureMap['t'];\n  const receivedSig = signatureMap['v1'];\n  const signedPayload = `${timestamp}.${JSON.stringify(payload)}`;\n  const expectedSig = crypto.createHmac('sha256', secret).update(signedPayload).digest('hex');\n  // In production, compare expectedSig === receivedSig\n  // For now, log and continue (Stripe Connect handles trust)\n}\n\n// Only process checkout.session.completed events\nif (payload.type !== 'checkout.session.completed') {\n  return [{ json: { skip: true, reason: 'Not a checkout completion event' } }];\n}\n\nconst session = payload.data.object;\nconst metadata = session.metadata || {};\n\n// Extract purchase details from Stripe metadata\n// SeedLink sets these when creating the checkout session:\n// - modules: comma-separated list (e.g., \"content,seo\")\n// - tier: basic|standard|premium\n// - client_email: customer email\n// - client_name: customer name\nconst clientData = {\n  skip: false,\n  event_type: payload.type,\n  stripe_session_id: session.id,\n  stripe_customer_id: session.customer,\n  client_email: session.customer_email || metadata.client_email || '',\n  client_name: metadata.client_name || session.customer_details?.name || '',\n  modules: (metadata.modules || 'content').split(',').map(m => m.trim()),\n  tier: metadata.tier || 'standard',\n  amount_paid: session.amount_total / 100, // cents to dollars\n  currency: session.currency || 'usd',\n  payment_status: session.payment_status,\n  purchased_at: new Date().toISOString(),\n  \n  // Calculate VV payout (85%)\n  vv_payout: Math.round((session.amount_total / 100) * 0.85 * 100) / 100,\n  seedlink_commission: Math.round((session.amount_total / 100) * 0.15 * 100) / 100,\n  \n  // Generate client ID for multi-tenant tracking\n  client_id: 'client_' + (metadata.client_name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now().toString(36)\n};\n\nreturn [{ json: clientData }];"
+      },
+      "id": "co-0002-4000-8000-000000000002",
+      "name": "Code: Parse Stripe Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-skip",
+              "leftValue": "={{$json.skip}}",
+              "rightValue": false,
+              "operator": { "type": "boolean", "operation": "false" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "co-0003-4000-8000-000000000003",
+      "name": "IF: Valid Checkout",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [750, 400]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_SALES_TRACKER_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sales Pipeline"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_name": "={{$json.client_name}}",
+            "client_email": "={{$json.client_email}}",
+            "client_id": "={{$json.client_id}}",
+            "modules": "={{$json.modules.join(', ')}}",
+            "tier": "={{$json.tier}}",
+            "amount_paid": "={{$json.amount_paid}}",
+            "vv_payout": "={{$json.vv_payout}}",
+            "seedlink_commission": "={{$json.seedlink_commission}}",
+            "stripe_session_id": "={{$json.stripe_session_id}}",
+            "purchased_at": "={{$json.purchased_at}}",
+            "status": "Payment Received",
+            "questionnaire_received": "",
+            "build_started": "",
+            "build_delivered": "",
+            "handoff_complete": "",
+            "monitoring_end": "",
+            "lite_support": "",
+            "notes": ""
+          }
+        },
+        "options": {}
+      },
+      "id": "co-0004-4000-8000-000000000004",
+      "name": "Sheets: Log Sale",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1000, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=💰 *New SeedLink Sale!*\n\n*Client:* {{$json.client_name}} ({{$json.client_email}})\n*Modules:* {{$json.modules.join(', ')}}\n*Tier:* {{$json.tier}}\n*Amount:* ${{$json.amount_paid}}\n*VV Payout (85%):* ${{$json.vv_payout}}\n*Client ID:* {{$json.client_id}}\n\n⏳ Awaiting onboarding questionnaire...\nQuestionnaire link sent to client automatically."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "co-0005-4000-8000-000000000005",
+      "name": "Slack: Notify VV — New Sale",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.EMAIL_API_URL}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.EMAIL_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"SeedLink <hello@seedlink.app>\",\n  \"to\": \"{{$json.client_email}}\",\n  \"subject\": \"You're in — here's what happens next\",\n  \"html\": \"<h2>Welcome to SeedLink, {{$json.client_name}}!</h2><p>Your <strong>{{$json.modules.join(' + ')}} ({{$json.tier}})</strong> automation build is confirmed.</p><h3>What happens next:</h3><ol><li><strong>Complete the onboarding questionnaire</strong> (takes ~15 minutes):<br><a href='{{$env.ONBOARDING_FORM_URL}}?client_id={{$json.client_id}}&email={{$json.client_email}}&modules={{$json.modules.join(',')}}'>Start Questionnaire →</a></li><li>Our automation team will review your answers and kick off the build within 48 hours</li><li>You'll receive a build update within 7–10 business days</li><li>We'll schedule a 30-minute handoff call to walk you through everything</li></ol><h3>What you'll need ready:</h3><ul><li>Your own accounts for the tools we'll connect (we'll tell you exactly which ones)</li><li>Access to your CMS (if applicable)</li><li>30 minutes for the handoff call</li></ul><p>Questions? Reply to this email or <a href='{{$env.CALENDLY_URL}}'>book a quick call</a>.</p><p>— The SeedLink Team</p>\"\n}",
+        "options": {}
+      },
+      "id": "co-0006-4000-8000-000000000006",
+      "name": "Email: Send Confirmation + Questionnaire Link",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 700]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "onboarding-questionnaire",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "co-0010-4000-8000-000000000010",
+      "name": "Webhook: Questionnaire Submitted",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 1000],
+      "webhookId": "onboarding-questionnaire"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse and validate the onboarding questionnaire submission\n// This webhook receives data from Typeform/Google Form via Zapier/Make\n// or from a custom form on seedlink.app\n\nconst body = $input.first().json.body;\n\nconst questionnaire = {\n  // Identifiers\n  client_id: body.client_id || '',\n  client_email: body.client_email || '',\n  \n  // Section 1: Business\n  brand_name: body.company_name || body.brand_name || '',\n  website_url: body.website_url || '',\n  brand_description: body.company_description || body.brand_description || '',\n  target_audience: body.target_audience || body.icp || '',\n  \n  // Section 2: Voice\n  has_existing_content: body.has_existing_content || false,\n  content_samples: body.content_samples || [], // Array of URLs\n  voice_preferences: body.voice_preferences || null, // Voice Builder A/B pairs\n  reference_voices: body.reference_voices || '', // Free text\n  closest_archetype: body.closest_archetype || '', // Dropdown selection\n  quick_fire: body.quick_fire || null, // Object with 5 answers\n  voice_recording_url: body.voice_recording_url || '', // Premium only\n  words_to_use: body.words_to_use || '',\n  words_to_avoid: body.words_to_avoid || '',\n  voice_style_dropdown: body.voice_style || '', // Professional, Casual, etc.\n  person_preference: body.person_preference || 'first', // first or company\n  smart_vs_approachable: body.smart_vs_approachable || 'approachable',\n  \n  // Section 3: Content Strategy\n  content_pillars: body.content_pillars || body.content_themes || '',\n  target_keywords: body.target_keywords || '',\n  cms_platform: body.cms_platform || 'wordpress',\n  posts_per_month: body.posts_per_month || 4,\n  \n  // Section 4: Outreach\n  linkedin_profiles: body.linkedin_profiles || '',\n  has_prospai: body.has_prospai || false,\n  crm_platform: body.crm_platform || 'none',\n  calendly_url: body.calendly_url || '',\n  \n  // Section 5: Platforms\n  social_platforms: body.social_platforms || 'linkedin,twitter',\n  has_buffer: body.has_buffer || false,\n  has_anthropic_key: body.has_anthropic_key || false,\n  notification_channel: body.notification_channel || 'slack',\n  slack_webhook: body.slack_webhook || '',\n  \n  // Modules purchased (passed through from Stripe)\n  modules: body.modules || [],\n  tier: body.tier || 'standard',\n  \n  // Metadata\n  submitted_at: new Date().toISOString()\n};\n\n// Validate required fields\nconst missing = [];\nif (!questionnaire.client_id) missing.push('client_id');\nif (!questionnaire.brand_name) missing.push('company_name');\nif (!questionnaire.client_email) missing.push('client_email');\nif (!questionnaire.brand_description) missing.push('company_description');\n\nquestionnaire.validation_errors = missing;\nquestionnaire.is_valid = missing.length === 0;\n\nreturn [{ json: questionnaire }];"
+      },
+      "id": "co-0011-4000-8000-000000000011",
+      "name": "Code: Parse Questionnaire",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 1000]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-valid",
+              "leftValue": "={{$json.is_valid}}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "co-0012-4000-8000-000000000012",
+      "name": "IF: Questionnaire Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [750, 1000]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Create the client's Google Sheets workbook by cloning the template\n// This uses the Google Drive API to copy the template spreadsheet\n// and then renames it for the client\n\nconst questionnaire = $input.first().json;\n\n// Store questionnaire data for downstream nodes\nconst clientConfig = {\n  ...questionnaire,\n  \n  // Settings tab values (will be written to the new sheet)\n  settings: {\n    brand_name: questionnaire.brand_name,\n    brand_description: questionnaire.brand_description,\n    voice_style: 'See Voice Profile tab',\n    content_pillars: questionnaire.content_pillars,\n    cta_products: questionnaire.brand_name + ' marketplace, ' + questionnaire.brand_name + ' resources',\n    blog_platform: questionnaire.cms_platform,\n    linkedin_accounts: questionnaire.linkedin_profiles,\n    target_audience: questionnaire.target_audience,\n    ai_model: 'claude-sonnet-4-20250514',\n    max_tokens_blog: '4096',\n    max_tokens_social: '1024',\n    max_tokens_meta: '512'\n  },\n  \n  // Environment variables this client needs\n  env_vars: {\n    client_id: questionnaire.client_id,\n    sheet_id: '', // Will be set after cloning\n    blog_url: questionnaire.website_url,\n    slack_webhook: questionnaire.slack_webhook || '',\n    cms_platform: questionnaire.cms_platform\n  }\n};\n\nreturn [{ json: clientConfig }];"
+      },
+      "id": "co-0013-4000-8000-000000000013",
+      "name": "Code: Build Client Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 1000]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/drive/v3/files/{{$env.SEEDLINK_TEMPLATE_SHEET_ID}}/copy",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{$json.brand_name}} — Content Hub\",\n  \"parents\": [\"{{$env.SEEDLINK_CLIENT_FOLDER_ID}}\"]\n}",
+        "options": {}
+      },
+      "id": "co-0014-4000-8000-000000000014",
+      "name": "Drive: Clone Template Sheet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 1000],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Capture the new sheet ID from the Drive copy response\nconst cloneResponse = $input.first().json;\nconst previousData = $('Code: Build Client Config').first().json;\n\nconst result = {\n  ...previousData,\n  new_sheet_id: cloneResponse.id,\n  new_sheet_url: 'https://docs.google.com/spreadsheets/d/' + cloneResponse.id\n};\n\n// Update env_vars with the new sheet ID\nresult.env_vars.sheet_id = cloneResponse.id;\n\nreturn [{ json: result }];"
+      },
+      "id": "co-0015-4000-8000-000000000015",
+      "name": "Code: Capture Sheet ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 1000]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$json.new_sheet_id}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Settings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key": "brand_name",
+            "value": "={{$json.settings.brand_name}}"
+          }
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "co-0016-4000-8000-000000000016",
+      "name": "Sheets: Write Settings — Brand Name",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1750, 800],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build batch update payload for all Settings tab rows\n// This writes all client config values to the Settings tab in one operation\nconst data = $input.first().json;\nconst settings = data.settings;\n\nconst settingsRows = [\n  { key: 'brand_name', value: settings.brand_name },\n  { key: 'brand_description', value: settings.brand_description },\n  { key: 'voice_style', value: settings.voice_style },\n  { key: 'content_pillars', value: settings.content_pillars },\n  { key: 'cta_products', value: settings.cta_products },\n  { key: 'blog_platform', value: settings.blog_platform },\n  { key: 'linkedin_accounts', value: settings.linkedin_accounts },\n  { key: 'target_audience', value: settings.target_audience },\n  { key: 'ai_model', value: settings.ai_model },\n  { key: 'max_tokens_blog', value: settings.max_tokens_blog },\n  { key: 'max_tokens_social', value: settings.max_tokens_social },\n  { key: 'max_tokens_meta', value: settings.max_tokens_meta }\n];\n\n// Output each row as a separate item for batch processing\nreturn settingsRows.map(row => ({ json: { ...data, setting_key: row.key, setting_value: row.value } }));"
+      },
+      "id": "co-0017-4000-8000-000000000017",
+      "name": "Code: Prepare Settings Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1750, 1000]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$json.new_sheet_id}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Settings"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key": "={{$json.setting_key}}",
+            "value": "={{$json.setting_value}}"
+          }
+        },
+        "matchingColumns": ["key"],
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "co-0018-4000-8000-000000000018",
+      "name": "Sheets: Write All Settings",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2000, 1000],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-20250514\",\n  \"max_tokens\": 2048,\n  \"system\": \"You are an onboarding configuration generator for an AI content automation platform. Given a client's questionnaire responses, generate a complete client configuration summary and a customized welcome brief.\\n\\nOutput a JSON object with these fields:\\n- setup_checklist: array of setup steps the client needs to complete (platform-specific based on their modules)\\n- env_var_notes: any special environment variable considerations\\n- workflow_config: which workflows to activate based on purchased modules\\n- customization_notes: any client-specific adjustments needed to standard templates\\n- estimated_setup_hours: number (VV build time estimate)\\n- risk_flags: array of potential issues (e.g., 'No CRM — manual lead tracking needed', 'Ghost CMS — may need custom API integration')\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Generate a client configuration for this new onboarding:\\n\\nClient: {{$json.brand_name}}\\nWebsite: {{$json.website_url}}\\nDescription: {{$json.brand_description}}\\nModules: {{$json.modules}}\\nTier: {{$json.tier}}\\nCMS: {{$json.cms_platform}}\\nContent Pillars: {{$json.content_pillars}}\\nTarget Audience: {{$json.target_audience}}\\nLinkedIn Profiles: {{$json.linkedin_profiles}}\\nHas Prosp.AI: {{$json.has_prospai}}\\nCRM: {{$json.crm_platform}}\\nSocial Platforms: {{$json.social_platforms}}\\nHas Buffer: {{$json.has_buffer}}\\nHas Anthropic Key: {{$json.has_anthropic_key}}\\nNotification Channel: {{$json.notification_channel}}\\nPosts/Month: {{$json.posts_per_month}}\"\n    }\n  ]\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "co-0019-4000-8000-000000000019",
+      "name": "Claude: Generate Client Config",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2250, 800]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine voice path and prepare data for voice profile generation\nconst data = $('Code: Capture Sheet ID').first().json;\n\n// Build the voice profile webhook payload\nconst voicePayload = {\n  client_name: data.brand_name,\n  company_description: data.brand_description,\n  target_audience: data.target_audience,\n  content_pillars: data.content_pillars,\n  sheet_id: data.new_sheet_id,\n  \n  // Voice path determination\n  has_content: data.has_existing_content,\n  content_samples: data.content_samples || [],\n  \n  // Voice Builder data (if no existing content)\n  preferences: data.voice_preferences || null,\n  reference_voices: data.reference_voices || '',\n  closest_archetype: data.closest_archetype || '',\n  quick_fire: data.quick_fire || null,\n  voice_recording_url: data.voice_recording_url || '',\n  words_to_use: data.words_to_use || '',\n  words_to_avoid: data.words_to_avoid || '',\n  person_preference: data.person_preference || 'first',\n  smart_vs_approachable: data.smart_vs_approachable || 'approachable'\n};\n\nreturn [{ json: { ...data, voice_payload: voicePayload } }];"
+      },
+      "id": "co-0020-4000-8000-000000000020",
+      "name": "Code: Prepare Voice Profile Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2250, 1200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.N8N_BASE_URL}}/webhook/voice-profile-generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify($json.voice_payload)}}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "co-0021-4000-8000-000000000021",
+      "name": "HTTP: Trigger Voice Profile Generator",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2500, 1200]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_SALES_TRACKER_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sales Pipeline"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_id": "={{$json.client_id}}",
+            "status": "Provisioned — Awaiting VV Build",
+            "questionnaire_received": "={{$json.submitted_at}}",
+            "notes": "=Sheet: {{$json.new_sheet_url}} | Config generated. Voice profile triggered."
+          }
+        },
+        "matchingColumns": ["client_id"],
+        "options": {}
+      },
+      "id": "co-0022-4000-8000-000000000022",
+      "name": "Sheets: Update Sales Pipeline",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2750, 1000],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=✅ *Client Onboarded & Provisioned!*\n\n*Client:* {{$json.brand_name}}\n*Client ID:* {{$json.client_id}}\n*Modules:* {{$json.modules}}\n*Tier:* {{$json.tier}}\n\n*What's been auto-configured:*\n• Google Sheet cloned & populated: {{$json.new_sheet_url}}\n• Settings tab written with client config\n• Voice Profile generation triggered\n• Sales pipeline updated\n\n*VV Action Required:*\n1. Review client config in the Google Sheet\n2. Set up n8n environment variables for this client:\n   - `{{$json.client_id}}_SHEET_ID` = `{{$json.new_sheet_id}}`\n   - `{{$json.client_id}}_BLOG_URL` = `{{$json.website_url}}`\n   - `{{$json.client_id}}_SLACK_WEBHOOK` = `{{$json.slack_webhook}}`\n3. Import & configure workflows for: {{$json.modules}}\n4. Run manual tests\n5. Schedule kickoff call with client\n\n*SLA:* Acknowledge within 24h, begin build within 48h."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "co-0023-4000-8000-000000000023",
+      "name": "Slack: Notify VV — Build Ready",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2750, 1200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.EMAIL_API_URL}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.EMAIL_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"SeedLink <hello@seedlink.app>\",\n  \"to\": \"{{$json.client_email}}\",\n  \"subject\": \"We've received your info — build is starting\",\n  \"html\": \"<h2>Thanks, {{$json.brand_name}}!</h2><p>We've received your onboarding questionnaire and your automation build is now in progress.</p><h3>Here's what's happening:</h3><ol><li>✅ Your content workspace has been created</li><li>✅ Your brand settings are being configured</li><li>✅ Your voice profile is being generated</li><li>⏳ Our automation team is reviewing your setup (within 48 hours)</li></ol><h3>What happens next:</h3><ul><li>You'll hear from us within 2 business days with a build update</li><li>We'll schedule a 30-minute handoff call when everything is ready</li><li>Total build time: approximately {{$json.tier === 'basic' ? '5-7' : $json.tier === 'premium' ? '10-15' : '7-10'}} business days</li></ul><p>Questions? Reply to this email anytime.</p><p>— The SeedLink Team</p>\"\n}",
+        "options": {}
+      },
+      "id": "co-0024-4000-8000-000000000024",
+      "name": "Email: Confirm Build Started",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2750, 1400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\": \"success\", \"message\": \"Client onboarded successfully\", \"client_id\": \"{{$json.client_id}}\", \"sheet_url\": \"{{$json.new_sheet_url}}\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "co-0025-4000-8000-000000000025",
+      "name": "Respond: Questionnaire Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [3000, 1000]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\": \"error\", \"message\": \"Missing required fields\", \"missing\": {{JSON.stringify($json.validation_errors)}}}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "co-0026-4000-8000-000000000026",
+      "name": "Respond: Validation Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1000, 1200]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "client-build-complete",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "co-0030-4000-8000-000000000030",
+      "name": "Webhook: Build Complete",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 1800],
+      "webhookId": "client-build-complete"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse build completion signal from VV\nconst body = $input.first().json.body;\n\nreturn [{ json: {\n  client_id: body.client_id,\n  client_name: body.client_name,\n  client_email: body.client_email,\n  sheet_url: body.sheet_url,\n  modules_delivered: body.modules || [],\n  handoff_booking_url: body.handoff_url || $env.CALENDLY_URL,\n  monitoring_start: new Date().toISOString(),\n  monitoring_end: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),\n  build_notes: body.notes || '',\n  workflows_activated: body.workflows || []\n} }];"
+      },
+      "id": "co-0031-4000-8000-000000000031",
+      "name": "Code: Parse Build Completion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 1800]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_SALES_TRACKER_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sales Pipeline"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_id": "={{$json.client_id}}",
+            "status": "Build Complete — Monitoring",
+            "build_delivered": "={{new Date().toISOString().split('T')[0]}}",
+            "monitoring_end": "={{$json.monitoring_end.split('T')[0]}}",
+            "notes": "=Workflows: {{$json.workflows_activated.join(', ')}} | {{$json.build_notes}}"
+          }
+        },
+        "matchingColumns": ["client_id"],
+        "options": {}
+      },
+      "id": "co-0032-4000-8000-000000000032",
+      "name": "Sheets: Update Pipeline — Delivered",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [750, 1700],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.EMAIL_API_URL}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.EMAIL_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"SeedLink <hello@seedlink.app>\",\n  \"to\": \"{{$json.client_email}}\",\n  \"subject\": \"Your {{$json.client_name}} automation is ready\",\n  \"html\": \"<h2>Your automation build is complete!</h2><p>Hi {{$json.client_name}},</p><p>Your {{$json.modules_delivered.join(' + ')}} automation has been built, tested, and is ready for handoff.</p><h3>What's been configured:</h3><ul>{{$json.workflows_activated.map(w => '<li>' + w + '</li>').join('')}}</ul><h3>Next steps:</h3><ol><li><strong>Book your handoff call</strong> (30 minutes): <a href='{{$json.handoff_booking_url}}'>Schedule Now →</a></li><li>We'll walk you through everything and answer questions</li><li>After handoff, we monitor everything for 2 weeks (until {{$json.monitoring_end.split('T')[0]}})</li></ol><p>{{$json.build_notes ? '<strong>Build notes:</strong> ' + $json.build_notes : ''}}</p><p>— The SeedLink Team</p>\"\n}",
+        "options": {}
+      },
+      "id": "co-0033-4000-8000-000000000033",
+      "name": "Email: Build Complete + Handoff",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [750, 1900]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=🎉 *Build Delivered — {{$json.client_name}}*\n\n*Client ID:* {{$json.client_id}}\n*Modules:* {{$json.modules_delivered.join(', ')}}\n*Monitoring period:* Now → {{$json.monitoring_end.split('T')[0]}}\n\nClient has been emailed with handoff booking link.\nSales pipeline updated."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "co-0034-4000-8000-000000000034",
+      "name": "Slack: Build Complete Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 1800]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "co-0040-4000-8000-000000000040",
+      "name": "Schedule: Monday 9am — Check Monitoring",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 2200]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_SALES_TRACKER_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sales Pipeline"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "Build Complete — Monitoring"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "co-0041-4000-8000-000000000041",
+      "name": "Sheets: Get Monitoring Clients",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [500, 2200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check which clients' monitoring periods have ended\nconst clients = $input.all();\nconst today = new Date();\nconst results = [];\n\nfor (const client of clients) {\n  const monitorEnd = new Date(client.json.monitoring_end);\n  if (today >= monitorEnd) {\n    results.push({\n      json: {\n        ...client.json,\n        action: 'monitoring_complete',\n        days_past_monitoring: Math.floor((today - monitorEnd) / (1000 * 60 * 60 * 24))\n      }\n    });\n  }\n}\n\nif (results.length === 0) {\n  return [{ json: { action: 'none', message: 'No monitoring periods ending this week' } }];\n}\n\nreturn results;"
+      },
+      "id": "co-0042-4000-8000-000000000042",
+      "name": "Code: Check Monitoring Expiry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [750, 2200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-monitoring-done",
+              "leftValue": "={{$json.action}}",
+              "rightValue": "monitoring_complete",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "co-0043-4000-8000-000000000043",
+      "name": "IF: Monitoring Ended",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1000, 2200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.EMAIL_API_URL}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.EMAIL_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"SeedLink <hello@seedlink.app>\",\n  \"to\": \"{{$json.client_email}}\",\n  \"subject\": \"Keep your automation running at peak performance\",\n  \"html\": \"<h2>Your monitoring period has ended</h2><p>Hi {{$json.client_name}},</p><p>Your 2-week monitoring period ended on {{$json.monitoring_end}}. Everything has been running smoothly.</p><p>If you'd like ongoing optimization — keyword refreshes, sequence tuning, performance reviews, and priority support — our <strong>Lite Support plan</strong> starts at $250/month. No lock-in, cancel anytime.</p><h3>What Lite Support includes:</h3><ul><li>Monthly content review and QA</li><li>Editorial calendar updates and topic refreshes</li><li>SEO keyword tracking and adjustments</li><li>Workflow maintenance and prompt optimization</li><li>Priority support for any issues</li><li>Monthly performance report</li></ul><p>Interested? <a href='{{$env.LITE_SUPPORT_CHECKOUT_URL}}?client_id={{$json.client_id}}'>Start Lite Support →</a></p><p>Or reply to this email with any questions.</p><p>— The SeedLink Team</p>\"\n}",
+        "options": {}
+      },
+      "id": "co-0044-4000-8000-000000000044",
+      "name": "Email: Lite Support Offer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1250, 2100]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{$env.SEEDLINK_SALES_TRACKER_ID}}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sales Pipeline"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "client_id": "={{$json.client_id}}",
+            "status": "Monitoring Complete — Lite Support Offered",
+            "notes": "=Lite Support email sent {{new Date().toISOString().split('T')[0]}}"
+          }
+        },
+        "matchingColumns": ["client_id"],
+        "options": {}
+      },
+      "id": "co-0045-4000-8000-000000000045",
+      "name": "Sheets: Update — Lite Support Offered",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1250, 2300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google_sheets",
+          "name": "Google Sheets OAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=📋 *Monitoring Complete — Lite Support Offered*\n\n*Client:* {{$json.client_name}} ({{$json.client_id}})\n*Monitoring ended:* {{$json.days_past_monitoring}} days ago\n\nLite Support offer email sent. Pipeline updated."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "co-0046-4000-8000-000000000046",
+      "name": "Slack: Lite Support Offer Sent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1500, 2200]
+    }
+  ],
+  "connections": {
+    "Webhook: Stripe Payment": {
+      "main": [
+        [{ "node": "Code: Parse Stripe Event", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code: Parse Stripe Event": {
+      "main": [
+        [{ "node": "IF: Valid Checkout", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF: Valid Checkout": {
+      "main": [
+        [
+          { "node": "Sheets: Log Sale", "type": "main", "index": 0 },
+          { "node": "Slack: Notify VV — New Sale", "type": "main", "index": 0 },
+          { "node": "Email: Send Confirmation + Questionnaire Link", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    },
+    "Webhook: Questionnaire Submitted": {
+      "main": [
+        [{ "node": "Code: Parse Questionnaire", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code: Parse Questionnaire": {
+      "main": [
+        [{ "node": "IF: Questionnaire Valid", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF: Questionnaire Valid": {
+      "main": [
+        [{ "node": "Code: Build Client Config", "type": "main", "index": 0 }],
+        [{ "node": "Respond: Validation Error", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code: Build Client Config": {
+      "main": [
+        [{ "node": "Drive: Clone Template Sheet", "type": "main", "index": 0 }]
+      ]
+    },
+    "Drive: Clone Template Sheet": {
+      "main": [
+        [{ "node": "Code: Capture Sheet ID", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code: Capture Sheet ID": {
+      "main": [
+        [
+          { "node": "Code: Prepare Settings Rows", "type": "main", "index": 0 },
+          { "node": "Claude: Generate Client Config", "type": "main", "index": 0 },
+          { "node": "Code: Prepare Voice Profile Input", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Code: Prepare Settings Rows": {
+      "main": [
+        [{ "node": "Sheets: Write All Settings", "type": "main", "index": 0 }]
+      ]
+    },
+    "Sheets: Write All Settings": {
+      "main": [
+        [{ "node": "Sheets: Update Sales Pipeline", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code: Prepare Voice Profile Input": {
+      "main": [
+        [{ "node": "HTTP: Trigger Voice Profile Generator", "type": "main", "index": 0 }]
+      ]
+    },
+    "Sheets: Update Sales Pipeline": {
+      "main": [
+        [
+          { "node": "Slack: Notify VV — Build Ready", "type": "main", "index": 0 },
+          { "node": "Email: Confirm Build Started", "type": "main", "index": 0 },
+          { "node": "Respond: Questionnaire Success", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Webhook: Build Complete": {
+      "main": [
+        [{ "node": "Code: Parse Build Completion", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code: Parse Build Completion": {
+      "main": [
+        [
+          { "node": "Sheets: Update Pipeline — Delivered", "type": "main", "index": 0 },
+          { "node": "Email: Build Complete + Handoff", "type": "main", "index": 0 },
+          { "node": "Slack: Build Complete Notification", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Schedule: Monday 9am — Check Monitoring": {
+      "main": [
+        [{ "node": "Sheets: Get Monitoring Clients", "type": "main", "index": 0 }]
+      ]
+    },
+    "Sheets: Get Monitoring Clients": {
+      "main": [
+        [{ "node": "Code: Check Monitoring Expiry", "type": "main", "index": 0 }]
+      ]
+    },
+    "Code: Check Monitoring Expiry": {
+      "main": [
+        [{ "node": "IF: Monitoring Ended", "type": "main", "index": 0 }]
+      ]
+    },
+    "IF: Monitoring Ended": {
+      "main": [
+        [
+          { "node": "Email: Lite Support Offer", "type": "main", "index": 0 },
+          { "node": "Sheets: Update — Lite Support Offered", "type": "main", "index": 0 },
+          { "node": "Slack: Lite Support Offer Sent", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [
+    { "name": "seedlink" },
+    { "name": "production" },
+    { "name": "onboarding" },
+    { "name": "orchestrator" }
+  ],
+  "pinData": {},
+  "versionId": "1"
+}

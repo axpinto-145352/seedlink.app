@@ -2,6 +2,8 @@
 
 Step-by-step instructions for importing and configuring all SeedLink automation workflows in n8n.
 
+> **Note:** For new client builds, Steps 1 and 3 are **automated** by the `client-onboarding-orchestrator.json` workflow. When a client pays via Stripe and submits the onboarding questionnaire, the orchestrator auto-clones the Google Sheet template, populates the Settings tab, triggers Voice Profile generation, and notifies VV with the client's sheet URL and build brief. The manual steps below are for VV's reference during the remaining setup tasks.
+
 ---
 
 ## Prerequisites
@@ -15,6 +17,14 @@ Before starting, ensure you have:
 - [ ] WordPress or CMS admin access for seedlink.app blog
 - [ ] Slack workspace with webhook permissions
 - [ ] Access to LinkedIn profiles (for Prosp.AI webhook setup)
+
+### Additional Prerequisites for Onboarding Orchestrator
+
+- [ ] Stripe account with Connect enabled (see `REVENUE_STRUCTURE.md`)
+- [ ] Template Google Sheet created and ID stored as `SEEDLINK_TEMPLATE_SHEET_ID`
+- [ ] Sales Pipeline Google Sheet created (see `sales-pipeline-template.md`) and ID stored as `SEEDLINK_SALES_TRACKER_ID`
+- [ ] Email service API configured (`EMAIL_API_URL`, `EMAIL_API_KEY`)
+- [ ] Onboarding form URL set as `ONBOARDING_FORM_URL`
 
 ---
 
@@ -79,6 +89,16 @@ In your n8n instance, set these environment variables:
 | `NOTIFICATION_SLACK_WEBHOOK` | `https://hooks.slack.com/services/...` | Slack → Apps → Incoming Webhooks |
 | `BUFFER_LINKEDIN_PROFILE_ID` | `abc123...` | Buffer API → Profiles endpoint |
 | `BUFFER_TWITTER_PROFILE_ID` | `def456...` | Buffer API → Profiles endpoint |
+| `SEEDLINK_SALES_TRACKER_ID` | `1xyz2abc...` | Sales Pipeline Google Sheet ID (see `sales-pipeline-template.md`) |
+| `SEEDLINK_TEMPLATE_SHEET_ID` | `1tmpl2abc...` | Template Google Sheet ID (the master copy that gets cloned per client) |
+| `SEEDLINK_CLIENT_FOLDER_ID` | `folder123...` | Google Drive folder ID for storing cloned client sheets |
+| `N8N_BASE_URL` | `https://your-n8n.app.n8n.cloud` | n8n instance URL (for inter-workflow webhook calls) |
+| `EMAIL_API_URL` | `https://api.resend.com/emails` | Email service API endpoint (Resend, SendGrid, etc.) |
+| `EMAIL_API_KEY` | `re_...` | Email service API key |
+| `ONBOARDING_FORM_URL` | `https://seedlink.app/onboarding` | Client onboarding questionnaire URL |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_...` | Stripe webhook signing secret (for verifying payment events) |
+| `CALENDLY_URL` | `https://calendly.com/seedlink/handoff` | Handoff call booking link |
+| `LITE_SUPPORT_CHECKOUT_URL` | `https://seedlink.app/lite-support` | Lite Support subscription checkout URL |
 
 ---
 
@@ -86,11 +106,18 @@ In your n8n instance, set these environment variables:
 
 Import order matters — some workflows reference others.
 
-1. **`editorial-calendar-manager.json`** — Weekly topic generation
-2. **`content-pipeline-main.json`** — Master content pipeline with multi-agent review
-3. **`social-engine.json`** — Social derivation + scheduling + publishing
-4. **`analytics-reporter.json`** — Weekly performance reports
-5. **`outreach-response-handler.json`** — Prosp.AI response classification
+### Infrastructure Workflows (import first, one-time setup)
+
+0. **`client-onboarding-orchestrator.json`** — Stripe payment → questionnaire → provisioning → build tracking → Lite Support offers (only on VV's master n8n instance, not per-client)
+1. **`voice-profile-generator.json`** — Voice Profile generation from questionnaire data (called by orchestrator)
+
+### Per-Client Workflows (import for each new client)
+
+2. **`editorial-calendar-manager.json`** — Weekly topic generation
+3. **`content-pipeline-main.json`** — Master content pipeline with multi-agent review
+4. **`social-engine.json`** — Social derivation + scheduling + publishing
+5. **`analytics-reporter.json`** — Weekly performance reports
+6. **`outreach-response-handler.json`** — Prosp.AI response classification
 
 For each workflow:
 1. In n8n, go to Workflows → Import from File
