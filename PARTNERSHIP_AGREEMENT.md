@@ -67,15 +67,34 @@ These are the packages available for online purchase on seedlink.app:
 | **Lite Support** (monthly) | 15% | 85% |
 | **Paid Assessment** ($750–$1,000) | 15% | 85% |
 
-**Payment terms:**
-- SeedLink collects full payment from the client
-- VV receives 85% within 7 business days of client payment clearing
-- For Lite Support: VV invoices SeedLink monthly; payment within 7 business days
-- All payments via bank transfer or agreed payment platform
+**Payment terms (Stripe Connect — automatic split):**
+- All client payments processed through Stripe Connect
+- Stripe automatically splits each payment at checkout: 85% to VV connected account, 15% to SeedLink platform account
+- Payouts occur on Stripe's standard schedule (next business day for both parties)
+- Both parties have real-time visibility into all transactions via their respective Stripe dashboards
+- Stripe processing fees (2.9% + $0.30) absorbed proportionally: 85% by VV, 15% by SeedLink
+- For Lite Support subscriptions: Stripe auto-splits each monthly recurring charge identically (85/15)
+- No manual invoicing required — Stripe handles all payment routing automatically
+- If Stripe Connect is temporarily unavailable: SeedLink pays VV within 3 business days of client payment clearing, with Stripe receipt forwarded as proof of payment
+
+**Payment protection:**
+- VV has real-time access to all transaction data via Stripe Connected Account dashboard
+- If any payment is more than 5 business days late (non-Connect fallback): VV may pause accepting new builds until resolved
+- VV may request Stripe transaction export quarterly to verify accuracy
+- VV retains IP rights on all deliverables until payment clears (per Section 1.11)
 
 **Example — Standard LinkedIn build ($2,200):**
-- SeedLink retains: $330
-- VV receives: $1,870
+- Client pays: $2,200.00
+- Stripe fee: -$64.10 (2.9% + $0.30)
+- Net to split: $2,135.90
+  - VV receives (85%): $1,815.52 (auto-deposited next business day)
+  - SeedLink retains (15%): $320.39 (auto-deposited next business day)
+
+**Shared financial dashboard:**
+- Both parties maintain access to a shared Sales Pipeline Google Sheet (see `sales-pipeline-template.md`)
+- Auto-populated by the `client-onboarding-orchestrator.json` workflow on every new sale
+- Tracks: client name, modules, tier, amount paid, VV payout, SeedLink commission, build status, Lite Support status
+- Revenue Summary tab auto-calculates totals, pending payouts, MRR, and monthly breakdown
 
 ---
 
@@ -89,11 +108,13 @@ Step 1: Client visits seedlink.app/automation (or /services)
 Step 2: Client selects module(s) and tier
     ↓
 Step 3: Client completes purchase via Stripe checkout
+        → Stripe Connect auto-splits payment: 85% VV / 15% SeedLink
     ↓
-Step 4: SeedLink sends automated confirmation email with:
-        - Receipt
-        - "What happens next" summary
-        - Link to onboarding questionnaire (Typeform/Google Form)
+Step 4: [AUTOMATED — client-onboarding-orchestrator.json]
+        Stripe webhook fires → orchestrator workflow:
+        a. Logs sale to shared Sales Pipeline Google Sheet
+        b. Sends confirmation email to client with questionnaire link
+        c. Notifies VV via Slack with purchase details + VV payout amount
     ↓
 Step 5: Client completes onboarding questionnaire (15–20 min, or 20–25 min if Voice Builder path)
         - Brand name, URL, description
@@ -106,20 +127,40 @@ Step 5: Client completes onboarding questionnaire (15–20 min, or 20–25 min i
         - LinkedIn accounts for outreach (Module A)
         - Goals (traffic, leads, brand awareness)
     ↓
-Step 6: SeedLink notifies VV via Slack/email with:
-        - Client name and package purchased
-        - Completed questionnaire responses
-        - Payment confirmation
+Step 6: [AUTOMATED — client-onboarding-orchestrator.json]
+        Questionnaire webhook fires → orchestrator workflow:
+        a. Validates questionnaire data
+        b. Clones Google Sheet template → creates client Content Hub
+        c. Populates Settings tab with client-specific config
+        d. Triggers Voice Profile Generator workflow
+        e. Generates client configuration via Claude (setup checklist, risk flags, build estimate)
+        f. Updates Sales Pipeline status
+        g. Sends "build started" email to client
+        h. Notifies VV via Slack with full build brief + client sheet URL + action items
     ↓
 Step 7: VV acknowledges within 24 hours and begins build
+        - Reviews auto-generated client config
+        - Sets up n8n environment variables for client
+        - Imports and configures workflows per module
+        - Runs manual end-to-end tests
     ↓
 Step 8: VV delivers build per timeline below
     ↓
-Step 9: VV conducts handoff call with client (SeedLink optional)
+Step 9: [AUTOMATED — client-onboarding-orchestrator.json]
+        VV fires build-complete webhook → orchestrator workflow:
+        a. Updates Sales Pipeline status to "Build Complete — Monitoring"
+        b. Emails client with handoff booking link
+        c. Notifies Slack
     ↓
-Step 10: 2-week monitoring period begins
+Step 10: VV conducts handoff call with client (SeedLink optional)
     ↓
-Step 11: Client offered Lite Support subscription
+Step 11: 2-week monitoring period begins
+    ↓
+Step 12: [AUTOMATED — client-onboarding-orchestrator.json]
+         Weekly check (Monday 9am) detects monitoring period ended:
+         a. Sends Lite Support offer email to client
+         b. Updates Sales Pipeline
+         c. Notifies Slack
 ```
 
 ---
