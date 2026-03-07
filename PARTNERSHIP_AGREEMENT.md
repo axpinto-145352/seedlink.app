@@ -97,7 +97,7 @@ Step 4: SeedLink sends automated confirmation email with:
     ↓
 Step 5: Client completes onboarding questionnaire (15–20 min)
         - Brand name, URL, description
-        - Voice examples (3–5 links to content they like)
+        - Voice examples (3–5 links) OR Voice Builder path if no existing content (Section 4.5)
         - Content pillars / themes
         - Target audience / ICP
         - Platforms used
@@ -547,8 +547,10 @@ Create a Typeform or Google Form with these fields:
 - What does your company do? (2–3 sentences)
 - Target audience / ideal customer profile
 
-**Section 2: Brand Voice**
-- Share 3–5 links to content that sounds like your brand (blog posts, LinkedIn posts, articles)
+**Section 2: Brand Voice** *(adaptive — see Voice Builder below)*
+- Have you published content before? (Yes — I have blog posts, LinkedIn posts, or articles / No — I'm starting fresh)
+- *(If Yes)* Share 3–5 links to content that sounds like your brand
+- *(If No)* Voice Builder path activates — see Section 4.5
 - How would you describe your brand voice? (dropdown: Professional, Casual, Technical, Founder-friendly, Academic, Other)
 - Any words or phrases to always use? Any to avoid?
 
@@ -653,7 +655,107 @@ Set up a simple tracking system (Google Sheet or Airtable):
 
 ---
 
-## 4.5 What SeedLink Does vs. What VV Does
+## 4.5 Voice Builder — For Clients Without Existing Content
+
+Many early-stage founders have no blog posts, LinkedIn history, or documented brand voice to sample from. The Voice Builder replaces the "share 3–5 content links" requirement with a fully self-serve, automated flow that requires zero VV interaction.
+
+### How It Works
+
+The Voice Builder is embedded directly in the onboarding questionnaire. When a client selects "No — I'm starting fresh" in Section 2, the questionnaire branches into the Voice Builder path instead of asking for content links.
+
+**Step 1: Voice Preference Picker (async, ~5 min)**
+
+The questionnaire shows 5 pairs of short writing samples on the same topic (e.g., "announcing a product launch"). Each pair contrasts a voice dimension. The client picks which one sounds more like them.
+
+| Pair | Dimension | Option A | Option B |
+|------|-----------|----------|----------|
+| 1 | Formality | Professional, polished | Casual, conversational |
+| 2 | Technicality | Explains concepts simply | Assumes technical fluency |
+| 3 | Energy | Measured, authoritative | High-energy, bold claims |
+| 4 | Humor | Straight, no jokes | Dry wit, occasional humor |
+| 5 | Perspective | Data-driven, evidence-first | Story-driven, anecdote-first |
+
+Each sample pair is pre-written and stored in the Typeform/Google Form — no AI generation at intake time.
+
+**Step 2: Reference Voices (~2 min)**
+
+- "Name 1–3 founders, brands, or publications whose communication style you admire" (free text)
+- "Pick your closest match" (dropdown with 6 archetypes):
+  - Paul Graham (clear, essay-style, first principles)
+  - Sahil Lavingia (casual, transparent, founder-diary)
+  - Lenny Rachitsky (structured, data-informed, practical)
+  - Alex Hormozi (direct, high-energy, action-oriented)
+  - Julie Zhuo (thoughtful, design-thinking, reflective)
+  - Naval Ravikant (concise, philosophical, contrarian)
+
+**Step 3: Quick-Fire Voice Questions (~3 min)**
+
+Five short-answer questions that capture natural language patterns:
+
+1. "How would you explain what your company does to a friend at dinner?" (2–3 sentences)
+2. "What's a common misconception in your industry that frustrates you?" (1–2 sentences)
+3. "What should never appear in your content?" (words, phrases, or tones to avoid)
+4. "Are you comfortable with first-person ('I built this because...') or prefer company voice ('We believe...')?"
+5. "What's more important: sounding smart or sounding approachable?" (slider or choice)
+
+**Step 4 (Premium tier only): Voice Recording (~5 min)**
+
+For Premium builds, the questionnaire includes an optional Loom/voice memo prompt:
+
+> "Record yourself answering: What problem does your company solve and why do you care?"
+
+This captures natural cadence, vocabulary, and energy that written answers miss. Claude transcribes and extracts voice patterns during the build phase.
+
+### Voice Profile Generation
+
+During the build phase, VV runs the Voice Builder questionnaire responses through a dedicated Claude prompt (`prompts/voice-builder.md`) that outputs a structured Voice Profile:
+
+```
+Voice Profile — [Client Name]
+Generated: [Date]
+Source: Voice Builder (no prior content)
+
+Tone: conversational, direct, mildly technical
+Formality: 3/5 (professional but not corporate)
+Energy: 4/5 (confident, forward-leaning)
+Humor: occasional dry wit, never sarcasm
+Perspective: story-first, supported by data
+
+Sentence style: short declarative sentences, occasional rhetorical questions
+Vocabulary: accessible technical (uses terms but defines them naturally)
+Person: first-person singular ("I")
+Closest reference: Sahil Lavingia × Lenny Rachitsky
+
+Always use: [client-specified terms]
+Never use: "leverage", "synergy", "disrupt", "revolutionize"
+
+Sample opening lines (generated, not client-written):
+- "Here's what no one tells you about [topic]."
+- "I spent three months figuring this out so you don't have to."
+- "The conventional advice is wrong. Here's why."
+```
+
+This Voice Profile feeds into the `{{voice_style}}` parameter in all content generation prompts — identical to how an existing-content voice profile would be used.
+
+### Calibration Loop (Built Into Monitoring Period)
+
+During the 2-week monitoring period, the first 3 content pieces serve double duty:
+
+1. Client reviews generated content and rates voice fit (1–5 scale, plus "highlight what sounds right / wrong")
+2. VV feeds calibration feedback back into the Voice Profile
+3. Voice Profile is locked after 2 rounds of calibration (or earlier if client rates ≥ 4/5)
+
+This happens within the existing monitoring period — no extra timeline or cost.
+
+### Pricing
+
+Voice Builder is included in all tiers at no extra charge. It replaces the "content links" requirement — it's not an add-on, it's an alternative path through the same onboarding.
+
+Premium tier includes the optional voice recording step, which adds ~15 minutes to VV's build time for transcription and extraction.
+
+---
+
+## 4.6 What SeedLink Does vs. What VV Does
 
 | Task | SeedLink | VV |
 |------|----------|-----|
