@@ -22,7 +22,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Verify Stripe webhook signature and extract checkout data\nconst crypto = require('crypto');\n\nconst payload = $input.first().json.body;\nconst sig = $input.first().json.headers['stripe-signature'];\nconst secret = $env.STRIPE_WEBHOOK_SECRET;\n\n// Verify signature (Stripe webhook security)\nif (sig && secret) {\n  const elements = sig.split(',');\n  const signatureMap = {};\n  elements.forEach(el => {\n    const [key, value] = el.split('=');\n    signatureMap[key] = value;\n  });\n  const timestamp = signatureMap['t'];\n  const receivedSig = signatureMap['v1'];\n  const signedPayload = `${timestamp}.${JSON.stringify(payload)}`;\n  const expectedSig = crypto.createHmac('sha256', secret).update(signedPayload).digest('hex');\n  // In production, compare expectedSig === receivedSig\n  // For now, log and continue (Stripe Connect handles trust)\n}\n\n// Only process checkout.session.completed events\nif (payload.type !== 'checkout.session.completed') {\n  return [{ json: { skip: true, reason: 'Not a checkout completion event' } }];\n}\n\nconst session = payload.data.object;\nconst metadata = session.metadata || {};\n\n// Extract purchase details from Stripe metadata\n// SeedLink sets these when creating the checkout session:\n// - modules: comma-separated list (e.g., \"content,seo\")\n// - tier: basic|standard|premium\n// - client_email: customer email\n// - client_name: customer name\nconst clientData = {\n  skip: false,\n  event_type: payload.type,\n  stripe_session_id: session.id,\n  stripe_customer_id: session.customer,\n  client_email: session.customer_email || metadata.client_email || '',\n  client_name: metadata.client_name || session.customer_details?.name || '',\n  modules: (metadata.modules || 'content').split(',').map(m => m.trim()),\n  tier: metadata.tier || 'standard',\n  amount_paid: session.amount_total / 100, // cents to dollars\n  currency: session.currency || 'usd',\n  payment_status: session.payment_status,\n  purchased_at: new Date().toISOString(),\n  \n  // Calculate VV payout (85%)\n  vv_payout: Math.round((session.amount_total / 100) * 0.85 * 100) / 100,\n  seedlink_commission: Math.round((session.amount_total / 100) * 0.15 * 100) / 100,\n  \n  // Generate client ID for multi-tenant tracking\n  client_id: 'client_' + (metadata.client_name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now().toString(36)\n};\n\nreturn [{ json: clientData }];"
+        "jsCode": "// Verify Stripe webhook signature and extract checkout data\nconst crypto = require('crypto');\n\nconst payload = $input.first().json.body;\nconst sig = $input.first().json.headers['stripe-signature'];\nconst secret = $env.STRIPE_WEBHOOK_SECRET;\n\n// Verify signature (Stripe webhook security)\nif (!sig || !secret) {\n  throw new Error('Stripe webhook signature or secret missing — rejecting request');\n}\n\nconst elements = sig.split(',');\nconst signatureMap = {};\nelements.forEach(el => {\n  const [key, value] = el.split('=');\n  signatureMap[key] = value;\n});\nconst timestamp = signatureMap['t'];\nconst receivedSig = signatureMap['v1'];\n\nif (!timestamp || !receivedSig) {\n  throw new Error('Stripe webhook signature malformed — missing timestamp or v1 signature');\n}\n\n// Reject requests with timestamps older than 5 minutes to prevent replay attacks\nconst currentTime = Math.floor(Date.now() / 1000);\nif (Math.abs(currentTime - parseInt(timestamp, 10)) > 300) {\n  throw new Error('Stripe webhook signature timestamp too old — possible replay attack');\n}\n\nconst signedPayload = `${timestamp}.${JSON.stringify(payload)}`;\nconst expectedSig = crypto.createHmac('sha256', secret).update(signedPayload).digest('hex');\n\nif (expectedSig !== receivedSig) {\n  throw new Error('Stripe webhook signature verification failed — rejecting request');\n}\n\n// Only process checkout.session.completed events\nif (payload.type !== 'checkout.session.completed') {\n  return [{ json: { skip: true, reason: 'Not a checkout completion event' } }];\n}\n\nconst session = payload.data.object;\nconst metadata = session.metadata || {};\n\n// Extract purchase details from Stripe metadata\n// SeedLink sets these when creating the checkout session:\n// - modules: comma-separated list (e.g., \"content,seo\")\n// - tier: basic|standard|premium\n// - client_email: customer email\n// - client_name: customer name\nconst clientData = {\n  skip: false,\n  event_type: payload.type,\n  stripe_session_id: session.id,\n  stripe_customer_id: session.customer,\n  client_email: session.customer_email || metadata.client_email || '',\n  client_name: metadata.client_name || session.customer_details?.name || '',\n  modules: (metadata.modules || 'content').split(',').map(m => m.trim()),\n  tier: metadata.tier || 'standard',\n  amount_paid: session.amount_total / 100, // cents to dollars\n  currency: session.currency || 'usd',\n  payment_status: session.payment_status,\n  purchased_at: new Date().toISOString(),\n  \n  // Calculate VV payout (85%)\n  vv_payout: Math.round((session.amount_total / 100) * 0.85 * 100) / 100,\n  seedlink_commission: Math.round((session.amount_total / 100) * 0.15 * 100) / 100,\n  \n  // Generate client ID for multi-tenant tracking\n  client_id: 'client_' + (metadata.client_name || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now().toString(36)\n};\n\nreturn [{ json: clientData }];"
       },
       "id": "co-0002-4000-8000-000000000002",
       "name": "Code: Parse Stripe Event",
@@ -1006,6 +1006,41 @@
           "responseCode": 401
         }
       }
+    },
+    {
+      "parameters": {},
+      "id": "co-0030-4000-8000-000000000030",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\"text\":\":rotating_light: *SeedLink Client Onboarding Orchestrator — Error Alert*\\n\\n*Workflow:* SeedLink - Client Onboarding Orchestrator\\n*Error Node:* \"+($json.execution?.error?.node || 'Unknown')+\"\\n*Error Message:* \"+($json.execution?.error?.message || 'No error message available')+\"\\n*Execution ID:* \"+($json.execution?.id || 'N/A')+\"\\n*Timestamp:* \"+new Date().toISOString()+\"\\n\\nPlease check the n8n execution log for details.\"}) }}",
+        "options": { "timeout": 10000 }
+      },
+      "id": "co-0031-4000-8000-000000000031",
+      "name": "HTTP: Slack Error Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        450,
+        -200
+      ]
     }
   ],
   "connections": {
@@ -1307,6 +1342,17 @@
         [
           {
             "node": "Respond: 401 Build Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Slack Error Alert",
             "type": "main",
             "index": 0
           }
