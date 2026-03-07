@@ -36,17 +36,21 @@ Current structure:
 
 **Stripe Connect costs:**
 - Stripe's standard processing fee: 2.9% + $0.30 per transaction (already being paid)
+- Connect payout fee (Express accounts): 0.25% + $0.25 per payout
 - Connect platform fee: $0 additional (Stripe Connect is free to set up)
 - Optional: Stripe can charge an additional "application fee" on top — but this isn't needed since we're doing a fixed split
 
 **Example — Standard Content Build ($2,200):**
 ```
-Client pays:     $2,200.00
-Stripe fee:      -$64.10 (2.9% + $0.30)
-Net to split:    $2,135.90
-  → VV (85%):    $1,815.52 (auto-deposited next business day)
-  → SeedLink:    $320.39  (auto-deposited next business day)
+Client pays:         $2,200.00
+Stripe processing:   -$64.10  (2.9% + $0.30)
+Connect payout fee:  -$5.80   (0.25% + $0.25 to VV, $0.25 to SeedLink)
+Net to split:        $2,130.10
+  → VV (85%):        $1,810.59  (auto-deposited next business day)
+  → SeedLink (15%):  $319.52    (auto-deposited next business day)
 ```
+
+> **Note:** Connect payout fees apply per payout, not per transaction. If VV receives one daily payout aggregating multiple transactions, the fee is $0.25% + $0.25 on the total payout amount — which is more favorable at higher volume.
 
 **Who absorbs the Stripe fee?**
 Three options (decide on call):

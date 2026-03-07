@@ -6,14 +6,24 @@
         "path": "outreach-response",
         "httpMethod": "POST",
         "responseMode": "lastNode",
-        "options": {}
+        "options": {},
+        "authentication": "headerAuth"
       },
       "id": "b2c3d4e5-0001-4000-8000-000000000001",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 300],
-      "webhookId": "outreach-response"
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "outreach-response",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "seedlink_webhook_auth",
+          "name": "seedlink_webhook_auth"
+        }
+      }
     },
     {
       "parameters": {
@@ -77,7 +87,10 @@
       "name": "Set: Format Response",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [260, 300]
+      "position": [
+        480,
+        300
+      ]
     },
     {
       "parameters": {
@@ -111,17 +124,23 @@
       "name": "Claude: Classify Response",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [520, 300]
+      "position": [
+        740,
+        300
+      ]
     },
     {
       "parameters": {
-        "jsCode": "// Parse the Claude API response and extract classification JSON\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const claudeResponse = item.json;\n  let classificationText = '';\n\n  // Extract text content from Claude's response\n  if (claudeResponse.content && Array.isArray(claudeResponse.content)) {\n    for (const block of claudeResponse.content) {\n      if (block.type === 'text') {\n        classificationText = block.text;\n        break;\n      }\n    }\n  }\n\n  // Parse the JSON from Claude's response text\n  let classification = {};\n  try {\n    // Try direct JSON parse first\n    classification = JSON.parse(classificationText);\n  } catch (e) {\n    // If direct parse fails, extract JSON from markdown code blocks or surrounding text\n    const jsonMatch = classificationText.match(/\\{[\\s\\S]*?\\}/);\n    if (jsonMatch) {\n      try {\n        classification = JSON.parse(jsonMatch[0]);\n      } catch (e2) {\n        classification = {\n          classification: 'question',\n          confidence: 0,\n          reasoning: 'Failed to parse Claude response: ' + classificationText,\n          suggested_action: 'Manual review required',\n          urgency: 'medium'\n        };\n      }\n    } else {\n      classification = {\n        classification: 'question',\n        confidence: 0,\n        reasoning: 'No JSON found in Claude response: ' + classificationText,\n        suggested_action: 'Manual review required',\n        urgency: 'medium'\n      };\n    }\n  }\n\n  // Carry forward the sender data from the previous Set node\n  // Access it via $('Set: Format Response').item\n  const senderData = $('Set: Format Response').item.json;\n\n  results.push({\n    json: {\n      classification: classification.classification || 'question',\n      confidence: classification.confidence || 0,\n      reasoning: classification.reasoning || '',\n      suggested_action: classification.suggested_action || '',\n      urgency: classification.urgency || 'medium',\n      sender_name: senderData.sender_name,\n      sender_title: senderData.sender_title,\n      sender_company: senderData.sender_company,\n      message_text: senderData.message_text,\n      response_date: senderData.response_date,\n      profile_source: senderData.profile_source,\n      source_account: senderData.source_account,\n      linkedin_profile_url: senderData.linkedin_profile_url\n    }\n  });\n}\n\nreturn results;"
+        "jsCode": "// Parse the Claude API response and extract classification JSON\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const claudeResponse = item.json;\n  let classificationText = '';\n\n  // Extract text content from Claude's response\n  if (claudeResponse.content && Array.isArray(claudeResponse.content)) {\n    for (const block of claudeResponse.content) {\n      if (block.type === 'text') {\n        classificationText = block.text;\n        break;\n      }\n    }\n  }\n\n  // Parse the JSON from Claude's response text\n  let classification = {};\n  try {\n    // Try direct JSON parse first\n    classification = JSON.parse(classificationText);\n  } catch (e) {\n    // If direct parse fails, extract JSON from markdown code blocks or surrounding text\n    const jsonMatch = classificationText.match(/\\{[\\s\\S]*?\\}/);\n    if (jsonMatch) {\n      try {\n        classification = JSON.parse(jsonMatch[0]);\n      } catch (e2) {\n        classification = {\n          classification: 'question',\n          confidence: 0,\n          reasoning: 'Failed to parse Claude response: ' + classificationText,\n          suggested_action: 'Manual review required',\n          urgency: 'medium'\n        };\n      }\n    } else {\n      classification = {\n        classification: 'question',\n        confidence: 0,\n        reasoning: 'No JSON found in Claude response: ' + classificationText,\n        suggested_action: 'Manual review required',\n        urgency: 'medium'\n      };\n    }\n  }\n\n  // Carry forward the sender data from the previous Set node\n  // Access it via $('Set: Format Response').item\n  const senderData = $('Set: Format Response').item.json;\n\n  results.push({\n    json: {\n      classification: classification.classification || 'question',\n      confidence: classification.confidence || 0,\n      reasoning: classification.reasoning || '',\n      suggested_action: classification.suggested_action || '',\n      urgency: classification.urgency || 'medium',\n      follow_up_status: (classification.confidence || 0) < 0.7 ? 'Needs Human Review' : 'Pending',\n      sender_name: senderData.sender_name,\n      sender_title: senderData.sender_title,\n      sender_company: senderData.sender_company,\n      message_text: senderData.message_text,\n      response_date: senderData.response_date,\n      profile_source: senderData.profile_source,\n      source_account: senderData.source_account,\n      linkedin_profile_url: senderData.linkedin_profile_url\n    }\n  });\n}\n\nreturn results;"
       },
       "id": "b2c3d4e5-0004-4000-8000-000000000004",
       "name": "Code: Parse Classification",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [780, 300]
+      "position": [
+        1000,
+        300
+      ]
     },
     {
       "parameters": {
@@ -154,7 +173,10 @@
       "name": "Switch: Response Type",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
-      "position": [1040, 300]
+      "position": [
+        1260,
+        300
+      ]
     },
     {
       "parameters": {
@@ -185,7 +207,8 @@
             "Suggested Action": "={{$json.suggested_action}}",
             "Urgency": "={{$json.urgency}}",
             "Source Account": "={{$json.source_account}}",
-            "LinkedIn URL": "={{$json.linkedin_profile_url}}"
+            "LinkedIn URL": "={{$json.linkedin_profile_url}}",
+            "Follow-Up Status": "={{$json.follow_up_status}}"
           }
         },
         "options": {}
@@ -194,7 +217,10 @@
       "name": "Sheets: Log Response",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1340, 300],
+      "position": [
+        1560,
+        300
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
@@ -225,7 +251,10 @@
       "name": "HTTP: Notify Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1640, 300]
+      "position": [
+        1860,
+        300
+      ]
     },
     {
       "parameters": {},
@@ -233,7 +262,10 @@
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
-      "position": [0, 700]
+      "position": [
+        0,
+        700
+      ]
     },
     {
       "parameters": {
@@ -258,7 +290,59 @@
       "name": "HTTP: Slack Error Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [260, 700]
+      "position": [
+        480,
+        700
+      ]
+    },
+    {
+      "id": "orh-auth-check",
+      "name": "IF: Webhook Auth Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-webhook-secret",
+              "leftValue": "={{ $json.headers?.['x-webhook-secret'] || $json.body?.webhook_secret }}",
+              "rightValue": "={{$env.SEEDLINK_WEBHOOK_SECRET}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "orh-auth-reject",
+      "name": "Respond: 401 Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        500
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"error\": \"Unauthorized\", \"message\": \"Invalid or missing webhook secret\"}",
+        "options": {
+          "responseCode": 401
+        }
+      }
     }
   ],
   "connections": {
@@ -266,7 +350,7 @@
       "main": [
         [
           {
-            "node": "Set: Format Response",
+            "node": "IF: Webhook Auth Valid",
             "type": "main",
             "index": 0
           }
@@ -354,6 +438,24 @@
         [
           {
             "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Webhook Auth Valid": {
+      "main": [
+        [
+          {
+            "node": "Set: Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond: 401 Unauthorized",
             "type": "main",
             "index": 0
           }

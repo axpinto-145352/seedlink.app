@@ -6,7 +6,10 @@
       "name": "Webhook: Content Approved",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "parameters": {
         "path": "seedlink-social-derive",
         "httpMethod": "POST",
@@ -14,16 +17,26 @@
         "responseData": "allEntries",
         "options": {
           "rawBody": false
-        }
+        },
+        "authentication": "headerAuth"
       },
-      "webhookId": "seedlink-social-derive"
+      "webhookId": "seedlink-social-derive",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "seedlink_webhook_auth",
+          "name": "seedlink_webhook_auth"
+        }
+      }
     },
     {
       "id": "wl-auth-check",
       "name": "IF: Auth Valid",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [460, 300],
+      "position": [
+        460,
+        300
+      ],
       "parameters": {
         "conditions": {
           "options": {
@@ -52,7 +65,10 @@
       "name": "Sheets: Get Approved Post",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [700, 300],
+      "position": [
+        700,
+        300
+      ],
       "parameters": {
         "operation": "read",
         "documentId": {
@@ -89,7 +105,10 @@
       "name": "Set: Format Blog Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [940, 300],
+      "position": [
+        940,
+        300
+      ],
       "parameters": {
         "mode": "manual",
         "duplicateItem": false,
@@ -135,7 +154,10 @@
       "name": "Claude: Derive LinkedIn Post",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1240, 100],
+      "position": [
+        1240,
+        100
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
@@ -143,18 +165,34 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
-            { "name": "anthropic-version", "value": "2023-06-01" },
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 1024, \"system\": \"Convert blog post into 150-300 word LinkedIn post for SeedLink CEO Shilpa Kollengode. Structure: Hook line, Insight (3-5 short paragraphs), Takeaway, CTA to blog, Hashtags. Voice: founder sharing observations, first person, direct, opinionated. No corporate speak.\", \"messages\": [{ \"role\": \"user\", \"content\": \"Convert this blog post into a LinkedIn post:\\n\\nTitle: \" + $json.blogTitle + \"\\nURL: \" + $json.blogUrl + \"\\n\\nContent:\\n\" + $json.blogContent.substring(0, 6000) }] }) }}",
         "options": {
-          "response": { "response": { "responseFormat": "json" } },
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
           "timeout": 60000,
-          "retry": { "maxRetries": 3, "retryInterval": 2000 }
+          "retry": {
+            "maxRetries": 3,
+            "retryInterval": 2000
+          }
         }
       }
     },
@@ -163,7 +201,10 @@
       "name": "Claude: Derive Twitter Thread",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1240, 340],
+      "position": [
+        1240,
+        340
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
@@ -171,18 +212,34 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
-            { "name": "anthropic-version", "value": "2023-06-01" },
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 1024, \"system\": \"Convert blog post into a 5-7 tweet X/Twitter thread. Tweet 1: Hook with thread emoji. Tweets 2-5: One insight per tweet, 200-250 chars. Tweet 6: Summary takeaway. Tweet 7: CTA with blog link. Voice: punchy, founder-style, hot takes. No hashtags in body. Output as JSON array of strings, one per tweet.\", \"messages\": [{ \"role\": \"user\", \"content\": \"Convert this blog post into a Twitter/X thread:\\n\\nTitle: \" + $json.blogTitle + \"\\nURL: \" + $json.blogUrl + \"\\n\\nContent:\\n\" + $json.blogContent.substring(0, 6000) }] }) }}",
         "options": {
-          "response": { "response": { "responseFormat": "json" } },
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
           "timeout": 60000,
-          "retry": { "maxRetries": 3, "retryInterval": 2000 }
+          "retry": {
+            "maxRetries": 3,
+            "retryInterval": 2000
+          }
         }
       }
     },
@@ -191,7 +248,10 @@
       "name": "Claude: Derive Short Posts",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1240, 580],
+      "position": [
+        1240,
+        580
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
@@ -199,18 +259,34 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
-            { "name": "anthropic-version", "value": "2023-06-01" },
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ \"model\": \"claude-sonnet-4-20250514\", \"max_tokens\": 512, \"system\": \"Generate 2-3 standalone social snippets from the blog. Each 1-3 sentences, shareable on any platform. Mix: one stat/insight, one provocative question, one practical tip. Output as JSON array of strings.\", \"messages\": [{ \"role\": \"user\", \"content\": \"Generate standalone social snippets from this blog post:\\n\\nTitle: \" + $json.blogTitle + \"\\nURL: \" + $json.blogUrl + \"\\n\\nContent:\\n\" + $json.blogContent.substring(0, 6000) }] }) }}",
         "options": {
-          "response": { "response": { "responseFormat": "json" } },
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
           "timeout": 60000,
-          "retry": { "maxRetries": 3, "retryInterval": 2000 }
+          "retry": {
+            "maxRetries": 3,
+            "retryInterval": 2000
+          }
         }
       }
     },
@@ -219,10 +295,15 @@
       "name": "Merge: Await All Derivations",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
-      "position": [1500, 340],
+      "position": [
+        1500,
+        340
+      ],
       "parameters": {
         "mode": "append",
-        "options": { "numberInputs": 3 }
+        "options": {
+          "numberInputs": 3
+        }
       }
     },
     {
@@ -230,7 +311,10 @@
       "name": "Set: Merge Social Content",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [1740, 340],
+      "position": [
+        1740,
+        340
+      ],
       "parameters": {
         "mode": "manual",
         "duplicateItem": false,
@@ -294,7 +378,10 @@
       "name": "Sheets: Save Social Content",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1980, 340],
+      "position": [
+        1980,
+        340
+      ],
       "parameters": {
         "operation": "update",
         "documentId": {
@@ -317,7 +404,9 @@
             "Twitter Publish Date": "={{ $json.twitterPublishDate }}",
             "Social Status": "Ready for Review"
           },
-          "matchingColumns": ["Post ID"]
+          "matchingColumns": [
+            "Post ID"
+          ]
         },
         "options": {}
       },
@@ -333,7 +422,10 @@
       "name": "HTTP: Notify Social Derived",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2220, 340],
+      "position": [
+        2220,
+        340
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
@@ -341,13 +433,18 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ \"text\": \":mega: *SeedLink Social Engine — Content Derived*\\n\\n*Blog:* \" + $json.blogTitle + \"\\n*Post ID:* \" + $json.postId + \"\\n\\n:white_check_mark: LinkedIn post (publish: \" + $json.linkedinPublishDate + \")\\n:white_check_mark: Twitter thread (publish: \" + $json.twitterPublishDate + \")\\n:white_check_mark: Short posts derived\\n\\n*Status:* Ready for Review — approve in Content Hub then status will change to 'Scheduled' for auto-publish via direct API.\" }) }}",
-        "options": { "timeout": 10000 }
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":mega: *SeedLink Social Engine \u2014 Content Derived*\\n\\n*Blog:* \" + $json.blogTitle + \"\\n*Post ID:* \" + $json.postId + \"\\n\\n:white_check_mark: LinkedIn post (publish: \" + $json.linkedinPublishDate + \")\\n:white_check_mark: Twitter thread (publish: \" + $json.twitterPublishDate + \")\\n:white_check_mark: Short posts derived\\n\\n*Status:* Ready for Review \u2014 approve in Content Hub then status will change to 'Scheduled' for auto-publish via direct API.\" }) }}",
+        "options": {
+          "timeout": 10000
+        }
       }
     },
     {
@@ -355,7 +452,10 @@
       "name": "Schedule Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [240, 900],
+      "position": [
+        240,
+        900
+      ],
       "parameters": {
         "rule": {
           "interval": [
@@ -372,7 +472,10 @@
       "name": "Sheets: Pull Today's Social Posts",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [500, 900],
+      "position": [
+        500,
+        900
+      ],
       "parameters": {
         "operation": "read",
         "documentId": {
@@ -413,7 +516,10 @@
       "name": "IF: Posts Available",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [740, 900],
+      "position": [
+        740,
+        900
+      ],
       "parameters": {
         "conditions": {
           "options": {
@@ -442,7 +548,10 @@
       "name": "NoOp: No Posts Today",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [1000, 1100],
+      "position": [
+        1000,
+        1100
+      ],
       "parameters": {}
     },
     {
@@ -450,7 +559,10 @@
       "name": "SplitInBatches",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
-      "position": [1000, 900],
+      "position": [
+        1000,
+        900
+      ],
       "parameters": {
         "batchSize": 1,
         "options": {}
@@ -461,20 +573,30 @@
       "name": "Switch: Platform",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
-      "position": [1260, 900],
+      "position": [
+        1260,
+        900
+      ],
       "parameters": {
         "rules": {
           "values": [
             {
               "outputKey": "LinkedIn",
               "conditions": {
-                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
                 "conditions": [
                   {
                     "id": "cond-li",
                     "leftValue": "={{ $json.Platform }}",
                     "rightValue": "LinkedIn",
-                    "operator": { "type": "string", "operation": "equals" }
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
                   }
                 ],
                 "combinator": "and"
@@ -483,13 +605,20 @@
             {
               "outputKey": "Twitter",
               "conditions": {
-                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
                 "conditions": [
                   {
                     "id": "cond-tw",
                     "leftValue": "={{ $json.Platform }}",
                     "rightValue": "Twitter",
-                    "operator": { "type": "string", "operation": "equals" }
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
                   }
                 ],
                 "combinator": "and"
@@ -498,13 +627,20 @@
             {
               "outputKey": "Blog",
               "conditions": {
-                "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
                 "conditions": [
                   {
                     "id": "cond-blog",
                     "leftValue": "={{ $json.Platform }}",
                     "rightValue": "Blog",
-                    "operator": { "type": "string", "operation": "equals" }
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
                   }
                 ],
                 "combinator": "and"
@@ -512,7 +648,9 @@
             }
           ]
         },
-        "options": { "fallbackOutput": "none" }
+        "options": {
+          "fallbackOutput": "none"
+        }
       }
     },
     {
@@ -520,7 +658,10 @@
       "name": "HTTP: Publish LinkedIn Direct",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1560, 720],
+      "position": [
+        1560,
+        720
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.linkedin.com/v2/ugcPosts",
@@ -528,9 +669,18 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "Bearer {{$env.LINKEDIN_ACCESS_TOKEN}}" },
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "X-Restli-Protocol-Version", "value": "2.0.0" }
+            {
+              "name": "Authorization",
+              "value": "Bearer {{$env.LINKEDIN_ACCESS_TOKEN}}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Restli-Protocol-Version",
+              "value": "2.0.0"
+            }
           ]
         },
         "sendBody": true,
@@ -538,8 +688,15 @@
         "jsonBody": "={{ JSON.stringify({ \"author\": \"urn:li:person:\" + $env.LINKEDIN_PERSON_URN, \"lifecycleState\": \"PUBLISHED\", \"specificContent\": { \"com.linkedin.ugc.ShareContent\": { \"shareCommentary\": { \"text\": $json.Content }, \"shareMediaCategory\": \"NONE\" } }, \"visibility\": { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } }) }}",
         "options": {
           "timeout": 30000,
-          "response": { "response": { "responseFormat": "json" } },
-          "retry": { "maxRetries": 2, "retryInterval": 3000 }
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "retry": {
+            "maxRetries": 2,
+            "retryInterval": 3000
+          }
         }
       }
     },
@@ -548,7 +705,10 @@
       "name": "HTTP: Publish Tweet Direct",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1560, 920],
+      "position": [
+        1560,
+        920
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.twitter.com/2/tweets",
@@ -557,7 +717,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
@@ -565,8 +728,15 @@
         "jsonBody": "={{ JSON.stringify({ \"text\": $json.Content }) }}",
         "options": {
           "timeout": 30000,
-          "response": { "response": { "responseFormat": "json" } },
-          "retry": { "maxRetries": 2, "retryInterval": 3000 }
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "retry": {
+            "maxRetries": 2,
+            "retryInterval": 3000
+          }
         }
       },
       "credentials": {
@@ -581,7 +751,10 @@
       "name": "HTTP: Notify Blog Ready for Framer",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1560, 1120],
+      "position": [
+        1560,
+        1120
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
@@ -589,13 +762,18 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ \"text\": \":memo: *Blog Post Ready for Framer*\\n\\n*Title:* \" + ($json.Title || $json['Post Title'] || 'Untitled') + \"\\n\\nContent is in the Content Hub Sheet. Copy and paste into Framer CMS.\\n\\n:link: <https://docs.google.com/spreadsheets/d/\" + $env.SEEDLINK_EDITORIAL_CALENDAR_ID + \"|Open Content Hub>\" }) }}",
-        "options": { "timeout": 10000 }
+        "options": {
+          "timeout": 10000
+        }
       }
     },
     {
@@ -603,7 +781,10 @@
       "name": "Code: Twitter Thread Publisher",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1800, 920],
+      "position": [
+        1800,
+        920
+      ],
       "parameters": {
         "jsCode": "// Twitter Thread Publisher\n// Publishes a thread by chaining tweets with in_reply_to_tweet_id\n// Input: $json.Content should be a JSON array of tweet strings, or a single tweet string\n\nconst content = $json.Content;\nlet tweets = [];\n\ntry {\n  tweets = JSON.parse(content);\n} catch (e) {\n  // Single tweet, not a thread\n  tweets = [content];\n}\n\nif (!Array.isArray(tweets) || tweets.length <= 1) {\n  // Single tweet already published by the previous node\n  return [{ json: { status: 'published', type: 'single_tweet', tweetId: $json.data?.id || 'unknown' } }];\n}\n\n// For threads, the first tweet was already published.\n// We need to publish replies 2-N chained to the first tweet's ID.\nconst firstTweetId = $json.data?.id;\n\nif (!firstTweetId) {\n  return [{ json: { status: 'error', message: 'First tweet ID not found in response. Thread cannot continue.' } }];\n}\n\nconst results = [{ tweet: tweets[0], tweetId: firstTweetId, status: 'published' }];\nlet lastTweetId = firstTweetId;\n\nfor (let i = 1; i < tweets.length; i++) {\n  try {\n    const response = await this.helpers.httpRequest({\n      method: 'POST',\n      url: 'https://api.twitter.com/2/tweets',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({\n        text: tweets[i],\n        reply: { in_reply_to_tweet_id: lastTweetId }\n      }),\n      timeout: 30000\n    });\n\n    const replyId = response?.data?.id || 'unknown';\n    results.push({ tweet: tweets[i], tweetId: replyId, status: 'published' });\n    lastTweetId = replyId;\n  } catch (err) {\n    results.push({ tweet: tweets[i], status: 'failed', error: err.message });\n    break; // Stop thread on failure\n  }\n\n  // Rate limit courtesy delay (1 second between tweets)\n  await new Promise(resolve => setTimeout(resolve, 1000));\n}\n\nreturn [{ json: { status: 'thread_published', threadLength: results.length, tweets: results } }];"
       }
@@ -613,7 +794,10 @@
       "name": "Sheets: Update Published Status",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [2040, 900],
+      "position": [
+        2040,
+        900
+      ],
       "parameters": {
         "operation": "update",
         "documentId": {
@@ -633,7 +817,9 @@
             "Published URL": "={{ $json.link || $json.url || $json.data?.id || $json.tweetId || '' }}",
             "Published At": "={{ new Date().toISOString() }}"
           },
-          "matchingColumns": ["Row ID"]
+          "matchingColumns": [
+            "Row ID"
+          ]
         },
         "options": {}
       },
@@ -649,7 +835,10 @@
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
-      "position": [240, 1400],
+      "position": [
+        240,
+        1400
+      ],
       "parameters": {}
     },
     {
@@ -657,7 +846,10 @@
       "name": "HTTP: Slack Error Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [500, 1400],
+      "position": [
+        500,
+        1400
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
@@ -665,172 +857,299 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ \"text\": \":rotating_light: *SeedLink Social Publisher — Error*\\n\\n*Error Node:* \" + ($json.execution?.error?.node || 'Unknown') + \"\\n*Error:* \" + ($json.execution?.error?.message || 'No error message') + \"\\n*Execution ID:* \" + ($json.execution?.id || 'N/A') + \"\\n*Time:* \" + new Date().toISOString() }) }}",
-        "options": { "timeout": 10000 }
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":rotating_light: *SeedLink Social Publisher \u2014 Error*\\n\\n*Error Node:* \" + ($json.execution?.error?.node || 'Unknown') + \"\\n*Error:* \" + ($json.execution?.error?.message || 'No error message') + \"\\n*Execution ID:* \" + ($json.execution?.id || 'N/A') + \"\\n*Time:* \" + new Date().toISOString() }) }}",
+        "options": {
+          "timeout": 10000
+        }
       }
+    },
+    {
+      "id": "spd-auth-reject",
+      "name": "NoOp: Auth Rejected",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        460,
+        500
+      ],
+      "parameters": {}
     }
   ],
   "connections": {
     "Webhook: Content Approved": {
       "main": [
         [
-          { "node": "IF: Auth Valid", "type": "main", "index": 0 }
+          {
+            "node": "IF: Auth Valid",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "IF: Auth Valid": {
       "main": [
         [
-          { "node": "Sheets: Get Approved Post", "type": "main", "index": 0 }
+          {
+            "node": "Sheets: Get Approved Post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NoOp: Auth Rejected",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Sheets: Get Approved Post": {
       "main": [
         [
-          { "node": "Set: Format Blog Data", "type": "main", "index": 0 }
+          {
+            "node": "Set: Format Blog Data",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Set: Format Blog Data": {
       "main": [
         [
-          { "node": "Claude: Derive LinkedIn Post", "type": "main", "index": 0 },
-          { "node": "Claude: Derive Twitter Thread", "type": "main", "index": 0 },
-          { "node": "Claude: Derive Short Posts", "type": "main", "index": 0 }
+          {
+            "node": "Claude: Derive LinkedIn Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Claude: Derive Twitter Thread",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Claude: Derive Short Posts",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Claude: Derive LinkedIn Post": {
       "main": [
         [
-          { "node": "Merge: Await All Derivations", "type": "main", "index": 0 }
+          {
+            "node": "Merge: Await All Derivations",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Claude: Derive Twitter Thread": {
       "main": [
         [
-          { "node": "Merge: Await All Derivations", "type": "main", "index": 1 }
+          {
+            "node": "Merge: Await All Derivations",
+            "type": "main",
+            "index": 1
+          }
         ]
       ]
     },
     "Claude: Derive Short Posts": {
       "main": [
         [
-          { "node": "Merge: Await All Derivations", "type": "main", "index": 2 }
+          {
+            "node": "Merge: Await All Derivations",
+            "type": "main",
+            "index": 2
+          }
         ]
       ]
     },
     "Merge: Await All Derivations": {
       "main": [
         [
-          { "node": "Set: Merge Social Content", "type": "main", "index": 0 }
+          {
+            "node": "Set: Merge Social Content",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Set: Merge Social Content": {
       "main": [
         [
-          { "node": "Sheets: Save Social Content", "type": "main", "index": 0 }
+          {
+            "node": "Sheets: Save Social Content",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Sheets: Save Social Content": {
       "main": [
         [
-          { "node": "HTTP: Notify Social Derived", "type": "main", "index": 0 }
+          {
+            "node": "HTTP: Notify Social Derived",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Schedule Trigger": {
       "main": [
         [
-          { "node": "Sheets: Pull Today's Social Posts", "type": "main", "index": 0 }
+          {
+            "node": "Sheets: Pull Today's Social Posts",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Sheets: Pull Today's Social Posts": {
       "main": [
         [
-          { "node": "IF: Posts Available", "type": "main", "index": 0 }
+          {
+            "node": "IF: Posts Available",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "IF: Posts Available": {
       "main": [
         [
-          { "node": "SplitInBatches", "type": "main", "index": 0 }
+          {
+            "node": "SplitInBatches",
+            "type": "main",
+            "index": 0
+          }
         ],
         [
-          { "node": "NoOp: No Posts Today", "type": "main", "index": 0 }
+          {
+            "node": "NoOp: No Posts Today",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "SplitInBatches": {
       "main": [
         [
-          { "node": "Switch: Platform", "type": "main", "index": 0 }
+          {
+            "node": "Switch: Platform",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Switch: Platform": {
       "main": [
         [
-          { "node": "HTTP: Publish LinkedIn Direct", "type": "main", "index": 0 }
+          {
+            "node": "HTTP: Publish LinkedIn Direct",
+            "type": "main",
+            "index": 0
+          }
         ],
         [
-          { "node": "HTTP: Publish Tweet Direct", "type": "main", "index": 0 }
+          {
+            "node": "HTTP: Publish Tweet Direct",
+            "type": "main",
+            "index": 0
+          }
         ],
         [
-          { "node": "HTTP: Notify Blog Ready for Framer", "type": "main", "index": 0 }
+          {
+            "node": "HTTP: Notify Blog Ready for Framer",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "HTTP: Publish LinkedIn Direct": {
       "main": [
         [
-          { "node": "Sheets: Update Published Status", "type": "main", "index": 0 }
+          {
+            "node": "Sheets: Update Published Status",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "HTTP: Publish Tweet Direct": {
       "main": [
         [
-          { "node": "Code: Twitter Thread Publisher", "type": "main", "index": 0 }
+          {
+            "node": "Code: Twitter Thread Publisher",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Code: Twitter Thread Publisher": {
       "main": [
         [
-          { "node": "Sheets: Update Published Status", "type": "main", "index": 0 }
+          {
+            "node": "Sheets: Update Published Status",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "HTTP: Notify Blog Ready for Framer": {
       "main": [
         [
-          { "node": "Sheets: Update Published Status", "type": "main", "index": 0 }
+          {
+            "node": "Sheets: Update Published Status",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Sheets: Update Published Status": {
       "main": [
         [
-          { "node": "SplitInBatches", "type": "main", "index": 0 }
+          {
+            "node": "SplitInBatches",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
     "Error Trigger": {
       "main": [
         [
-          { "node": "HTTP: Slack Error Alert", "type": "main", "index": 0 }
+          {
+            "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     }
@@ -841,11 +1160,19 @@
     "callerPolicy": "workflowsFromSameOwner"
   },
   "tags": [
-    { "name": "seedlink" },
-    { "name": "production" },
-    { "name": "white-label" }
+    {
+      "name": "seedlink"
+    },
+    {
+      "name": "production"
+    },
+    {
+      "name": "white-label"
+    }
   ],
   "pinData": {},
   "versionId": "2",
-  "meta": { "instanceId": "" }
+  "meta": {
+    "instanceId": ""
+  }
 }

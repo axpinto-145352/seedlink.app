@@ -184,6 +184,53 @@ The orchestrator auto-sends the Lite Support offer email and updates the Sales P
 
 ---
 
+## Lite Support Scope Definition
+
+**Pricing:** $250/month (Content), $300/month (Content + Outreach), $350/month (Full Suite)
+
+**Included (up to 5 hours/month):**
+- Keyword refreshes and target keyword updates
+- Social post sequence tuning (CTA adjustments, format changes)
+- Monthly performance review (analytics check + 1-paragraph summary)
+- Voice Profile refinements based on client feedback
+- Agent prompt threshold adjustments
+- Workflow error investigation and resolution
+- Google Sheets maintenance (stuck rows, formula fixes)
+
+**Not included (billable as overage at $75/hour):**
+- New workflow builds or major modifications
+- New content pillar setup
+- CMS migration or new platform integrations
+- Full voice profile rebuild (use $400 voice workshop change order)
+- Custom analytics dashboards or reporting
+- Training sessions beyond the initial handoff call
+- Work exceeding 5 hours in a calendar month
+
+**Overage process:** VV notifies client when approaching 5-hour cap. Work beyond 5 hours requires written client approval and is billed at $75/hour on the next month's invoice.
+
+---
+
+## Content Pipeline Failure Procedures
+
+### When Content Fails After 2 Revision Cycles
+
+If the multi-agent review rejects content after 2 revision attempts:
+
+1. Content Hub row will have Status = "Needs Manual Review"
+2. **Read the agent feedback** in the Review Notes column — identify which agent(s) scored lowest and why
+3. **Assess the root cause:**
+   - **Topic too vague/broad:** Rewrite the Topic and Angle columns with more specificity, add target keyword, set Status back to "Queued"
+   - **Voice Profile miscalibration:** Check Voice Profile tab — compare against client's actual writing. Re-run calibration if needed.
+   - **Impossible topic:** Some topics can't be written well by AI (highly technical, requires proprietary knowledge). Flag for manual writing.
+   - **Prompt issue:** If multiple topics fail on the same agent, the prompt may need tuning — log for monthly prompt optimization.
+4. **Resolution options:**
+   - Option A: Fix the brief and re-queue (most common)
+   - Option B: Manually edit the AI draft to resolve the flagged issues, then set Status to "Ready for Review" to bypass the pipeline
+   - Option C: Write the post manually and paste into Draft Content, set Status to "Approved"
+5. **Log the failure** in Notes column with the date, cause, and resolution for future reference
+
+---
+
 ## Roles & Responsibilities
 
 ### SeedLink Responsibilities
