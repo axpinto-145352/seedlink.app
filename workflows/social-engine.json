@@ -6,22 +6,35 @@
       "name": "Webhook: Content Approved",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "parameters": {
         "path": "seedlink-social-derive",
         "httpMethod": "POST",
         "responseMode": "onReceived",
         "responseData": "allEntries",
-        "options": {}
+        "options": {},
+        "authentication": "headerAuth"
       },
-      "webhookId": "seedlink-social-derive"
+      "webhookId": "seedlink-social-derive",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "seedlink_webhook_auth",
+          "name": "seedlink_webhook_auth"
+        }
+      }
     },
     {
       "id": "sheets-get-approved-post",
       "name": "Sheets: Get Approved Post",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [500, 300],
+      "position": [
+        720,
+        300
+      ],
       "parameters": {
         "operation": "read",
         "documentId": {
@@ -60,7 +73,10 @@
       "name": "Set: Format Blog Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [760, 300],
+      "position": [
+        980,
+        300
+      ],
       "parameters": {
         "mode": "manual",
         "duplicateItem": false,
@@ -106,7 +122,10 @@
       "name": "Claude: Derive LinkedIn Post",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1060, 100],
+      "position": [
+        1280,
+        100
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
@@ -146,7 +165,10 @@
       "name": "Claude: Derive Twitter Thread",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1060, 340],
+      "position": [
+        1280,
+        340
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
@@ -186,7 +208,10 @@
       "name": "Claude: Derive Short Posts",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1060, 580],
+      "position": [
+        1280,
+        580
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
@@ -226,7 +251,10 @@
       "name": "Merge: Await All Derivations",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
-      "position": [1220, 340],
+      "position": [
+        1440,
+        340
+      ],
       "parameters": {
         "mode": "append",
         "options": {
@@ -239,7 +267,10 @@
       "name": "Set: Merge Social Content",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [1380, 300],
+      "position": [
+        1600,
+        300
+      ],
       "parameters": {
         "mode": "manual",
         "duplicateItem": false,
@@ -315,7 +346,10 @@
       "name": "Sheets: Save Social Content",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1660, 300],
+      "position": [
+        1880,
+        300
+      ],
       "parameters": {
         "operation": "update",
         "documentId": {
@@ -339,7 +373,9 @@
             "Short Posts Publish Date": "={{ $json.shortPostsPublishDate }}",
             "Social Status": "Ready for Review"
           },
-          "matchingColumns": ["Post ID"]
+          "matchingColumns": [
+            "Post ID"
+          ]
         },
         "options": {}
       },
@@ -355,7 +391,10 @@
       "name": "HTTP: Notify Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1920, 300],
+      "position": [
+        2140,
+        300
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
@@ -371,7 +410,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ \"text\": \":mega: *SeedLink Social Engine — Content Derived*\\n\\n*Blog:* \" + $json.blogTitle + \"\\n*Post ID:* \" + $json.postId + \"\\n\\n:white_check_mark: LinkedIn post derived (publish: \" + $json.linkedinPublishDate + \")\\n:white_check_mark: Twitter thread derived (publish: \" + $json.twitterPublishDate + \")\\n:white_check_mark: Short posts derived (publish: \" + $json.shortPostsPublishDate + \")\\n\\n*Social Status:* Ready for Review\\n\\nPlease review the social content in the Content Hub and update status to 'Scheduled' when approved.\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":mega: *SeedLink Social Engine \u2014 Content Derived*\\n\\n*Blog:* \" + $json.blogTitle + \"\\n*Post ID:* \" + $json.postId + \"\\n\\n:white_check_mark: LinkedIn post derived (publish: \" + $json.linkedinPublishDate + \")\\n:white_check_mark: Twitter thread derived (publish: \" + $json.twitterPublishDate + \")\\n:white_check_mark: Short posts derived (publish: \" + $json.shortPostsPublishDate + \")\\n\\n*Social Status:* Ready for Review\\n\\nPlease review the social content in the Content Hub and update status to 'Scheduled' when approved.\" }) }}",
         "options": {
           "timeout": 10000
         }
@@ -382,7 +421,10 @@
       "name": "Schedule Trigger",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [240, 900],
+      "position": [
+        240,
+        900
+      ],
       "parameters": {
         "rule": {
           "interval": [
@@ -399,7 +441,10 @@
       "name": "Sheets: Pull Today's Social Posts",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [500, 900],
+      "position": [
+        720,
+        900
+      ],
       "parameters": {
         "operation": "read",
         "documentId": {
@@ -442,7 +487,10 @@
       "name": "IF: Posts Available",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [760, 900],
+      "position": [
+        980,
+        900
+      ],
       "parameters": {
         "conditions": {
           "options": {
@@ -471,7 +519,10 @@
       "name": "HTTP: No Posts Today",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1060, 1100],
+      "position": [
+        1280,
+        1100
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
@@ -487,7 +538,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ \"text\": \":calendar: *SeedLink Social Engine — No Posts Today*\\n\\nNo social posts scheduled for \" + new Date().toISOString().split('T')[0] + \". The Social Queue has no entries with today's date and status 'Scheduled'.\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":calendar: *SeedLink Social Engine \u2014 No Posts Today*\\n\\nNo social posts scheduled for \" + new Date().toISOString().split('T')[0] + \". The Social Queue has no entries with today's date and status 'Scheduled'.\" }) }}",
         "options": {
           "timeout": 10000
         }
@@ -498,7 +549,10 @@
       "name": "SplitInBatches",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
-      "position": [1060, 900],
+      "position": [
+        1280,
+        900
+      ],
       "parameters": {
         "batchSize": 1,
         "options": {}
@@ -509,7 +563,10 @@
       "name": "Switch: Platform",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
-      "position": [1320, 900],
+      "position": [
+        1540,
+        900
+      ],
       "parameters": {
         "rules": {
           "values": [
@@ -591,7 +648,10 @@
       "name": "HTTP: Publish LinkedIn to Buffer",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1620, 720],
+      "position": [
+        1840,
+        720
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.bufferapp.com/1/updates/create.json",
@@ -630,7 +690,10 @@
       "name": "HTTP: Publish Twitter to Buffer",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1620, 920],
+      "position": [
+        1840,
+        920
+      ],
       "parameters": {
         "method": "POST",
         "url": "https://api.bufferapp.com/1/updates/create.json",
@@ -669,7 +732,10 @@
       "name": "HTTP: Notify Blog Ready for Framer",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1620, 1120],
+      "position": [
+        1840,
+        1120
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
@@ -696,7 +762,10 @@
       "name": "Sheets: Update Published Status",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1920, 900],
+      "position": [
+        2140,
+        900
+      ],
       "parameters": {
         "operation": "update",
         "documentId": {
@@ -716,7 +785,9 @@
             "Published URL": "={{ $json.link || $json.url || $json.updates?.[0]?.service_link || '' }}",
             "Published At": "={{ new Date().toISOString() }}"
           },
-          "matchingColumns": ["Row ID"],
+          "matchingColumns": [
+            "Row ID"
+          ],
           "dataMode": "autoMapInputData"
         },
         "options": {}
@@ -733,7 +804,10 @@
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
-      "position": [240, 1300],
+      "position": [
+        240,
+        1300
+      ],
       "parameters": {}
     },
     {
@@ -741,7 +815,10 @@
       "name": "HTTP: Slack Error Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [500, 1300],
+      "position": [
+        720,
+        1300
+      ],
       "parameters": {
         "method": "POST",
         "url": "={{$env.NOTIFICATION_SLACK_WEBHOOK}}",
@@ -757,11 +834,54 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ \"text\": \":rotating_light: *SeedLink Social Engine — Error Alert*\\n\\n*Workflow:* SeedLink - Social Engine\\n*Error Node:* \" + ($json.execution?.error?.node || 'Unknown') + \"\\n*Error Message:* \" + ($json.execution?.error?.message || 'No error message available') + \"\\n*Execution ID:* \" + ($json.execution?.id || 'N/A') + \"\\n*Timestamp:* \" + new Date().toISOString() + \"\\n\\nPlease check the n8n execution log for details.\" }) }}",
+        "jsonBody": "={{ JSON.stringify({ \"text\": \":rotating_light: *SeedLink Social Engine \u2014 Error Alert*\\n\\n*Workflow:* SeedLink - Social Engine\\n*Error Node:* \" + ($json.execution?.error?.node || 'Unknown') + \"\\n*Error Message:* \" + ($json.execution?.error?.message || 'No error message available') + \"\\n*Execution ID:* \" + ($json.execution?.id || 'N/A') + \"\\n*Timestamp:* \" + new Date().toISOString() + \"\\n\\nPlease check the n8n execution log for details.\" }) }}",
         "options": {
           "timeout": 10000
         }
       }
+    },
+    {
+      "id": "se-auth-check",
+      "name": "IF: Webhook Auth Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-webhook-secret",
+              "leftValue": "={{ $json.headers?.['x-webhook-secret'] || $json.body?.webhook_secret }}",
+              "rightValue": "={{$env.SEEDLINK_WEBHOOK_SECRET}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "se-auth-reject",
+      "name": "NoOp: Auth Rejected",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        460,
+        500
+      ],
+      "parameters": {}
     }
   ],
   "connections": {
@@ -769,7 +889,7 @@
       "main": [
         [
           {
-            "node": "Sheets: Get Approved Post",
+            "node": "IF: Webhook Auth Valid",
             "type": "main",
             "index": 0
           }
@@ -999,6 +1119,24 @@
         [
           {
             "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Webhook Auth Valid": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Get Approved Post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NoOp: Auth Rejected",
             "type": "main",
             "index": 0
           }

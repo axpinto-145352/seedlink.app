@@ -6,25 +6,42 @@
         "httpMethod": "POST",
         "path": "voice-profile-generate",
         "responseMode": "responseNode",
-        "options": {}
+        "options": {},
+        "authentication": "headerAuth"
       },
       "id": "vp-0001-4000-8000-000000000001",
       "name": "Webhook: Voice Profile Request",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [250, 300],
-      "webhookId": "voice-profile-generate"
+      "position": [
+        250,
+        300
+      ],
+      "webhookId": "voice-profile-generate",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "seedlink_webhook_auth",
+          "name": "seedlink_webhook_auth"
+        }
+      }
     },
     {
       "parameters": {
         "conditions": {
-          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
           "conditions": [
             {
               "id": "cond-has-content",
               "leftValue": "={{$json.body.content_samples && $json.body.content_samples.length > 0}}",
               "rightValue": true,
-              "operator": { "type": "boolean", "operation": "true" }
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
             }
           ],
           "combinator": "and"
@@ -35,7 +52,10 @@
       "name": "IF: Has Existing Content",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [500, 300]
+      "position": [
+        720,
+        300
+      ]
     },
     {
       "parameters": {
@@ -44,21 +64,35 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
-            { "name": "anthropic-version", "value": "2023-06-01" },
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":2048,\"system\":\"You are a brand voice analyst. Analyze 3-5 existing content samples from a client and produce a structured Voice Profile.\\n\\nAnalysis Process:\\n1. Read all samples twice. First pass: overall impression. Second pass: extract specific patterns.\\n2. Extract quantitative patterns: avg sentence length (short <12, medium 12-20, long 20+), paragraph length, question frequency, first-person vs third-person ratio, jargon density, metaphor frequency.\\n3. Extract qualitative patterns: opening style, closing style, emotional register, humor usage, complexity handling.\\n4. Identify signature patterns — recurring phrases, structural habits, distinctive word choices.\\n5. Reconcile stated vs revealed voice — if questionnaire says 'Professional' but content is casual, trust content. Note discrepancy.\\n6. Check consistency across samples. Note platform-specific variation.\\n\\nOutput ONLY a JSON object with this exact structure — no markdown, no explanation:\\n{\\\"tone\\\": \\\"2-3 descriptors\\\", \\\"formality\\\": \\\"X/5 (description)\\\", \\\"energy\\\": \\\"X/5 (description)\\\", \\\"humor\\\": \\\"specific guidance\\\", \\\"perspective\\\": \\\"primary mode\\\", \\\"sentence_style\\\": \\\"patterns\\\", \\\"paragraph_length\\\": \\\"pattern\\\", \\\"vocabulary\\\": \\\"level\\\", \\\"person\\\": \\\"preference\\\", \\\"reference_blend\\\": \\\"X meets Y\\\", \\\"opening_style\\\": \\\"how to open\\\", \\\"cta_style\\\": \\\"how to reference products\\\", \\\"closing_style\\\": \\\"how to close\\\", \\\"always_use\\\": \\\"terms\\\", \\\"never_use\\\": \\\"banned words\\\", \\\"sensitive_topics\\\": \\\"areas to avoid\\\", \\\"sample_opening_1\\\": \\\"example\\\", \\\"sample_opening_2\\\": \\\"example\\\", \\\"sample_opening_3\\\": \\\"example\\\", \\\"calibration_notes\\\": \\\"confidence and gaps\\\"}\\n\\nDo NOT produce a generic profile. Every field must reflect THIS client's content. Do NOT default to SeedLink's brand voice. Keep total profile under 600 words.\",\"messages\":[{\"role\":\"user\",\"content\":\"Analyze the following content samples and produce a Voice Profile.\\n\\nClient: \"+$json.body.client_name+\"\\nDescription: \"+ ($json.body.company_description || '')+\"\\nTarget Audience: \"+($json.body.target_audience || '')+\"\\nStated Voice: \"+($json.body.stated_voice || '')+\"\\nWords to Use: \"+($json.body.words_to_use || '')+\"\\nWords to Avoid: \"+($json.body.words_to_avoid || '')+\"\\n\\nContent Samples:\\n\"+JSON.stringify($json.body.content_samples)}]}) }}",
-        "options": { "timeout": 120000 }
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":2048,\"system\":\"You are a brand voice analyst. Analyze 3-5 existing content samples from a client and produce a structured Voice Profile.\\n\\nAnalysis Process:\\n1. Read all samples twice. First pass: overall impression. Second pass: extract specific patterns.\\n2. Extract quantitative patterns: avg sentence length (short <12, medium 12-20, long 20+), paragraph length, question frequency, first-person vs third-person ratio, jargon density, metaphor frequency.\\n3. Extract qualitative patterns: opening style, closing style, emotional register, humor usage, complexity handling.\\n4. Identify signature patterns \u2014 recurring phrases, structural habits, distinctive word choices.\\n5. Reconcile stated vs revealed voice \u2014 if questionnaire says 'Professional' but content is casual, trust content. Note discrepancy.\\n6. Check consistency across samples. Note platform-specific variation.\\n\\nOutput ONLY a JSON object with this exact structure \u2014 no markdown, no explanation:\\n{\\\"tone\\\": \\\"2-3 descriptors\\\", \\\"formality\\\": \\\"X/5 (description)\\\", \\\"energy\\\": \\\"X/5 (description)\\\", \\\"humor\\\": \\\"specific guidance\\\", \\\"perspective\\\": \\\"primary mode\\\", \\\"sentence_style\\\": \\\"patterns\\\", \\\"paragraph_length\\\": \\\"pattern\\\", \\\"vocabulary\\\": \\\"level\\\", \\\"person\\\": \\\"preference\\\", \\\"reference_blend\\\": \\\"X meets Y\\\", \\\"opening_style\\\": \\\"how to open\\\", \\\"cta_style\\\": \\\"how to reference products\\\", \\\"closing_style\\\": \\\"how to close\\\", \\\"always_use\\\": \\\"terms\\\", \\\"never_use\\\": \\\"banned words\\\", \\\"sensitive_topics\\\": \\\"areas to avoid\\\", \\\"sample_opening_1\\\": \\\"example\\\", \\\"sample_opening_2\\\": \\\"example\\\", \\\"sample_opening_3\\\": \\\"example\\\", \\\"calibration_notes\\\": \\\"confidence and gaps\\\"}\\n\\nDo NOT produce a generic profile. Every field must reflect THIS client's content. Do NOT default to SeedLink's brand voice. Keep total profile under 600 words.\",\"messages\":[{\"role\":\"user\",\"content\":\"Analyze the following content samples and produce a Voice Profile.\\n\\nClient: \"+$json.body.client_name+\"\\nDescription: \"+ ($json.body.company_description || '')+\"\\nTarget Audience: \"+($json.body.target_audience || '')+\"\\nStated Voice: \"+($json.body.stated_voice || '')+\"\\nWords to Use: \"+($json.body.words_to_use || '')+\"\\nWords to Avoid: \"+($json.body.words_to_avoid || '')+\"\\n\\nContent Samples:\\n\"+JSON.stringify($json.body.content_samples)}]}) }}",
+        "options": {
+          "timeout": 120000
+        }
       },
       "id": "vp-0003-4000-8000-000000000003",
       "name": "Claude: Extract Voice",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [750, 200]
+      "position": [
+        970,
+        200
+      ]
     },
     {
       "parameters": {
@@ -67,21 +101,35 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "x-api-key", "value": "={{$env.ANTHROPIC_API_KEY}}" },
-            { "name": "anthropic-version", "value": "2023-06-01" },
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "x-api-key",
+              "value": "={{$env.ANTHROPIC_API_KEY}}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":2048,\"system\":\"You are a brand voice analyst. Take structured questionnaire responses from a client with no existing content and produce a Voice Profile.\\n\\nProcess:\\n1. Extract natural language patterns from quick-fire answers — sentence length, vocabulary, use of questions, metaphor, emotional register.\\n2. Map preference pairs to concrete writing rules — don't just note 'casual'; specify what casual means (contractions, fragments OK, rhetorical questions encouraged).\\n3. Cross-reference with archetype — use selected reference voice to fill gaps.\\n4. If voice recording transcript present, weight it heavily — spoken cadence reveals more than written answers.\\n5. Identify contradictions — if 'Professional' selected but quick-fire answers are casual, trust quick-fire (revealed > stated).\\n\\nArchetype reference:\\n- Paul Graham: essay-style, first-principles, contrarian\\n- Sahil Lavingia: casual, transparent, founder-diary\\n- Lenny Rachitsky: structured, numbered lists, frameworks\\n- Alex Hormozi: direct, high-energy, sales-oriented\\n- Julie Zhuo: warm, reflective, design-thinking\\n- Naval Ravikant: aphoristic, philosophical, minimalist\\n- Seth Godin: punchy, short posts, provocative questions\\n- Brené Brown: empathetic, vulnerability-forward, research-backed\\n\\nOutput ONLY a JSON object with this exact structure — no markdown, no explanation:\\n{\\\"tone\\\": \\\"2-3 descriptors\\\", \\\"formality\\\": \\\"X/5 (description)\\\", \\\"energy\\\": \\\"X/5 (description)\\\", \\\"humor\\\": \\\"specific guidance\\\", \\\"perspective\\\": \\\"primary mode\\\", \\\"sentence_style\\\": \\\"patterns\\\", \\\"paragraph_length\\\": \\\"pattern\\\", \\\"vocabulary\\\": \\\"level\\\", \\\"person\\\": \\\"preference\\\", \\\"reference_blend\\\": \\\"X meets Y\\\", \\\"opening_style\\\": \\\"how to open\\\", \\\"cta_style\\\": \\\"how to reference products\\\", \\\"closing_style\\\": \\\"how to close\\\", \\\"always_use\\\": \\\"terms\\\", \\\"never_use\\\": \\\"banned words\\\", \\\"sensitive_topics\\\": \\\"areas to avoid\\\", \\\"sample_opening_1\\\": \\\"example\\\", \\\"sample_opening_2\\\": \\\"example\\\", \\\"sample_opening_3\\\": \\\"example\\\", \\\"calibration_notes\\\": \\\"confidence and gaps\\\"}\\n\\nDo NOT produce a generic profile. Every field must reflect THIS client's input. Do NOT default to SeedLink's brand voice. Keep total profile under 600 words.\",\"messages\":[{\"role\":\"user\",\"content\":\"Generate a Voice Profile from these questionnaire responses.\\n\\nClient: \"+$json.body.client_name+\"\\nDescription: \"+($json.body.company_description || '')+\"\\nTarget Audience: \"+($json.body.target_audience || '')+\"\\n\\nVoice Preferences (A/B pairs):\\n\"+JSON.stringify($json.body.preferences || {})+\"\\n\\nReference Voices: \"+JSON.stringify($json.body.reference_voices || [])+\"\\nArchetype: \"+($json.body.archetype || '')+\"\\n\\nQuick-Fire Answers:\\n\"+JSON.stringify($json.body.quick_fire || {})+\"\\n\\nVoice Transcript: \"+($json.body.voice_transcript || 'Not provided')}]}) }}",
-        "options": { "timeout": 120000 }
+        "jsonBody": "={{ JSON.stringify({\"model\":\"claude-sonnet-4-20250514\",\"max_tokens\":2048,\"system\":\"You are a brand voice analyst. Take structured questionnaire responses from a client with no existing content and produce a Voice Profile.\\n\\nProcess:\\n1. Extract natural language patterns from quick-fire answers \u2014 sentence length, vocabulary, use of questions, metaphor, emotional register.\\n2. Map preference pairs to concrete writing rules \u2014 don't just note 'casual'; specify what casual means (contractions, fragments OK, rhetorical questions encouraged).\\n3. Cross-reference with archetype \u2014 use selected reference voice to fill gaps.\\n4. If voice recording transcript present, weight it heavily \u2014 spoken cadence reveals more than written answers.\\n5. Identify contradictions \u2014 if 'Professional' selected but quick-fire answers are casual, trust quick-fire (revealed > stated).\\n\\nArchetype reference:\\n- Paul Graham: essay-style, first-principles, contrarian\\n- Sahil Lavingia: casual, transparent, founder-diary\\n- Lenny Rachitsky: structured, numbered lists, frameworks\\n- Alex Hormozi: direct, high-energy, sales-oriented\\n- Julie Zhuo: warm, reflective, design-thinking\\n- Naval Ravikant: aphoristic, philosophical, minimalist\\n- Seth Godin: punchy, short posts, provocative questions\\n- Bren\u00e9 Brown: empathetic, vulnerability-forward, research-backed\\n\\nOutput ONLY a JSON object with this exact structure \u2014 no markdown, no explanation:\\n{\\\"tone\\\": \\\"2-3 descriptors\\\", \\\"formality\\\": \\\"X/5 (description)\\\", \\\"energy\\\": \\\"X/5 (description)\\\", \\\"humor\\\": \\\"specific guidance\\\", \\\"perspective\\\": \\\"primary mode\\\", \\\"sentence_style\\\": \\\"patterns\\\", \\\"paragraph_length\\\": \\\"pattern\\\", \\\"vocabulary\\\": \\\"level\\\", \\\"person\\\": \\\"preference\\\", \\\"reference_blend\\\": \\\"X meets Y\\\", \\\"opening_style\\\": \\\"how to open\\\", \\\"cta_style\\\": \\\"how to reference products\\\", \\\"closing_style\\\": \\\"how to close\\\", \\\"always_use\\\": \\\"terms\\\", \\\"never_use\\\": \\\"banned words\\\", \\\"sensitive_topics\\\": \\\"areas to avoid\\\", \\\"sample_opening_1\\\": \\\"example\\\", \\\"sample_opening_2\\\": \\\"example\\\", \\\"sample_opening_3\\\": \\\"example\\\", \\\"calibration_notes\\\": \\\"confidence and gaps\\\"}\\n\\nDo NOT produce a generic profile. Every field must reflect THIS client's input. Do NOT default to SeedLink's brand voice. Keep total profile under 600 words.\",\"messages\":[{\"role\":\"user\",\"content\":\"Generate a Voice Profile from these questionnaire responses.\\n\\nClient: \"+$json.body.client_name+\"\\nDescription: \"+($json.body.company_description || '')+\"\\nTarget Audience: \"+($json.body.target_audience || '')+\"\\n\\nVoice Preferences (A/B pairs):\\n\"+JSON.stringify($json.body.preferences || {})+\"\\n\\nReference Voices: \"+JSON.stringify($json.body.reference_voices || [])+\"\\nArchetype: \"+($json.body.archetype || '')+\"\\n\\nQuick-Fire Answers:\\n\"+JSON.stringify($json.body.quick_fire || {})+\"\\n\\nVoice Transcript: \"+($json.body.voice_transcript || 'Not provided')}]}) }}",
+        "options": {
+          "timeout": 120000
+        }
       },
       "id": "vp-0004-4000-8000-000000000004",
       "name": "Claude: Build Voice",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [750, 450]
+      "position": [
+        970,
+        450
+      ]
     },
     {
       "parameters": {
@@ -89,10 +137,30 @@
         "duplicateItem": false,
         "assignments": {
           "assignments": [
-            { "id": "m1", "name": "claude_response", "value": "={{$json.content[0].text}}", "type": "string" },
-            { "id": "m2", "name": "source", "value": "Voice Extractor", "type": "string" },
-            { "id": "m3", "name": "client_name", "value": "={{$('Webhook: Voice Profile Request').item.json.body.client_name}}", "type": "string" },
-            { "id": "m4", "name": "sheet_id", "value": "={{$('Webhook: Voice Profile Request').item.json.body.sheet_id || $env.SEEDLINK_EDITORIAL_CALENDAR_ID}}", "type": "string" }
+            {
+              "id": "m1",
+              "name": "claude_response",
+              "value": "={{$json.content[0].text}}",
+              "type": "string"
+            },
+            {
+              "id": "m2",
+              "name": "source",
+              "value": "Voice Extractor",
+              "type": "string"
+            },
+            {
+              "id": "m3",
+              "name": "client_name",
+              "value": "={{$('Webhook: Voice Profile Request').item.json.body.client_name}}",
+              "type": "string"
+            },
+            {
+              "id": "m4",
+              "name": "sheet_id",
+              "value": "={{$('Webhook: Voice Profile Request').item.json.body.sheet_id || $env.SEEDLINK_EDITORIAL_CALENDAR_ID}}",
+              "type": "string"
+            }
           ]
         },
         "options": {}
@@ -101,7 +169,10 @@
       "name": "Set: Tag Extractor Result",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [1000, 200]
+      "position": [
+        1220,
+        200
+      ]
     },
     {
       "parameters": {
@@ -109,10 +180,30 @@
         "duplicateItem": false,
         "assignments": {
           "assignments": [
-            { "id": "m1", "name": "claude_response", "value": "={{$json.content[0].text}}", "type": "string" },
-            { "id": "m2", "name": "source", "value": "Voice Builder", "type": "string" },
-            { "id": "m3", "name": "client_name", "value": "={{$('Webhook: Voice Profile Request').item.json.body.client_name}}", "type": "string" },
-            { "id": "m4", "name": "sheet_id", "value": "={{$('Webhook: Voice Profile Request').item.json.body.sheet_id || $env.SEEDLINK_EDITORIAL_CALENDAR_ID}}", "type": "string" }
+            {
+              "id": "m1",
+              "name": "claude_response",
+              "value": "={{$json.content[0].text}}",
+              "type": "string"
+            },
+            {
+              "id": "m2",
+              "name": "source",
+              "value": "Voice Builder",
+              "type": "string"
+            },
+            {
+              "id": "m3",
+              "name": "client_name",
+              "value": "={{$('Webhook: Voice Profile Request').item.json.body.client_name}}",
+              "type": "string"
+            },
+            {
+              "id": "m4",
+              "name": "sheet_id",
+              "value": "={{$('Webhook: Voice Profile Request').item.json.body.sheet_id || $env.SEEDLINK_EDITORIAL_CALENDAR_ID}}",
+              "type": "string"
+            }
           ]
         },
         "options": {}
@@ -121,7 +212,10 @@
       "name": "Set: Tag Builder Result",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [1000, 450]
+      "position": [
+        1220,
+        450
+      ]
     },
     {
       "parameters": {
@@ -131,7 +225,10 @@
       "name": "Code: Parse Voice Profile",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1250, 300]
+      "position": [
+        1470,
+        300
+      ]
     },
     {
       "parameters": {
@@ -141,7 +238,10 @@
       "name": "Code: Split Rows",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1500, 200]
+      "position": [
+        1720,
+        200
+      ]
     },
     {
       "parameters": {
@@ -163,7 +263,10 @@
       "name": "Sheets: Clear Old Profile",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1500, 400],
+      "position": [
+        1720,
+        400
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
@@ -194,7 +297,10 @@
       "name": "Sheets: Write Voice Profile",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1750, 300],
+      "position": [
+        1970,
+        300
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
@@ -209,31 +315,44 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\"text\":\":art: *Voice Profile Generated*\\n\\n*Client:* \"+$('Code: Parse Voice Profile').item.json.client_name+\"\\n*Source:* \"+$('Code: Parse Voice Profile').item.json.source+\"\\n*Summary:* \"+$('Code: Parse Voice Profile').item.json.profile_summary+\"\\n*Status:* Calibrating — will lock after 2 rounds at ≥ 4/5\\n\\n\"+($('Code: Parse Voice Profile').item.json.calibration_notes ? '*Calibration Notes:* '+$('Code: Parse Voice Profile').item.json.calibration_notes : '')+\"\\n\\n:link: <https://docs.google.com/spreadsheets/d/\"+$('Code: Parse Voice Profile').item.json.sheet_id+\"|Open Google Sheet>\"}) }}",
-        "options": { "timeout": 10000 }
+        "jsonBody": "={{ JSON.stringify({\"text\":\":art: *Voice Profile Generated*\\n\\n*Client:* \"+$('Code: Parse Voice Profile').item.json.client_name+\"\\n*Source:* \"+$('Code: Parse Voice Profile').item.json.source+\"\\n*Summary:* \"+$('Code: Parse Voice Profile').item.json.profile_summary+\"\\n*Status:* Calibrating \u2014 will lock after 2 rounds at \u2265 4/5\\n\\n\"+($('Code: Parse Voice Profile').item.json.calibration_notes ? '*Calibration Notes:* '+$('Code: Parse Voice Profile').item.json.calibration_notes : '')+\"\\n\\n:link: <https://docs.google.com/spreadsheets/d/\"+$('Code: Parse Voice Profile').item.json.sheet_id+\"|Open Google Sheet>\"}) }}",
+        "options": {
+          "timeout": 10000
+        }
       },
       "id": "vp-0011-4000-8000-000000000011",
       "name": "HTTP: Notify Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2000, 200]
+      "position": [
+        2220,
+        200
+      ]
     },
     {
       "parameters": {
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify({\"success\": true, \"client\": $('Code: Parse Voice Profile').item.json.client_name, \"source\": $('Code: Parse Voice Profile').item.json.source, \"profile_summary\": $('Code: Parse Voice Profile').item.json.profile_summary, \"calibration_status\": \"Calibrating\", \"message\": \"Voice Profile written to Google Sheet. Status: Calibrating.\"}) }}",
-        "options": { "responseCode": 200 }
+        "options": {
+          "responseCode": 200
+        }
       },
       "id": "vp-0012-4000-8000-000000000012",
       "name": "Respond: Success",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [2250, 300]
+      "position": [
+        2470,
+        300
+      ]
     },
     {
       "parameters": {},
@@ -241,7 +360,10 @@
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
-      "position": [250, 600]
+      "position": [
+        250,
+        600
+      ]
     },
     {
       "parameters": {
@@ -250,48 +372,165 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "content-type", "value": "application/json" }
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\"text\":\":rotating_light: *Voice Profile Generator — Error*\\n\\n*Error Node:* \"+($json.execution?.error?.node || 'Unknown')+\"\\n*Error:* \"+($json.execution?.error?.message || 'Unknown error')+\"\\n*Execution ID:* \"+($json.execution?.id || 'N/A')}) }}",
-        "options": { "timeout": 10000 }
+        "jsonBody": "={{ JSON.stringify({\"text\":\":rotating_light: *Voice Profile Generator \u2014 Error*\\n\\n*Error Node:* \"+($json.execution?.error?.node || 'Unknown')+\"\\n*Error:* \"+($json.execution?.error?.message || 'Unknown error')+\"\\n*Execution ID:* \"+($json.execution?.id || 'N/A')}) }}",
+        "options": {
+          "timeout": 10000
+        }
       },
       "id": "vp-0014-4000-8000-000000000014",
       "name": "HTTP: Slack Error Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [500, 600]
+      "position": [
+        720,
+        600
+      ]
+    },
+    {
+      "id": "vp-auth-check",
+      "name": "IF: Webhook Auth Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        470,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-webhook-secret",
+              "leftValue": "={{ $json.headers?.['x-webhook-secret'] || $json.body?.webhook_secret }}",
+              "rightValue": "={{$env.SEEDLINK_WEBHOOK_SECRET}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "vp-auth-reject",
+      "name": "Respond: 401 Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        470,
+        500
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"error\": \"Unauthorized\", \"message\": \"Invalid or missing webhook secret\"}",
+        "options": {
+          "responseCode": 401
+        }
+      }
     }
   ],
   "connections": {
     "Webhook: Voice Profile Request": {
-      "main": [[{ "node": "IF: Has Existing Content", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "IF: Webhook Auth Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "IF: Has Existing Content": {
       "main": [
-        [{ "node": "Claude: Extract Voice", "type": "main", "index": 0 }],
-        [{ "node": "Claude: Build Voice", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Claude: Extract Voice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Claude: Build Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Claude: Extract Voice": {
-      "main": [[{ "node": "Set: Tag Extractor Result", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Set: Tag Extractor Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Claude: Build Voice": {
-      "main": [[{ "node": "Set: Tag Builder Result", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Set: Tag Builder Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Set: Tag Extractor Result": {
-      "main": [[{ "node": "Code: Parse Voice Profile", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Code: Parse Voice Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Set: Tag Builder Result": {
-      "main": [[{ "node": "Code: Parse Voice Profile", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Code: Parse Voice Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Code: Parse Voice Profile": {
       "main": [
         [
-          { "node": "Code: Split Rows", "type": "main", "index": 0 },
-          { "node": "Sheets: Clear Old Profile", "type": "main", "index": 0 }
+          {
+            "node": "Code: Split Rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sheets: Clear Old Profile",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -299,16 +538,66 @@
       "main": []
     },
     "Code: Split Rows": {
-      "main": [[{ "node": "Sheets: Write Voice Profile", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Sheets: Write Voice Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Sheets: Write Voice Profile": {
-      "main": [[{ "node": "HTTP: Notify Slack", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "HTTP: Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "HTTP: Notify Slack": {
-      "main": [[{ "node": "Respond: Success", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Respond: Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Error Trigger": {
-      "main": [[{ "node": "HTTP: Slack Error Alert", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Webhook Auth Valid": {
+      "main": [
+        [
+          {
+            "node": "IF: Has Existing Content",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond: 401 Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {},
@@ -319,9 +608,15 @@
   },
   "staticData": null,
   "tags": [
-    { "name": "seedlink" },
-    { "name": "production" },
-    { "name": "onboarding" }
+    {
+      "name": "seedlink"
+    },
+    {
+      "name": "production"
+    },
+    {
+      "name": "onboarding"
+    }
   ],
   "triggerCount": 1,
   "updatedAt": "2026-03-07T00:00:00.000Z",

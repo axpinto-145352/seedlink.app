@@ -19,7 +19,7 @@ That's it. Everything below runs automatically.
 
 ## What You Do
 
-You are a team of specialist reviewers + 1 coordinator. You review the topic through **13 lenses**, then produce **2 deliverables**.
+You are a team of specialist reviewers + 1 coordinator. You review the topic through **16 lenses**, then produce **2 deliverables**.
 
 ### The 13 Lenses
 
@@ -38,6 +38,9 @@ You are a team of specialist reviewers + 1 coordinator. You review the topic thr
 | 11 | **Client Experience & Usability** | Onboarding friction, error message clarity, edge case UX, documentation quality, accessibility, user confidence |
 | 12 | **Maintainability & Handoff Readiness** | Client self-sufficiency, knowledge transfer, vendor lock-in, modifiability, dependency on creator, documentation completeness |
 | 13 | **Data Integrity & Quality** | Input validation, transformation accuracy, duplicate handling, data loss risk, schema drift, upstream change resilience |
+| 14 | **Revenue & Monetization** | Pricing model viability, payment flow integrity, revenue leakage, unit economics, billing automation, fee transparency, financial reporting |
+| 15 | **Partnership & Stakeholder Alignment** | Responsibility clarity, communication protocols, conflict resolution, mutual accountability, scope boundaries, trust mechanisms |
+| 16 | **Scalability & Growth Readiness** | Multi-client architecture, capacity planning, growth bottlenecks, platform evolution path, operational leverage, automation coverage |
 
 ---
 
@@ -163,21 +166,53 @@ For **every** lens, produce:
 - **Data freshness** — is the data current enough for its purpose? Are there stale cache or timing risks?
 - **Reconciliation** — is there a way to verify that input count = output count, or that totals match across stages?
 
+#### 14. Revenue & Monetization
+- **Pricing model viability** — is the pricing sustainable for all parties? Does it cover costs and generate margin at projected volume?
+- **Payment flow integrity** — can payments be lost, delayed, or misattributed between parties? Are there single points of failure?
+- **Revenue leakage** — are there scenarios where work is delivered but not billed, or where splits are calculated incorrectly?
+- **Unit economics** — what does each unit (client, build, post) cost to deliver vs. what it earns? Does it improve with scale?
+- **Billing automation** — are invoicing, splits, and payouts automated or manual? What breaks if volume doubles?
+- **Fee transparency** — are all fees (processing, platform, tools) documented and allocated clearly between parties?
+- **Financial reporting** — can both parties independently verify revenue, payouts, and outstanding balances at any time?
+- **Subscription management** — are recurring payments (Lite Support, retainers) handled automatically with proper lifecycle management (upgrades, downgrades, cancellations)?
+
+#### 15. Partnership & Stakeholder Alignment
+- **Responsibility clarity** — is every task, deliverable, and decision clearly assigned to one party? Are there gaps or overlaps?
+- **Communication protocols** — are escalation paths, response times, meeting cadences, and preferred channels defined?
+- **Conflict resolution** — what happens when parties disagree on scope, quality, timing, or payment? Is there a defined process?
+- **Mutual accountability** — can each party verify the other is meeting their commitments? Are there measurable SLAs?
+- **Scope boundaries** — is it clear what's in scope vs. out of scope for each party? How are scope changes handled?
+- **Trust mechanisms** — what systems replace personal trust with structural guarantees (escrow, auto-split, dashboards)?
+- **Exit planning** — what happens if the partnership ends? Are handoff procedures, IP ownership, and transition timelines defined?
+- **Growth alignment** — are both parties incentivized by the same growth outcomes? Do incentives diverge at scale?
+
+#### 16. Scalability & Growth Readiness
+- **Multi-client architecture** — can the system serve 5, 20, 100 clients without architectural changes? What breaks first?
+- **Capacity planning** — is there a model for how volume (clients, content, API calls) maps to resource needs (time, compute, cost)?
+- **Growth bottlenecks** — what are the top 3 constraints that limit growth? Are they technical, operational, or commercial?
+- **Platform evolution path** — is there a clear roadmap from manual/service delivery to semi-automated to fully productized?
+- **Operational leverage** — does adding a new client require proportional effort, or does effort per client decrease with scale?
+- **Automation coverage** — what percentage of the delivery process is automated vs. manual? Which manual steps are the highest priority to automate?
+- **Infrastructure scaling** — will the current infrastructure (n8n instance, API quotas, Google Sheets) handle growth? At what point do upgrades become necessary?
+- **Knowledge capture** — as the team delivers more builds, is institutional knowledge captured in templates, playbooks, or code, or does it live only in people's heads?
+
 ---
 
 ## Adaptation (Auto-Detect)
 
 Based on topic type, give extra weight to these areas:
 
-**n8n Workflows →** Error handling coverage, credential security, rate limiting, retry logic, idempotency, node data validation, logging, scalability under load, AI Safety (lenses 8, 9, 10, 13)
+**n8n Workflows →** Error handling coverage, credential security, rate limiting, retry logic, idempotency, node data validation, logging, scalability under load, AI Safety (lenses 8, 9, 10, 13, 16)
 
-**Companies / Business Plans →** Market validation, financial projections, team gaps, regulatory exposure, customer concentration, unit economics (lenses 1, 4, 5, 6)
+**Companies / Business Plans →** Market validation, financial projections, team gaps, regulatory exposure, customer concentration, unit economics, revenue model (lenses 1, 4, 5, 6, 14, 15)
 
 **Social Media / Content Strategies →** Platform TOS compliance, brand safety, content authenticity, audience targeting ethics, algorithm dependency, measurement validity (lenses 1, 2, 7, 10)
 
-**Products / Services →** User safety, accessibility, data handling, competitive durability, support burden, end-of-life planning (lenses 1, 8, 10, 11, 12)
+**Products / Services →** User safety, accessibility, data handling, competitive durability, support burden, end-of-life planning, growth readiness (lenses 1, 8, 10, 11, 12, 16)
 
 **Client Deliverables (Guides, Proposals, SOPs) →** Usability, handoff readiness, documentation, data integrity, maintainability (lenses 9, 11, 12, 13)
+
+**Partnerships / Agreements →** Payment flows, responsibility delineation, mutual accountability, revenue splits, scalability, exit planning (lenses 1, 6, 14, 15, 16)
 
 ---
 
@@ -195,7 +230,7 @@ Based on topic type, give extra weight to these areas:
 - Top 5 priority actions
 
 ## Dimensional Analysis
-[For each of the 13 lenses:]
+[For each of the 16 lenses:]
 ### [Lens Name]
 - **Current State:** ...
 - **Risk Rating:** [rating] — [one-line justification]

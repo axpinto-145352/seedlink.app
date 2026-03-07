@@ -6,14 +6,24 @@
         "path": "outreach-response",
         "httpMethod": "POST",
         "responseMode": "lastNode",
-        "options": {}
+        "options": {},
+        "authentication": "headerAuth"
       },
       "id": "b2c3d4e5-0001-4000-8000-000000000001",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 300],
-      "webhookId": "outreach-response"
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "outreach-response",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "seedlink_webhook_auth",
+          "name": "seedlink_webhook_auth"
+        }
+      }
     },
     {
       "parameters": {
@@ -77,7 +87,10 @@
       "name": "Set: Format Response",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [260, 300]
+      "position": [
+        480,
+        300
+      ]
     },
     {
       "parameters": {
@@ -111,7 +124,10 @@
       "name": "Claude: Classify Response",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [520, 300]
+      "position": [
+        740,
+        300
+      ]
     },
     {
       "parameters": {
@@ -121,7 +137,10 @@
       "name": "Code: Parse Classification",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [780, 300]
+      "position": [
+        1000,
+        300
+      ]
     },
     {
       "parameters": {
@@ -154,7 +173,10 @@
       "name": "Switch: Response Type",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
-      "position": [1040, 300]
+      "position": [
+        1260,
+        300
+      ]
     },
     {
       "parameters": {
@@ -194,7 +216,10 @@
       "name": "Sheets: Log Response",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1340, 300],
+      "position": [
+        1560,
+        300
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google_sheets",
@@ -225,7 +250,10 @@
       "name": "HTTP: Notify Slack",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1640, 300]
+      "position": [
+        1860,
+        300
+      ]
     },
     {
       "parameters": {},
@@ -233,7 +261,10 @@
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
-      "position": [0, 700]
+      "position": [
+        0,
+        700
+      ]
     },
     {
       "parameters": {
@@ -258,7 +289,59 @@
       "name": "HTTP: Slack Error Alert",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [260, 700]
+      "position": [
+        480,
+        700
+      ]
+    },
+    {
+      "id": "orh-auth-check",
+      "name": "IF: Webhook Auth Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-webhook-secret",
+              "leftValue": "={{ $json.headers?.['x-webhook-secret'] || $json.body?.webhook_secret }}",
+              "rightValue": "={{$env.SEEDLINK_WEBHOOK_SECRET}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "orh-auth-reject",
+      "name": "Respond: 401 Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        500
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"error\": \"Unauthorized\", \"message\": \"Invalid or missing webhook secret\"}",
+        "options": {
+          "responseCode": 401
+        }
+      }
     }
   ],
   "connections": {
@@ -266,7 +349,7 @@
       "main": [
         [
           {
-            "node": "Set: Format Response",
+            "node": "IF: Webhook Auth Valid",
             "type": "main",
             "index": 0
           }
@@ -354,6 +437,24 @@
         [
           {
             "node": "HTTP: Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Webhook Auth Valid": {
+      "main": [
+        [
+          {
+            "node": "Set: Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond: 401 Unauthorized",
             "type": "main",
             "index": 0
           }

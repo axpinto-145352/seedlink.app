@@ -1,5 +1,7 @@
 # SeedLink.app — Requirements Document
 
+> **Note:** This is a v1 historical document from the initial requirements extraction phase. Sheet names reference "Editorial Calendar" which has been renamed to "Content Hub" in the v2 architecture. See `ARCHITECTURE.md` and `SUMMARY.md` for current terminology.
+
 Extracted from: `SeedLink_Combined_Proposal_VeteranVectors_Updated.pdf` (Growth Strategy Proposal) and `SeedLink_SOW_Combined_VeteranVectors_Updated.pdf` (Statement of Work).
 
 ---
