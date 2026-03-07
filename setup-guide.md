@@ -100,7 +100,36 @@ For each workflow:
 
 ---
 
-## Step 5: Manual Testing
+## Step 5: Voice Profile Setup
+
+Before testing content workflows, the client's Voice Profile must be generated and stored.
+
+### 5a. Determine Voice Path
+
+- **Client has existing content** (provided 3-5 links in questionnaire): Use `prompts/voice-extractor.md`
+- **Client is starting fresh** (selected Voice Builder path in questionnaire): Use `prompts/voice-builder.md`
+
+### 5b. Generate Voice Profile
+
+1. Format the client's questionnaire responses as JSON (see input format in the relevant prompt file)
+2. Call Claude API with the appropriate prompt (voice-extractor.md or voice-builder.md) and the client's JSON input
+3. Review the generated Voice Profile for completeness — all sections should reflect client-specific data, not generic defaults
+
+### 5c. Store Voice Profile
+
+1. In the client's Google Sheet, create the "Voice Profile" tab (Sheet 7) using the schema from `google-sheets-template.md`
+2. Populate all rows from the generated Voice Profile output
+3. Set `calibration_status` to "Calibrating" and `source` to "Voice Builder" or "Voice Extractor"
+4. Protect the tab with Google Sheets protected ranges (only workflow automation should modify values after calibration)
+
+### 5d. Verify Integration
+
+1. Run the Content Pipeline manually (Step 6 below) — the draft should reflect the client's Voice Profile
+2. Check that the Voice Agent review score reflects the new voice (not defaulting to generic SeedLink voice)
+
+---
+
+## Step 6: Manual Testing
 
 Test each workflow manually before enabling scheduled triggers.
 
@@ -143,7 +172,7 @@ Test each workflow manually before enabling scheduled triggers.
 
 ---
 
-## Step 6: Activate Scheduled Triggers
+## Step 7: Activate Scheduled Triggers
 
 Once all manual tests pass, activate the scheduled workflows:
 

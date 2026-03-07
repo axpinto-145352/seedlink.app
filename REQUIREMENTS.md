@@ -183,6 +183,27 @@ Every piece of content must include contextual CTAs driving readers to:
 - Recently launched AI Playbook (milestone planner with tool recommendations)
 - Target audience: founders and teams building with AI
 
+### Voice Builder & Voice Extraction (Client Voice Onboarding)
+
+For modular builds and white label platform clients, each client needs a Voice Profile that calibrates all AI-generated content to their brand voice. Two onboarding paths:
+
+**Path A — Voice Extractor** (clients with existing content):
+- Client provides 3-5 links to published content (blog posts, LinkedIn posts, articles)
+- `prompts/voice-extractor.md` analyzes content samples and extracts voice characteristics
+- Outputs a structured Voice Profile (tone, formality, energy, writing rules, guardrails)
+
+**Path B — Voice Builder** (clients with no existing content):
+- Client completes Voice Builder questionnaire embedded in onboarding form:
+  - 5 A/B voice preference pairs (formality, technicality, energy, humor, perspective)
+  - Reference voice archetypes (8 options: Paul Graham, Sahil Lavingia, Lenny Rachitsky, Alex Hormozi, Julie Zhuo, Naval Ravikant, Seth Godin, Brené Brown)
+  - 5 quick-fire voice-revealing questions
+  - Optional voice recording (Premium tier only, transcribed via Whisper/AssemblyAI)
+- `prompts/voice-builder.md` processes questionnaire responses into a Voice Profile
+
+**Both paths produce identical Voice Profile format**, stored in a dedicated "Voice Profile" tab in the client's Google Sheet. All content generation prompts consume this profile via `{{voice_style}}`.
+
+**Calibration requirement:** During the 2-week monitoring period, the first 2-3 content pieces are used for voice calibration. Client rates voice fit (1-5 scale), profile is refined if needed, and locked after ≥ 4/5 rating.
+
 ---
 
 ## 6. Monthly Retainer Workflows (Post-Launch)

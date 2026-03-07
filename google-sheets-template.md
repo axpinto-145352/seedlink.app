@@ -175,7 +175,7 @@ Stores client-specific configuration that workflows read at startup. This enable
 |---------|--------------|-------------|
 | `brand_name` | SeedLink.app | The client's brand name used in all content |
 | `brand_description` | AI-augmented talent marketplace connecting founders with AI talent, tools, and Playbook | One-line brand description for system prompts |
-| `voice_style` | founder-to-founder, practical, non-salesy, opinionated but not pushy | Voice guidelines injected into all writing prompts |
+| `voice_style` | See "Voice Profile" tab | Short reference — full Voice Profile lives in dedicated tab. Legacy field for backward compatibility; new builds use the Voice Profile tab. |
 | `content_pillars` | Finding AI Talent, Zero to MVP, AI Industry & Trends, SeedLink in Action | Comma-separated list of content pillars |
 | `cta_products` | marketplace, playbook, talent_matching | Comma-separated list of products to reference in CTAs |
 | `blog_platform` | framer | Blog platform (framer, wordpress, ghost, webflow) — controls publishing behavior |
@@ -191,6 +191,55 @@ Stores client-specific configuration that workflows read at startup. This enable
 - Workflows read all settings at the start of each execution
 - Changing a setting takes effect on the next workflow run — no restart needed
 - This is the primary mechanism for deploying the system to a new client: clone the Google Sheet, update the Settings tab, configure credentials in n8n
+
+---
+
+## Sheet 7: "Voice Profile" (Brand Voice Configuration)
+
+Stores the client's full Voice Profile — generated either by the Voice Builder (for clients with no existing content) or the Voice Extractor (for clients with existing content). Both paths produce the same format. This tab is the single source of truth for brand voice, referenced by all content generation prompts via `{{voice_style}}`.
+
+### Column Definitions
+
+| Column | Header | Data Type | Description |
+|--------|--------|-----------|-------------|
+| A | Attribute | Text | Voice attribute name (key) |
+| B | Value | Text | Voice attribute value |
+| C | Category | Text | Section grouping (Core, Writing Rules, Content Patterns, Guardrails) |
+
+### Required Rows
+
+| Attribute | Example Value | Category |
+|-----------|--------------|----------|
+| `tone` | conversational, direct, mildly technical | Core |
+| `formality` | 3/5 (professional but not corporate) | Core |
+| `energy` | 4/5 (confident, forward-leaning) | Core |
+| `humor` | occasional dry wit, never sarcasm | Core |
+| `perspective` | story-first, supported by data | Core |
+| `sentence_style` | short declarative sentences, occasional rhetorical questions | Writing Rules |
+| `paragraph_length` | 2-3 sentences max, single-sentence paragraphs for emphasis | Writing Rules |
+| `vocabulary` | accessible technical — uses industry terms but defines them in context | Writing Rules |
+| `person` | first-person singular ("I") | Writing Rules |
+| `reference_blend` | Sahil Lavingia's transparency × Lenny Rachitsky's structure | Writing Rules |
+| `opening_style` | lead with a contrarian observation or personal experience | Content Patterns |
+| `cta_style` | weave in as "here's a tool that does this" — never "check out our product" | Content Patterns |
+| `closing_style` | end with a forward-looking question or one actionable takeaway | Content Patterns |
+| `always_use` | [client-specified terms] | Guardrails |
+| `never_use` | leverage, synergy, excited to announce, in today's fast-paced world | Guardrails |
+| `sensitive_topics` | [any areas to avoid] | Guardrails |
+| `sample_opening_1` | "Here's what no one tells you about [topic]." | Calibration |
+| `sample_opening_2` | "I spent three months figuring this out so you don't have to." | Calibration |
+| `sample_opening_3` | "The conventional advice is wrong. Here's why." | Calibration |
+| `source` | Voice Builder / Voice Extractor | Metadata |
+| `generated_date` | 2026-03-07 | Metadata |
+| `calibration_status` | Locked / Calibrating / Needs Review | Metadata |
+| `calibration_score` | 4.5 | Metadata |
+
+### Notes
+
+- This tab is generated during the build phase and should NOT be manually edited by clients after calibration is locked
+- Protect this tab with Google Sheets protected ranges — only the workflow automation should modify values
+- Content generation prompts read all rows and inject them as the `{{voice_style}}` block
+- During calibration, the `calibration_status` field tracks progress: "Calibrating" → "Locked" after 2 rounds at ≥ 4/5
 
 ---
 

@@ -569,11 +569,11 @@ You don't need to understand the technical details, but here's what's happening 
 
 2. DRAFT GENERATION
    A second AI pass writes the full 1,000-1,500 word blog post
-   following SeedLink's founder-to-founder voice
+   following your brand's Voice Profile (calibrated during onboarding)
 
 3. MULTI-AGENT REVIEW (4 specialized AI reviewers)
 
-   ┌─ Voice Agent ──────── Is this founder-to-founder? Concrete? Accessible?
+   ┌─ Voice Agent ──────── Does this match your Voice Profile? Concrete? Accessible?
    ├─ Strategy Agent ───── Does this align with the right pillar? Is the CTA natural?
    └─ SEO/AEO Agent ────── Will this rank in search? Will AI assistants cite this?
 
@@ -665,6 +665,12 @@ You'll receive Slack notifications when:
 
 **Q: What if I stop getting Slack notifications?**
 Contact Veteran Vectors — this usually means a workflow has deactivated or a credential expired.
+
+**Q: How was my brand voice set up?**
+During onboarding, your voice was calibrated one of two ways: (1) If you provided content examples, the AI analyzed them to extract your voice characteristics. (2) If you were starting fresh, the Voice Builder questionnaire (preference pairs, reference voices, quick-fire questions) was used to construct your voice from scratch. Either way, the result is a Voice Profile stored in the "Voice Profile" tab of your Google Sheet. All AI-generated content follows this profile.
+
+**Q: The content doesn't sound like me — what do I do?**
+During the first 2 weeks (monitoring period), rate content 1-5 for voice fit and note what sounds right/wrong. VV will recalibrate your Voice Profile. After monitoring, voice adjustments are handled via Lite Support or a change order.
 
 **Q: Can I change the content pillars?**
 Yes, but this requires updating the AI prompts. Contact Veteran Vectors for pillar changes.

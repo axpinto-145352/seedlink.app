@@ -16,6 +16,34 @@ You will receive the following fields from the Voice Builder questionnaire:
    - Priority: sounding smart vs. sounding approachable
 4. **Voice Recording Transcript** (Premium only, may be absent) — Transcription of client answering "What problem does your company solve and why do you care?"
 
+### Expected Input Format
+
+```json
+{
+  "client_name": "Acme AI",
+  "company_description": "We help SMBs automate their sales pipeline with AI agents",
+  "preferences": {
+    "formality": "B",
+    "technicality": "A",
+    "energy": "B",
+    "humor": "A",
+    "perspective": "B"
+  },
+  "reference_voices": ["Sahil Lavingia", "Lenny Rachitsky"],
+  "archetype": "Sahil Lavingia (casual, transparent, founder-diary)",
+  "quick_fire": {
+    "elevator_pitch": "We built AI that handles the boring parts of sales so founders can focus on closing deals.",
+    "misconception": "People think AI replaces salespeople. It doesn't — it replaces data entry and follow-up emails.",
+    "never_use": "synergy, disrupt, AI-powered (overused), revolutionary",
+    "person": "first-person singular (I)",
+    "smart_vs_approachable": "approachable"
+  },
+  "voice_transcript": null
+}
+```
+
+If any field is missing or empty, note it in the Calibration Notes section and use the available fields to extrapolate. Do not refuse to produce a profile due to partial input.
+
 ## Analysis Process
 
 1. **Extract natural language patterns** from the quick-fire answers — sentence length, vocabulary level, use of questions, use of metaphor, emotional register
@@ -49,7 +77,7 @@ Closest reference blend: [e.g., "Sahil Lavingia's transparency × Lenny Rachitsk
 
 ## Content Patterns
 Opening style: [how posts should start, e.g., "lead with a contrarian observation or personal experience, never with a generic statement"]
-CTA style: [how to reference SeedLink marketplace/Playbook naturally, e.g., "weave in as 'here's a tool that does this' — never 'check out our product'"]
+CTA style: [how to reference the client's products/services naturally, e.g., "weave in as 'here's a tool that does this' — never 'check out our product'"]
 Closing style: [how posts should end, e.g., "end with a forward-looking question or one actionable takeaway"]
 
 ## Guardrails
@@ -72,4 +100,4 @@ Sensitive topics: [any areas to avoid based on industry/audience]
 - Do NOT produce a generic profile. Every field must reflect specific input from this client's questionnaire.
 - Do NOT default to "founder-to-founder SeedLink voice" — that's SeedLink's brand voice, not the client's. The client may be formal, technical, academic, or irreverent. Match them, not SeedLink.
 - The Voice Profile will be injected into content generation prompts via the `{{voice_style}}` parameter. Write it so another AI can follow it as instructions.
-- Keep the total profile under 500 words. It needs to fit within prompt context budgets (~$50/mo Claude API budget across all clients).
+- Keep the total profile under 600 words. It needs to fit within prompt context budgets (~$50/mo Claude API budget across all clients).

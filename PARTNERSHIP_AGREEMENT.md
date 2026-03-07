@@ -95,7 +95,7 @@ Step 4: SeedLink sends automated confirmation email with:
         - "What happens next" summary
         - Link to onboarding questionnaire (Typeform/Google Form)
     ↓
-Step 5: Client completes onboarding questionnaire (15–20 min)
+Step 5: Client completes onboarding questionnaire (15–20 min, or 20–25 min if Voice Builder path)
         - Brand name, URL, description
         - Voice examples (3–5 links) OR Voice Builder path if no existing content (Section 4.5)
         - Content pillars / themes
@@ -205,6 +205,8 @@ Every modular build must include:
 - [ ] All system prompts fully written (no placeholders)
 - [ ] Google Sheets template cloned and configured for client
 - [ ] Settings sheet populated with client-specific values
+- [ ] Voice Profile generated and stored (if Voice Builder path) — see Section 4.5
+- [ ] Voice Profile calibrated and locked after monitoring (if Voice Builder path)
 - [ ] All credentials configured using client's own accounts
 - [ ] End-to-end test of every workflow
 - [ ] Handoff documentation (setup guide customized for client)
@@ -294,7 +296,7 @@ Based on the SAAS_IMPLEMENTATION_PLAN.md and CEO direction, the white label buil
 | **Platform connection wizard** | OAuth flows for Google Sheets, Buffer, Slack; API key input for Claude | 2–3 weeks |
 | **Analytics dashboard** | Content performance, social engagement, publishing cadence | 2–3 weeks |
 | **Billing integration** | Stripe subscriptions, plan enforcement, usage display | 1–2 weeks |
-| **Self-serve onboarding wizard** | Guided setup: brand info → voice calibration → platform connections → first content | 1–2 weeks |
+| **Self-serve onboarding wizard** | Guided setup: brand info → voice calibration (Voice Builder UI for new clients, content upload for existing brands — both paths per Section 4.5) → platform connections → first content | 1–2 weeks |
 
 **Estimated total Phase 2: 18–30 weeks of development (~$25,000–$45,000)**
 
@@ -680,13 +682,15 @@ Each sample pair is pre-written and stored in the Typeform/Google Form — no AI
 **Step 2: Reference Voices (~2 min)**
 
 - "Name 1–3 founders, brands, or publications whose communication style you admire" (free text)
-- "Pick your closest match" (dropdown with 6 archetypes):
+- "Pick your closest match" (dropdown with 8 archetypes):
   - Paul Graham (clear, essay-style, first principles)
   - Sahil Lavingia (casual, transparent, founder-diary)
   - Lenny Rachitsky (structured, data-informed, practical)
   - Alex Hormozi (direct, high-energy, action-oriented)
   - Julie Zhuo (thoughtful, design-thinking, reflective)
   - Naval Ravikant (concise, philosophical, contrarian)
+  - Seth Godin (marketing-savvy, punchy, idea-driven)
+  - Brené Brown (warm, vulnerability-forward, purpose-driven)
 
 **Step 3: Quick-Fire Voice Questions (~3 min)**
 
@@ -704,7 +708,7 @@ For Premium builds, the questionnaire includes an optional Loom/voice memo promp
 
 > "Record yourself answering: What problem does your company solve and why do you care?"
 
-This captures natural cadence, vocabulary, and energy that written answers miss. Claude transcribes and extracts voice patterns during the build phase.
+This captures natural cadence, vocabulary, and energy that written answers miss. VV transcribes the recording (using Whisper, AssemblyAI, or equivalent) and feeds the transcript into the voice-builder prompt during the build phase.
 
 ### Voice Profile Generation
 
@@ -735,17 +739,19 @@ Sample opening lines (generated, not client-written):
 - "The conventional advice is wrong. Here's why."
 ```
 
-This Voice Profile feeds into the `{{voice_style}}` parameter in all content generation prompts — identical to how an existing-content voice profile would be used.
+This Voice Profile is stored as a dedicated tab ("Voice Profile") in the client's Google Sheet — not in the single-cell `voice_style` field. Content generation prompts reference the full Voice Profile tab via `{{voice_style}}`.
 
 ### Calibration Loop (Built Into Monitoring Period)
 
 During the 2-week monitoring period, the first 3 content pieces serve double duty:
 
 1. Client reviews generated content and rates voice fit (1–5 scale, plus "highlight what sounds right / wrong")
-2. VV feeds calibration feedback back into the Voice Profile
+2. VV re-runs the voice-builder prompt with original inputs + client feedback to produce a revised Voice Profile
 3. Voice Profile is locked after 2 rounds of calibration (or earlier if client rates ≥ 4/5)
 
-This happens within the existing monitoring period — no extra timeline or cost.
+**If voice fit remains below 4/5 after 2 calibration rounds:** VV schedules a 15-minute voice alignment call with the client to identify specific mismatches, then produces a final revised profile. This is the only scenario where direct VV-client interaction is required for Voice Builder clients. If voice fit still cannot be resolved, a change order ($400) covers a full manual voice workshop.
+
+This happens within the existing monitoring period — no extra timeline or cost for the standard 2-round calibration.
 
 ### Pricing
 
@@ -764,6 +770,9 @@ Premium tier includes the optional voice recording step, which adds ~15 minutes 
 | Payment collection (Stripe) | ✓ | |
 | Onboarding questionnaire management | ✓ | |
 | Forwarding questionnaire to VV | ✓ | |
+| Voice Builder sample content (5 A/B pairs, archetypes) | | ✓ (one-time creation) |
+| Voice Profile generation (Claude prompt during build) | | ✓ |
+| Voice calibration during monitoring period | | ✓ |
 | Technical build (workflows, prompts, config) | | ✓ |
 | Client onboarding/handoff call | Optional | ✓ |
 | 2-week monitoring | | ✓ |
