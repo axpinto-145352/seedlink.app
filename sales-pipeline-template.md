@@ -18,8 +18,8 @@ The main client tracking sheet. Auto-populated by the `client-onboarding-orchest
 | `modules` | Text | Stripe metadata | Comma-separated: content, linkedin, email, seo |
 | `tier` | Dropdown | Stripe metadata | Basic / Standard / Premium |
 | `amount_paid` | Currency | Stripe | Total payment amount |
-| `vv_payout` | Currency | Formula: `=amount_paid * 0.85` | VV's 85% share |
-| `seedlink_commission` | Currency | Formula: `=amount_paid * 0.15` | SeedLink's 15% share |
+| `vv_payout` | Currency | Formula: `=amount_paid * 0.75` | VV's 75% share |
+| `seedlink_commission` | Currency | Formula: `=amount_paid * 0.25` | SeedLink's 25% share |
 | `vv_payout_date` | Date | Stripe Connect / Manual | Date VV received payout |
 | `vv_payout_status` | Dropdown | Manual / Stripe Connect | Pending / Paid / Overdue |
 | `stripe_session_id` | Text | Stripe webhook | For payment verification |
@@ -88,7 +88,7 @@ Auto-calculated summary of financial performance.
 | **VV Overdue Payouts** | `=SUMIFS(Pipeline!vv_payout, Pipeline!vv_payout_status, "Overdue")` | Late VV payments |
 | **Active Clients** | `=COUNTIFS(Pipeline!status, "*Active*") + COUNTIFS(Pipeline!status, "*Monitoring*") + COUNTIFS(Pipeline!status, "*Build*")` | Currently served |
 | **Lite Support MRR** | `=SUMIFS(Pipeline!lite_support_monthly, Pipeline!lite_support, "Active")` | Monthly recurring |
-| **VV Lite Support MRR** | `=Lite_Support_MRR * 0.85` | VV's share |
+| **VV Lite Support MRR** | `=Lite_Support_MRR * 0.75` | VV's share |
 | **Avg Build Value** | `=AVERAGE(Pipeline!amount_paid)` | Average deal size |
 | **Builds This Month** | `=COUNTIFS(Pipeline!purchased_at, ">="&DATE(YEAR(TODAY()),MONTH(TODAY()),1))` | Current month volume |
 
@@ -112,7 +112,7 @@ For tracking ongoing monthly retainers.
 | `client_name` | — |
 | `modules_supported` | Which modules have Lite Support |
 | `monthly_rate` | Total monthly charge |
-| `vv_monthly` | VV's 85% share |
+| `vv_monthly` | VV's 75% share |
 | `start_date` | Subscription start |
 | `last_invoice_date` | Most recent charge |
 | `next_invoice_date` | Upcoming charge |

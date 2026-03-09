@@ -166,7 +166,7 @@ Common scenarios and step-by-step resolution procedures.
 1. Check Stripe dashboard → Connect → verify VV's connected account is active
 2. Check the payment's transfer details in Stripe — was a transfer created?
 3. If no transfer: the Stripe checkout product may not have the `transfer_data` parameter set
-4. Review Stripe product/checkout configuration — ensure 85% transfer to VV's connected account
+4. Review Stripe product/checkout configuration — ensure 75% transfer to VV's connected account (with 1-day delayed payout)
 5. If first time: the Connect integration may need explicit activation per REVENUE_STRUCTURE.md setup steps
 
 ### Scenario 14: Client requests refund

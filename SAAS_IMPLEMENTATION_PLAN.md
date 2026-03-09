@@ -362,14 +362,22 @@ Total time: 30-60 minutes self-serve
 
 ### Phase 2: Productized Service GTM
 
+**Updated per Mar 9, 2026 call — SeedLink's Go-to-Market Strategy:**
+
+SeedLink's primary acquisition channel is **network-based, not paid ads**. Shilpa is in the **Founders Creative accelerator** (backed by Progressive Ventures), which connects her to 10,000–15,000 founders and the Bay Area enterprise ecosystem. CAC through LinkedIn/Meta ads is very high; organic network effects are the near-term focus.
+
 | Channel | Tactic | Expected Outcome |
 |---------|--------|-----------------|
-| **Founder referrals** | Shilpa introduces 3 CEOs who expressed interest | 2-3 paying clients in month 1 |
+| **Accelerator network** | Shilpa leverages Founders Creative (Progressive Ventures) — direct access to 10-15K founders | Primary pipeline; 2-3 warm leads/month |
+| **Founder referrals** | Shilpa introduces CEOs from accelerator cohort and founder groups | 2-3 paying clients in month 1 |
+| **Partnership networks** | Business school partnerships, other accelerators, founder communities | Mid-term scaling channel |
 | **SeedLink marketplace** | Banner/CTA on seedlink.app: "Automate your content with AI" | Inbound from existing SeedLink users |
 | **LinkedIn (Shilpa's profile)** | "Building in public" posts about the content engine | Thought leadership → inbound interest |
 | **LinkedIn (other 3 accounts)** | Cross-promote from Karthik, Shashank, 4th account | Wider reach across networks |
 | **Content pillar: SeedLink in Action** | Blog posts documenting automation results | SEO + social proof |
 | **Direct outreach via Prosp.AI** | Target startup founders who post content manually | Outbound pipeline |
+
+**Key GTM insight (Mar 9 call):** SeedLink's ICP is partnerships, accelerators, and business schools — not cold outreach. Scaling will come through network effects, not ad spend. Break-even target: ~25-50 clients at ~$200-250K ARR.
 
 ### Phase 3: Platform GTM
 

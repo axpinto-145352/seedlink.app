@@ -1,12 +1,12 @@
 # SEEDLINK × VETERAN VECTORS — PARTNERSHIP AGREEMENT & IMPLEMENTATION GUIDE
 
-**Date:** March 6, 2026
+**Date:** March 9, 2026
 **Parties:**
 - **SeedLink.app** ("SeedLink") — Shilpa Kollengode, Founder & CEO
 - **Veteran Vectors** ("VV") — Anthony Pinto, Founder
 
 **Classification:** Confidential
-**Version:** 1.0
+**Version:** 2.0 — Updated per Mar 9 call (75/25 split, Premium tier removed, Growth Partner role, delayed Stripe split, validation call added)
 
 ---
 
@@ -19,6 +19,19 @@ This document defines the operating partnership between SeedLink and Veteran Vec
 2. **Track B — White Label Platform Build**: The productization of SeedLink's automation infrastructure into a self-serve or semi-serve SaaS product that clients buy directly from SeedLink. VV builds and maintains the platform under SeedLink's brand.
 
 Both tracks operate simultaneously. Track A generates revenue now while Track B builds toward mid-year scale.
+
+### Partner Roles
+
+SeedLink operates with multiple specialized partners. VV's role is as the **Growth Partner** — responsible for technical delivery of automation builds (LinkedIn outreach, content engine, email, SEO/AEO). Other SeedLink partners handle different functions:
+
+| Partner Role | Scope | Status |
+|-------------|-------|--------|
+| **Build Partner** | Framer websites, design, end-to-end AI product development | Active (separate dev partner) |
+| **Launch Partner** | Product Hunt, press releases, Forbes/media placement | In discussion |
+| **Growth Partner (VV)** | Automation builds, content engine, outreach, SEO/AEO | Active (this agreement) |
+| **Scale Partner** | Meta ads, LinkedIn ads, paid acquisition at scale | TBD |
+
+**SeedLink handles all sales, marketing, and client acquisition.** VV does not source or market to clients. Shilpa conducts pre-sale pitches, accelerator network outreach, and a validation call with each client before handing off to VV for the technical build.
 
 ---
 
@@ -34,20 +47,24 @@ SMB clients purchase individual automation modules directly through SeedLink's w
 
 These are the packages available for online purchase on seedlink.app:
 
-| Module | Basic | Standard ★ | Premium |
-|--------|-------|-----------|---------|
-| **A. LinkedIn Outreach** | $1,500 | $2,200 | $3,000 |
-| **B. Content Creation** | $1,500 | $2,200 | $3,000 |
-| **C. Email Automation** | $1,500 | $2,200 | $3,000 |
-| **D. SEO/GEO Engine** | $1,500 | $2,200 | $3,000 |
+| Module | Basic | Standard ★ |
+|--------|-------|-----------|
+| **A. LinkedIn Outreach** | $1,500 | $2,200 |
+| **B. Content Creation** | $1,500 | $2,200 |
+| **C. Email Automation** | $1,500 | $2,200 |
+| **D. SEO/GEO Engine** | $1,500 | $2,200 |
+
+> **Note:** Premium tier ($3,000) removed per Mar 9 call — fewer options, more streamlined. Standard ($2,200) is the recommended tier. If a client needs Premium-level scope, handle as a custom quote.
 
 **Bundle pricing** (integration premium included):
 
-| Bundle | Basic | Standard | Premium |
-|--------|-------|----------|---------|
-| Any 2 modules | $3,200 | $4,600 | $6,200 |
-| Any 3 modules | $4,700 | $6,800 | $9,200 |
-| All 4 modules | $6,400 | $9,200 | $12,400 |
+| Bundle | Basic | Standard |
+|--------|-------|----------|
+| Any 2 modules | $3,200 | $4,600 |
+| Any 3 modules | $4,700 | $6,800 |
+| All 4 modules | $6,400 | $9,200 |
+
+> **Note (under discussion):** Module pricing may be adjusted to reflect complexity differences — LinkedIn is simplest, SEO/AEO is most complex. Potential future structure: lower entry points ($750–$1,000) for simpler modules, higher for complex. See Section 1.2a below.
 
 **Lite Support** (optional monthly retainer):
 
@@ -63,22 +80,23 @@ These are the packages available for online purchase on seedlink.app:
 
 | Component | SeedLink | Veteran Vectors |
 |-----------|----------|----------------|
-| **Build fees** (one-time) | 15% referral commission | 85% delivery revenue |
-| **Lite Support** (monthly) | 15% | 85% |
-| **Paid Assessment** ($750–$1,000) | 15% | 85% |
+| **Build fees** (one-time) | 25% referral/marketing commission | 75% delivery revenue |
+| **Lite Support** (monthly) | 25% | 75% |
+| **Paid Assessment** ($750–$1,000) | 25% | 75% |
 
 **Payment terms (Stripe Connect — automatic split):**
 - All client payments processed through Stripe Connect
-- Stripe automatically splits each payment at checkout: 85% to VV connected account, 15% to SeedLink platform account
-- Payouts occur on Stripe's standard schedule (next business day for both parties)
+- Stripe automatically splits each payment: 75% to VV connected account, 25% to SeedLink platform account
+- Stripe Connect configured with a 1-business-day payout delay: payment lands in SeedLink's account first (Day 0), then auto-splits to VV on Day 1. This allows SeedLink to log revenue before the split occurs (important for investor reporting).
 - Both parties have real-time visibility into all transactions via their respective Stripe dashboards
-- Stripe processing fees (2.9% + $0.30) absorbed proportionally: 85% by VV, 15% by SeedLink
-- For Lite Support subscriptions: Stripe auto-splits each monthly recurring charge identically (85/15)
+- Stripe processing fees (2.9% + $0.30) absorbed proportionally: 75% by VV, 25% by SeedLink
+- For Lite Support subscriptions: Stripe auto-splits each monthly recurring charge identically (75/25)
 - No manual invoicing required — Stripe handles all payment routing automatically
 - If Stripe Connect is temporarily unavailable: SeedLink pays VV within 3 business days of client payment clearing, with Stripe receipt forwarded as proof of payment
 
 **Payment protection:**
 - VV has real-time access to all transaction data via Stripe Connected Account dashboard
+- Payout delay: Stripe Connect configured with 1-business-day delay so SeedLink records revenue before split
 - If any payment is more than 5 business days late (non-Connect fallback): VV may pause accepting new builds until resolved
 - VV may request Stripe transaction export quarterly to verify accuracy
 - VV retains IP rights on all deliverables until payment clears (per Section 1.11)
@@ -87,8 +105,8 @@ These are the packages available for online purchase on seedlink.app:
 - Client pays: $2,200.00
 - Stripe fee: -$64.10 (2.9% + $0.30)
 - Net to split: $2,135.90
-  - VV receives (85%): $1,815.52 (auto-deposited next business day)
-  - SeedLink retains (15%): $320.39 (auto-deposited next business day)
+  - VV receives (75%): $1,601.93 (auto-deposited 1 business day after payment)
+  - SeedLink retains (25%): $533.98 (deposited same day as payment)
 
 **Shared financial dashboard:**
 - Both parties maintain access to a shared Sales Pipeline Google Sheet (see `sales-pipeline-template.md`)
@@ -108,7 +126,7 @@ Step 1: Client visits seedlink.app/automation (or /services)
 Step 2: Client selects module(s) and tier
     ↓
 Step 3: Client completes purchase via Stripe checkout
-        → Stripe Connect auto-splits payment: 85% VV / 15% SeedLink
+        → Stripe Connect auto-splits payment: 75% VV / 25% SeedLink
     ↓
 Step 4: [AUTOMATED — client-onboarding-orchestrator.json]
         Stripe webhook fires → orchestrator workflow:
@@ -116,7 +134,12 @@ Step 4: [AUTOMATED — client-onboarding-orchestrator.json]
         b. Sends confirmation email to client with questionnaire link
         c. Notifies VV via Slack with purchase details + VV payout amount
     ↓
-Step 5: Client completes onboarding questionnaire (15–20 min, or 20–25 min if Voice Builder path)
+Step 5: SeedLink conducts validation call with client (~15 min)
+        - Not a sales call — client has already purchased
+        - Confirms requirements, reviews questionnaire expectations
+        - Sets expectations for VV build timeline
+    ↓
+Step 5b: Client completes onboarding questionnaire (15–20 min, or 20–25 min if Voice Builder path)
         - Brand name, URL, description
         - Voice examples (3–5 links) OR Voice Builder path if no existing content (Section 4.5)
         - Content pillars / themes
@@ -190,7 +213,7 @@ Each module tier has defined deliverables (per the Mavera proposal and template 
 3. VV sends scope + quote to SeedLink
 4. SeedLink approves and communicates to client
 5. Client pays for change order via SeedLink
-6. Same 85/15 split applies
+6. Same 75/25 split applies
 
 **Standard change order rates:**
 - Additional LinkedIn account: $500
@@ -628,8 +651,8 @@ Set up a simple tracking system (Google Sheet or Airtable):
 | Module(s) | A, B, C, D |
 | Tier | Basic / Standard / Premium |
 | Amount Paid | — |
-| VV Payout (85%) | Auto-calculated |
-| SeedLink Commission (15%) | Auto-calculated |
+| VV Payout (75%) | Auto-calculated |
+| SeedLink Commission (25%) | Auto-calculated |
 | Questionnaire Received | Date |
 | Build Started | Date |
 | Build Delivered | Date |
@@ -835,7 +858,7 @@ Premium tier includes the optional voice recording step, which adds ~15 minutes 
 |-----------|------------------------|------------------------------|
 | **What it is** | Individual project builds for each client | Product that serves many clients automatically |
 | **Revenue model** | One-time build fees + optional Lite Support | Monthly subscriptions + setup fees |
-| **Revenue split** | 85% VV / 15% SeedLink | 75–80% SeedLink / 20–25% VV (or negotiated) |
+| **Revenue split** | 75% VV / 25% SeedLink | 75–80% SeedLink / 20–25% VV (or negotiated) |
 | **Client experience** | Custom build, handoff call, Google Sheets | Self-serve dashboard, automated onboarding |
 | **VV effort per client** | 28–75 hours per build | Near-zero after platform is built |
 | **SeedLink effort per client** | Sales + questionnaire forwarding | Minimal (self-serve) |
@@ -887,4 +910,4 @@ Signature: _______________
 ---
 
 *Confidential — Prepared for SeedLink.app × Veteran Vectors Partnership*
-*March 6, 2026 — v1.0*
+*March 9, 2026 — v2.0*
