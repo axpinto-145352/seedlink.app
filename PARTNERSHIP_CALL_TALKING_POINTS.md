@@ -35,7 +35,7 @@ Net to split:        $2,135.90
 |--------|----------|---------|
 | Client absorbs | Client charged extra | Less transparent |
 | **Proportional (recommended)** | **VV 75% of fee, SeedLink 25%** | **Fairest — neither disadvantaged** |
-| SeedLink absorbs | Comes off SeedLink's 15% | Disproportionate |
+| SeedLink absorbs | Comes off SeedLink's 25% | Disproportionate |
 
 ### Benefits for VV
 - Automatic payment — no chasing, no invoicing

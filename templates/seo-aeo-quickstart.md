@@ -40,15 +40,14 @@ One-time build. Your team owns the system. Content flows from topic idea to publ
 |---|---|---|---|
 | Basic (1 pillar) | 4–6 posts | ✓ | ✓ |
 | Standard (2 pillars) ★ | 8–12 posts | ✓ | ✓ |
-| Premium (3+ pillars) | 12–20 posts | ✓ | ✓ |
 
 ---
 
 ## 03 | One-Time Build Pricing
 
-| | Basic | Standard ★ | Premium |
-|---|---|---|---|
-| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
+| | Basic | Standard ★ |
+|---|---|---|
+| **One-Time Build Fee** | **$1,500** | **$2,200** |
 | n8n Content Pipeline Setup | ✓ | ✓ | ✓ |
 | Claude AI Prompt Engineering | ✓ | ✓ | ✓ |
 | SEO Meta Generation Workflow | ✓ | ✓ | ✓ |

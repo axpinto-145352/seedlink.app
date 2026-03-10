@@ -15,10 +15,14 @@ TEMPLATE USAGE NOTES (delete this block before sending):
 This is a standardized proposal template for Seedlink automation packages.
 Replace all [BRACKETED] placeholders with client-specific information.
 
-STANDARD PRICE TIERS (commission included):
-  - Tier 1 (Basic):    $1,500
-  - Tier 2 (Standard): $2,200
-  - Tier 3 (Premium):  $3,000
+PACKAGE PRICING (primary — commission included):
+  - Outreach Package (LinkedIn + Email): $2,500
+  - Content Package (Content + SEO/GEO): $4,000
+  - Full Stack (All 4 modules):          $6,000
+
+À LA CARTE PRICING (single modules):
+  - Basic:    $1,500
+  - Standard: $2,200
 
 SUPPORTED SERVICE TYPES:
   - LinkedIn Outreach Automation
@@ -111,19 +115,29 @@ LITE SUPPORT: $250/month standard across all packages
 
 ## 05 | One-Time Build Pricing
 
-| | [Tier 1 Name] | [Tier 2 Name] ★ | [Tier 3 Name] ★ |
-|---|---|---|---|
-| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
-| [Deliverable 1] | ✓ | ✓ | ✓ |
-| [Deliverable 2] | ✓ | ✓ | ✓ |
-| [Deliverable 3] | ✓ | ✓ | ✓ |
-| [Deliverable 4] | ✓ | ✓ | ✓ |
-| [Deliverable 5] | ✓ | ✓ | ✓ |
-| [Deliverable 6] | ✓ | ✓ | ✓ |
-| Training Sessions | ✓ | ✓ | ✓ |
-| [Monitoring period] | ✓ | ✓ | ✓ |
-| Full Handoff & Documentation | ✓ | ✓ | ✓ |
-| Break-Even vs Old Model | < [X] weeks | < [Y] weeks | < [Z] weeks |
+### Package Pricing (Recommended)
+
+| Package | What's Included | Price |
+|---------|----------------|-------|
+| **Outreach Package** | LinkedIn + Email | **$2,500** |
+| **Content Package** | Content + SEO/GEO | **$4,000** |
+| **Full Stack** | All 4 modules | **$6,000** |
+
+### À La Carte Pricing (Single Module)
+
+| | Basic | Standard ★ |
+|---|---|---|
+| **One-Time Build Fee** | **$1,500** | **$2,200** |
+| [Deliverable 1] | ✓ | ✓ |
+| [Deliverable 2] | ✓ | ✓ |
+| [Deliverable 3] | ✓ | ✓ |
+| [Deliverable 4] | ✓ | ✓ |
+| [Deliverable 5] | ✓ | ✓ |
+| [Deliverable 6] | ✓ | ✓ |
+| Training Sessions | ✓ | ✓ |
+| [Monitoring period] | ✓ | ✓ |
+| Full Handoff & Documentation | ✓ | ✓ |
+| Break-Even vs Old Model | < [X] weeks | < [Y] weeks |
 
 *All pricing includes commission. No hidden fees.*
 

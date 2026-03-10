@@ -6,7 +6,7 @@
 - **Veteran Vectors** ("VV") — Anthony Pinto, Founder
 
 **Classification:** Confidential
-**Version:** 2.0 — Updated per Mar 9 call (75/25 split, Premium tier removed, Growth Partner role, delayed Stripe split, validation call added)
+**Version:** 2.1 — Updated Mar 10: Package pricing (Outreach $2,500, Content $4,000, Full Stack $6,000). Prior: Mar 9 call (75/25 split, Premium tier removed, Growth Partner role, delayed Stripe split, validation call added)
 
 ---
 
@@ -56,15 +56,15 @@ These are the packages available for online purchase on seedlink.app:
 
 > **Note:** Premium tier ($3,000) removed per Mar 9 call — fewer options, more streamlined. Standard ($2,200) is the recommended tier. If a client needs Premium-level scope, handle as a custom quote.
 
-**Bundle pricing** (integration premium included):
+**Package pricing** (primary pricing — bundles complementary modules):
 
-| Bundle | Basic | Standard |
-|--------|-------|----------|
-| Any 2 modules | $3,200 | $4,600 |
-| Any 3 modules | $4,700 | $6,800 |
-| All 4 modules | $6,400 | $9,200 |
+| Package | What's Included | Price |
+|---------|----------------|-------|
+| **Outreach Package** | LinkedIn (A) + Email (C) | **$2,500** |
+| **Content Package** | Content (B) + SEO/GEO (D) | **$4,000** |
+| **Full Stack** | All 4 modules | **$6,000** |
 
-> **Note (under discussion):** Module pricing may be adjusted to reflect complexity differences — LinkedIn is simplest, SEO/AEO is most complex. Potential future structure: lower entry points ($750–$1,000) for simpler modules, higher for complex. See Section 1.2a below.
+> Packages are the recommended purchase path. Individual modules available à la carte at Basic ($1,500) or Standard ($2,200) for clients who only need one system. Upgrade credit: clients who purchased à la carte can upgrade to a package and apply what they've paid toward the package price.
 
 **Lite Support** (optional monthly retainer):
 
@@ -101,12 +101,19 @@ These are the packages available for online purchase on seedlink.app:
 - VV may request Stripe transaction export quarterly to verify accuracy
 - VV retains IP rights on all deliverables until payment clears (per Section 1.11)
 
-**Example — Standard LinkedIn build ($2,200):**
-- Client pays: $2,200.00
-- Stripe fee: -$64.10 (2.9% + $0.30)
-- Net to split: $2,135.90
-  - VV receives (75%): $1,601.93 (auto-deposited 1 business day after payment)
-  - SeedLink retains (25%): $533.98 (deposited same day as payment)
+**Example — Outreach Package ($2,500):**
+- Client pays: $2,500.00
+- Stripe fee: -$72.80 (2.9% + $0.30)
+- Net to split: $2,427.20
+  - VV receives (75%): $1,820.40 (auto-deposited 1 business day after payment)
+  - SeedLink retains (25%): $606.80 (deposited same day as payment)
+
+**Example — Full Stack Package ($6,000):**
+- Client pays: $6,000.00
+- Stripe fee: -$174.30 (2.9% + $0.30)
+- Net to split: $5,825.70
+  - VV receives (75%): $4,369.28 (auto-deposited 1 business day after payment)
+  - SeedLink retains (25%): $1,456.43 (deposited same day as payment)
 
 **Shared financial dashboard:**
 - Both parties maintain access to a shared Sales Pipeline Google Sheet (see `sales-pipeline-template.md`)
@@ -193,11 +200,11 @@ Step 12: [AUTOMATED — client-onboarding-orchestrator.json]
 | Tier | Build Time | Monitoring | Total |
 |------|-----------|------------|-------|
 | Paid Assessment | 3–5 business days | N/A | 3–5 days |
-| Basic | 5–7 business days | 2 weeks | ~3 weeks |
-| Standard | 7–10 business days | 2 weeks | ~4 weeks |
-| Premium | 10–15 business days | 2 weeks | ~5 weeks |
-| Bundle (2 modules) | 10–15 business days | 2 weeks | ~5 weeks |
-| Bundle (3–4 modules) | 15–20 business days | 2 weeks | ~6 weeks |
+| Basic (single module) | 5–7 business days | 2 weeks | ~3 weeks |
+| Standard (single module) | 7–10 business days | 2 weeks | ~4 weeks |
+| Outreach Package | 10–15 business days | 2 weeks | ~5 weeks |
+| Content Package | 15–20 business days | 2 weeks | ~6 weeks |
+| Full Stack | 20–25 business days | 2 weeks | ~7 weeks |
 
 **SLA:** VV will acknowledge new builds within 24 hours and begin work within 48 hours of receiving the completed questionnaire.
 
@@ -575,8 +582,8 @@ Content structure:
    - Module name + one-line description
    - "Starting at $1,500" with link to pricing
    - Key stat (e.g., "90% time saved" for LinkedIn, "88% cost reduction" for SEO)
-4. **Pricing table** — Basic / Standard / Premium for each module
-5. **Bundle pricing** — show savings for multi-module purchases
+4. **Package pricing** — Outreach ($2,500), Content ($4,000), Full Stack ($6,000)
+5. **À la carte pricing** — Basic ($1,500) / Standard ($2,200) per module for single-module buyers
 6. **Social proof** — Mavera case study (once available), testimonials
 7. **FAQ section** — "What tools do I need?", "How long does it take?", "Do I own everything?"
 8. **CTA:** "Get Started" → Stripe checkout or "Book a Call" → Calendly
@@ -584,12 +591,12 @@ Content structure:
 ### Stripe Checkout Integration
 
 Set up Stripe products for:
-- Each module × each tier (12 products)
-- Each bundle option (12 bundle products)
+- 3 packages: Outreach ($2,500), Content ($4,000), Full Stack ($6,000)
+- 8 à la carte modules: 4 modules × 2 tiers (Basic/Standard)
 - Lite Support subscriptions (4 products)
 - Paid Assessment (1 product)
 
-**Total: ~29 Stripe products.** Can be simplified by using a product configurator or custom checkout page.
+**Total: ~16 Stripe products.** Significantly simpler than the previous 29-product structure.
 
 ### Post-Purchase Automation
 
