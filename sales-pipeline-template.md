@@ -88,7 +88,7 @@ Auto-calculated summary of financial performance.
 | **VV Overdue Payouts** | `=SUMIFS(Pipeline!vv_payout, Pipeline!vv_payout_status, "Overdue")` | Late VV payments |
 | **Active Clients** | `=COUNTIFS(Pipeline!status, "*Active*") + COUNTIFS(Pipeline!status, "*Monitoring*") + COUNTIFS(Pipeline!status, "*Build*")` | Currently served |
 | **Lite Support MRR** | `=SUMIFS(Pipeline!lite_support_monthly, Pipeline!lite_support, "Active")` | Monthly recurring |
-| **VV Lite Support MRR** | `=Lite_Support_MRR * 0.75` | VV's share |
+| **VV Lite Support MRR** | `=Lite_Support_MRR * 0.90` | VV's 90% share (VV does all Lite Support delivery) |
 | **Avg Build Value** | `=AVERAGE(Pipeline!amount_paid)` | Average deal size |
 | **Builds This Month** | `=COUNTIFS(Pipeline!purchased_at, ">="&DATE(YEAR(TODAY()),MONTH(TODAY()),1))` | Current month volume |
 

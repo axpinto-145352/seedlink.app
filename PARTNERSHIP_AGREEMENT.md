@@ -6,7 +6,7 @@
 - **Veteran Vectors** ("VV") — Anthony Pinto, Founder
 
 **Classification:** Confidential
-**Version:** 2.1 — Updated Mar 10: Package pricing (Outreach $2,500, Content $4,000, Full Stack $6,000). Prior: Mar 9 call (75/25 split, Premium tier removed, Growth Partner role, delayed Stripe split, validation call added)
+**Version:** 3.0 — Major restructure Mar 10: Added scope of work per party (Sections 1.2–1.3), deliverables per module (1.5), Lite Support detail with 90/10 split (1.6), annotated client purchase flow (1.8), strengthened shared terms (Part 3: independent contractor, warranties, indemnification, force majeure, amendments). Package pricing (Outreach $2,500, Content $4,000, Full Stack $6,000). Prior: Mar 9 call (75/25 split, Premium tier removed, Growth Partner role, delayed Stripe split, validation call added)
 
 ---
 
@@ -43,7 +43,89 @@ SMB clients purchase individual automation modules directly through SeedLink's w
 
 ---
 
-## 1.2 Service Catalog (Standard Packages)
+## 1.2 Scope of Work — SeedLink Responsibilities
+
+SeedLink is responsible for everything before the build and the ongoing client relationship after the build. SeedLink does not perform any technical delivery work.
+
+### Pre-Sale (100% SeedLink)
+
+| Responsibility | Description |
+|---------------|-------------|
+| **Brand & marketing** | Maintain seedlink.app, write sales copy, produce marketing content, manage social presence |
+| **Lead generation** | Source clients via Founders Creative accelerator network, inbound marketing, partnerships, referrals |
+| **Sales conversations** | Conduct all pre-sale calls, demos, and pitches. VV is never on sales calls |
+| **Pricing & packaging** | Set and communicate pricing to clients. VV does not discuss pricing with clients |
+| **Stripe & billing** | Maintain Stripe Connect platform, process payments, manage refunds/disputes |
+| **Validation call** | Conduct 15-min post-purchase validation call with each client before questionnaire |
+
+### Post-Sale (Shared — SeedLink Owns Relationship)
+
+| Responsibility | Description |
+|---------------|-------------|
+| **Client relationship** | Primary point of contact for client relationship issues, complaints, account management |
+| **Questionnaire management** | Maintain and distribute the onboarding questionnaire (Typeform/Google Form) |
+| **Financial reporting** | Maintain shared Sales Pipeline sheet; provide VV with monthly revenue summaries |
+| **Upsell / expansion** | Identify and pitch upsell opportunities (additional modules, package upgrades) to existing clients |
+| **Client communication (non-technical)** | Handle billing questions, scheduling, general inquiries |
+| **Lite Support billing** | Process monthly Lite Support subscriptions via Stripe (automated) |
+
+### What SeedLink Does NOT Do
+
+- SeedLink does not build, configure, or maintain n8n workflows
+- SeedLink does not write or edit system prompts
+- SeedLink does not provide technical support to clients
+- SeedLink does not conduct handoff calls (optional attendance only)
+- SeedLink does not perform Lite Support work (monitoring, optimization, troubleshooting)
+
+---
+
+## 1.3 Scope of Work — Veteran Vectors Responsibilities
+
+VV is responsible for all technical delivery, from the moment a completed questionnaire arrives through build completion, handoff, monitoring, and ongoing Lite Support.
+
+### Build Phase (100% VV)
+
+| Responsibility | Description |
+|---------------|-------------|
+| **Environment setup** | Set client-specific n8n environment variables, import and configure workflows per purchased modules |
+| **Workflow configuration** | Customize all workflow nodes for client's platforms, CRM, CMS, and accounts |
+| **Prompt engineering** | Write and tune all Claude API system prompts using client's voice profile, content pillars, and ICP |
+| **Voice Profile generation** | Run Voice Builder or Voice Extractor to produce the client's Voice Profile |
+| **Google Sheet setup** | Clone template, configure Settings tab, populate Voice Profile tab |
+| **Integration testing** | End-to-end test of every workflow; validate data flows across all connected platforms |
+| **Documentation** | Produce client-specific setup guide and handoff documentation |
+
+### Handoff & Monitoring (100% VV)
+
+| Responsibility | Description |
+|---------------|-------------|
+| **Handoff call** | Conduct 30-min client walkthrough of all delivered systems (SeedLink optional) |
+| **2-week monitoring** | Monitor all workflows for errors, review first content outputs, tune prompts as needed |
+| **Voice calibration** | Run calibration loop during monitoring (up to 2 rounds; voice alignment call if needed) |
+| **Build-complete notification** | Fire build-complete webhook to trigger automated client email and Sales Pipeline update |
+
+### Lite Support (100% VV Delivery — See Section 1.6 for Detail)
+
+| Responsibility | Description |
+|---------------|-------------|
+| **Performance monitoring** | Weekly check on workflow health, error rates, content quality |
+| **Keyword & prompt refresh** | Monthly keyword updates, prompt tuning based on performance data |
+| **Sequence optimization** | A/B test messaging, update sequences based on response patterns |
+| **Technical troubleshooting** | Fix workflow failures, API changes, platform integration issues |
+| **Client support (technical)** | Respond to client technical questions within 1 business day |
+| **Monthly performance summary** | Provide brief performance update to client (email or Slack) |
+
+### What VV Does NOT Do
+
+- VV does not source, market to, or sell to clients
+- VV does not set or negotiate pricing with clients
+- VV does not handle billing, refunds, or payment disputes
+- VV does not make product roadmap decisions unilaterally (provides input)
+- VV does not manage client relationships outside of technical delivery and support
+
+---
+
+## 1.4 Service Catalog (Standard Packages)
 
 These are the packages available for online purchase on seedlink.app:
 
@@ -66,23 +148,143 @@ These are the packages available for online purchase on seedlink.app:
 
 > Packages are the recommended purchase path. Individual modules available à la carte at Basic ($1,500) or Standard ($2,200) for clients who only need one system. Upgrade credit: clients who purchased à la carte can upgrade to a package and apply what they've paid toward the package price.
 
-**Lite Support** (optional monthly retainer):
+---
 
-| Module | Monthly |
-|--------|---------|
-| LinkedIn | $250/mo |
-| Content / Email / SEO | $350/mo each |
-| Multi-module discount (3+) | 10% off total |
+## 1.5 Deliverables by Module
+
+These are the specific deliverables VV produces for each module. SeedLink provides the client questionnaire data, Voice Profile inputs, and access credentials. VV builds everything below.
+
+### Module A — LinkedIn Outreach
+
+| Deliverable | Basic | Standard |
+|-------------|-------|----------|
+| Prosp.AI setup & configuration | 1 account | 2 accounts |
+| ICP list build & segmentation | 1 ICP | 2 ICPs |
+| Connection request message templates | 3 variants | 5 variants |
+| 5-touch follow-up sequences | 1 sequence | 2 sequences |
+| Loom video framework & scripts | ✓ | ✓ |
+| Calendly integration | ✓ | ✓ |
+| LinkedIn profile optimization guide | ✓ | ✓ |
+| CRM integration (if applicable) | Basic | Advanced |
+| n8n response-handler workflow | ✓ | ✓ |
+| Google Sheet tracking dashboard | ✓ | ✓ |
+| 2 training sessions (30 min each) | ✓ | ✓ |
+| Handoff documentation | ✓ | ✓ |
+
+### Module B — Content Creation
+
+| Deliverable | Basic | Standard |
+|-------------|-------|----------|
+| Content pillars configured | 1 pillar | 2 pillars |
+| Blog posts/month (automated) | 4 | 8 |
+| Voice Profile (generated or extracted) | ✓ | ✓ |
+| Editorial calendar (Google Sheet) | ✓ | ✓ |
+| n8n content-pipeline-main workflow | ✓ | ✓ |
+| n8n social-derivation workflow | Blog-to-social | Blog-to-social + standalone |
+| n8n editorial-calendar-manager workflow | ✓ | ✓ |
+| Claude system prompts (brief, writer, reviewer) | ✓ | ✓ |
+| Platform publishing | 1 platform | 2 platforms (LinkedIn + blog) |
+| Human approval workflow (email/Slack) | ✓ | ✓ |
+| Handoff documentation | ✓ | ✓ |
+
+### Module C — Email Automation
+
+| Deliverable | Basic | Standard |
+|-------------|-------|----------|
+| Email sequences | 2 sequences | 4 sequences |
+| Emails per sequence | 3–5 | 5–7 |
+| CRM/trigger integration | 1 CRM | Advanced (multi-trigger) |
+| Subject line variants | 2 per email | 3 per email |
+| Personalization tokens | Basic (name, company) | Advanced (role, industry, behavior) |
+| n8n email orchestration workflow | ✓ | ✓ |
+| Response classification workflow | ✓ | ✓ |
+| Performance tracking dashboard | ✓ | ✓ |
+| Handoff documentation | ✓ | ✓ |
+
+### Module D — SEO/GEO Engine
+
+| Deliverable | Basic | Standard |
+|-------------|-------|----------|
+| Content pillars configured | 1 pillar | 2 pillars |
+| Posts optimized/month | 4 | 8 |
+| Meta title & description generation | ✓ | ✓ |
+| JSON-LD schema markup | — | ✓ |
+| AEO optimization (AI-citable structure) | ✓ | ✓ |
+| Internal link suggestion engine | ✓ | ✓ |
+| n8n seo-content-optimizer workflow | ✓ | ✓ |
+| CMS integration (WordPress/Ghost/Webflow) | — | ✓ |
+| Weekly performance report workflow | — | ✓ |
+| Keyword tracking setup | ✓ | ✓ |
+| Handoff documentation | ✓ | ✓ |
+
+### Package Deliverables
+
+Packages include all deliverables from their component modules, plus integration work:
+
+| Package | Component Modules | Additional Integration Deliverables |
+|---------|-------------------|-------------------------------------|
+| **Outreach ($2,500)** | LinkedIn (A) + Email (C) | Shared CRM pipeline: LinkedIn connections auto-feed into email sequences; unified response tracking; single performance dashboard across both channels |
+| **Content ($4,000)** | Content (B) + SEO/GEO (D) | Unified content pipeline: posts are written and SEO-optimized in a single workflow pass; shared editorial calendar; combined performance reporting |
+| **Full Stack ($6,000)** | All 4 modules (A+B+C+D) | Cross-channel integration: LinkedIn outreach feeds email nurture; content pipeline feeds social + SEO; single editorial calendar manages all channels; unified analytics dashboard; shared CRM across outreach + content |
 
 ---
 
-## 1.3 Revenue Split — Modular Builds
+## 1.6 Lite Support — Monthly Retainer
+
+Lite Support is the optional monthly retainer offered to clients after their 2-week monitoring period ends. **VV performs 100% of Lite Support delivery work.** SeedLink handles billing only (automated via Stripe).
+
+### What Lite Support Includes
+
+| Service | Frequency | Description |
+|---------|-----------|-------------|
+| **Workflow health monitoring** | Weekly | Check for errors, failed executions, API issues across all active workflows |
+| **Prompt tuning** | Monthly | Review content quality, adjust system prompts based on performance and client feedback |
+| **Keyword refresh** (Content/SEO modules) | Monthly | Update target keywords based on search trends, refresh editorial calendar topics |
+| **Sequence optimization** (LinkedIn/Email modules) | Monthly | Review response rates, update messaging, A/B test new variants |
+| **Technical troubleshooting** | As needed | Fix workflow failures, handle API changes, resolve integration issues |
+| **Client technical support** | As needed | Respond to client questions within 1 business day (email or Slack) |
+| **Performance summary** | Monthly | Brief email/Slack update to client with key metrics and any changes made |
+
+### Hour Cap
+
+Lite Support is capped at **5 hours per module per month**. Work beyond 5 hours is billed as a change order at $75/hr (same 90/10 split as Lite Support).
+
+### Lite Support Pricing
+
+| Module | Monthly Price |
+|--------|-------------|
+| LinkedIn | $250/mo |
+| Content | $350/mo |
+| Email | $350/mo |
+| SEO/GEO | $350/mo |
+| Multi-module discount (3+) | 10% off total |
+
+### Lite Support — What Each Party Does
+
+| Task | SeedLink | VV |
+|------|----------|-----|
+| Bill client monthly (Stripe auto-charge) | ✓ | |
+| Forward client billing questions | ✓ | |
+| Perform all monitoring & optimization work | | ✓ |
+| Communicate with client on technical matters | | ✓ |
+| Provide monthly performance summary to client | | ✓ |
+| Troubleshoot and fix issues | | ✓ |
+| Escalate client relationship issues (cancellation, complaints) | ✓ | |
+| Recommend upsells (additional modules, package upgrade) | ✓ | Flags opportunities to SeedLink |
+
+---
+
+## 1.7 Revenue Split — Modular Builds
 
 | Component | SeedLink | Veteran Vectors |
 |-----------|----------|----------------|
-| **Build fees** (one-time) | 25% referral/marketing commission | 75% delivery revenue |
-| **Lite Support** (monthly) | 25% | 75% |
+| **Build fees** (one-time) | 25% commission | 75% delivery revenue |
+| **Lite Support** (monthly) | 10% (billing only) | 90% (all delivery work) |
 | **Paid Assessment** ($750–$1,000) | 25% | 75% |
+| **Change orders** | 25% | 75% |
+| **Lite Support overages** ($75/hr beyond cap) | 10% | 90% |
+
+> **Lite Support split rationale:** On one-time builds, SeedLink earns 25% for active work — client acquisition, sales, validation, and brand. On Lite Support, SeedLink's ongoing contribution is limited to processing an automated Stripe subscription. VV performs all monitoring, optimization, troubleshooting, and client support (3–5 hours/month per module). The 90/10 split reflects the actual labor distribution.
 
 **Payment terms (Stripe Connect — automatic split):**
 - All client payments processed through Stripe Connect
@@ -90,7 +292,7 @@ These are the packages available for online purchase on seedlink.app:
 - Stripe Connect configured with a 1-business-day payout delay: payment lands in SeedLink's account first (Day 0), then auto-splits to VV on Day 1. This allows SeedLink to log revenue before the split occurs (important for investor reporting).
 - Both parties have real-time visibility into all transactions via their respective Stripe dashboards
 - Stripe processing fees (2.9% + $0.30) absorbed proportionally: 75% by VV, 25% by SeedLink
-- For Lite Support subscriptions: Stripe auto-splits each monthly recurring charge identically (75/25)
+- For Lite Support subscriptions: Stripe auto-splits each monthly recurring charge at 90% VV / 10% SeedLink (see Section 1.6)
 - No manual invoicing required — Stripe handles all payment routing automatically
 - If Stripe Connect is temporarily unavailable: SeedLink pays VV within 3 business days of client payment clearing, with Stripe receipt forwarded as proof of payment
 
@@ -99,7 +301,7 @@ These are the packages available for online purchase on seedlink.app:
 - Payout delay: Stripe Connect configured with 1-business-day delay so SeedLink records revenue before split
 - If any payment is more than 5 business days late (non-Connect fallback): VV may pause accepting new builds until resolved
 - VV may request Stripe transaction export quarterly to verify accuracy
-- VV retains IP rights on all deliverables until payment clears (per Section 1.11)
+- VV retains IP rights on all deliverables until payment clears (per Section 1.15)
 
 **Example — Outreach Package ($2,500):**
 - Client pays: $2,500.00
@@ -123,79 +325,30 @@ These are the packages available for online purchase on seedlink.app:
 
 ---
 
-## 1.4 Client Purchase Flow (Online)
+## 1.8 Client Purchase Flow (Online)
 
-This is the non-technical flow for clients buying directly on seedlink.app:
+Each step has a clear owner. This flow applies to all online purchases via seedlink.app.
 
-```
-Step 1: Client visits seedlink.app/automation (or /services)
-    ↓
-Step 2: Client selects module(s) and tier
-    ↓
-Step 3: Client completes purchase via Stripe checkout
-        → Stripe Connect auto-splits payment: 75% VV / 25% SeedLink
-    ↓
-Step 4: [AUTOMATED — client-onboarding-orchestrator.json]
-        Stripe webhook fires → orchestrator workflow:
-        a. Logs sale to shared Sales Pipeline Google Sheet
-        b. Sends confirmation email to client with questionnaire link
-        c. Notifies VV via Slack with purchase details + VV payout amount
-    ↓
-Step 5: SeedLink conducts validation call with client (~15 min)
-        - Not a sales call — client has already purchased
-        - Confirms requirements, reviews questionnaire expectations
-        - Sets expectations for VV build timeline
-    ↓
-Step 5b: Client completes onboarding questionnaire (15–20 min, or 20–25 min if Voice Builder path)
-        - Brand name, URL, description
-        - Voice examples (3–5 links) OR Voice Builder path if no existing content (Section 4.5)
-        - Content pillars / themes
-        - Target audience / ICP
-        - Platforms used
-        - CMS (WordPress, Framer, Ghost, Webflow)
-        - Existing CRM (if applicable)
-        - LinkedIn accounts for outreach (Module A)
-        - Goals (traffic, leads, brand awareness)
-    ↓
-Step 6: [AUTOMATED — client-onboarding-orchestrator.json]
-        Questionnaire webhook fires → orchestrator workflow:
-        a. Validates questionnaire data
-        b. Clones Google Sheet template → creates client Content Hub
-        c. Populates Settings tab with client-specific config
-        d. Triggers Voice Profile Generator workflow
-        e. Generates client configuration via Claude (setup checklist, risk flags, build estimate)
-        f. Updates Sales Pipeline status
-        g. Sends "build started" email to client
-        h. Notifies VV via Slack with full build brief + client sheet URL + action items
-    ↓
-Step 7: VV acknowledges within 24 hours and begins build
-        - Reviews auto-generated client config
-        - Sets up n8n environment variables for client
-        - Imports and configures workflows per module
-        - Runs manual end-to-end tests
-    ↓
-Step 8: VV delivers build per timeline below
-    ↓
-Step 9: [AUTOMATED — client-onboarding-orchestrator.json]
-        VV fires build-complete webhook → orchestrator workflow:
-        a. Updates Sales Pipeline status to "Build Complete — Monitoring"
-        b. Emails client with handoff booking link
-        c. Notifies Slack
-    ↓
-Step 10: VV conducts handoff call with client (SeedLink optional)
-    ↓
-Step 11: 2-week monitoring period begins
-    ↓
-Step 12: [AUTOMATED — client-onboarding-orchestrator.json]
-         Weekly check (Monday 9am) detects monitoring period ended:
-         a. Sends Lite Support offer email to client
-         b. Updates Sales Pipeline
-         c. Notifies Slack
-```
+| Step | Owner | What Happens |
+|------|-------|-------------|
+| **1. Discovery** | **SEEDLINK** | Client visits seedlink.app/automation. SeedLink's website, copy, and sales funnel drive the visit. |
+| **2. Selection** | **CLIENT** | Client selects package or à la carte module(s) and tier. |
+| **3. Payment** | **SEEDLINK (Stripe)** | Client completes purchase via Stripe checkout. Stripe Connect auto-splits: 75% VV / 25% SeedLink (builds) or 90% VV / 10% SeedLink (Lite Support). |
+| **4. Post-purchase automation** | **AUTOMATED** | `client-onboarding-orchestrator.json` fires: (a) logs sale to Sales Pipeline, (b) sends confirmation email with questionnaire link, (c) notifies VV via Slack with purchase details + payout amount. |
+| **5. Validation call** | **SEEDLINK** | Shilpa conducts ~15 min call with client. Not a sales call — confirms requirements, reviews questionnaire expectations, sets build timeline expectations. |
+| **6. Questionnaire** | **CLIENT** | Client completes onboarding questionnaire (15–25 min). Covers: business info, voice samples or Voice Builder, content pillars, ICP, platforms, CMS, CRM, LinkedIn accounts, goals. |
+| **7. Onboarding automation** | **AUTOMATED** | Orchestrator fires: (a) validates data, (b) clones Google Sheet → creates client Content Hub, (c) populates Settings tab, (d) triggers Voice Profile Generator, (e) generates client config via Claude, (f) updates Sales Pipeline, (g) sends "build started" email, (h) notifies VV with full brief + sheet URL + action items. |
+| **8. Build acknowledgment** | **VV** | VV acknowledges within 24 hours. Reviews auto-generated config, sets up n8n env vars, imports workflows, begins build. |
+| **9. Technical build** | **VV** | VV builds all deliverables per module spec (Section 1.5). Configures workflows, writes prompts, integrates platforms, runs end-to-end tests. See Section 1.9 for timelines. |
+| **10. Build-complete automation** | **AUTOMATED** | VV fires build-complete webhook → orchestrator: (a) updates Sales Pipeline to "Build Complete — Monitoring", (b) emails client handoff booking link, (c) notifies Slack. |
+| **11. Handoff call** | **VV** | VV conducts 30-min handoff call with client. Walks through all systems, answers questions, provides documentation. SeedLink attendance optional. |
+| **12. Monitoring** | **VV** | 2-week monitoring period. VV monitors workflows, reviews first content outputs, runs Voice Calibration if applicable. |
+| **13. Lite Support offer** | **AUTOMATED** | Orchestrator detects monitoring end: (a) sends Lite Support offer email, (b) updates Sales Pipeline, (c) notifies Slack. |
+| **14. Ongoing support** | **VV (delivery) / SEEDLINK (billing)** | If client opts into Lite Support: VV performs all monthly work (Section 1.6). SeedLink processes Stripe subscription. |
 
 ---
 
-## 1.5 Delivery Timelines — Modular Builds
+## 1.9 Delivery Timelines — Modular Builds
 
 | Tier | Build Time | Monitoring | Total |
 |------|-----------|------------|-------|
@@ -210,7 +363,7 @@ Step 12: [AUTOMATED — client-onboarding-orchestrator.json]
 
 ---
 
-## 1.6 Scope & Change Orders
+## 1.10 Scope & Change Orders
 
 Each module tier has defined deliverables (per the Mavera proposal and template docs). Anything outside the defined scope requires a change order.
 
@@ -231,7 +384,7 @@ Each module tier has defined deliverables (per the Mavera proposal and template 
 
 ---
 
-## 1.7 Communication Protocol — Modular Builds
+## 1.11 Communication Protocol — Modular Builds
 
 | Channel | Purpose | Participants |
 |---------|---------|-------------|
@@ -255,7 +408,7 @@ Each module tier has defined deliverables (per the Mavera proposal and template 
 
 ---
 
-## 1.8 Branding — Modular Builds
+## 1.12 Branding — Modular Builds
 
 **Two options (to be decided on partnership call):**
 
@@ -268,7 +421,7 @@ Each module tier has defined deliverables (per the Mavera proposal and template 
 
 ---
 
-## 1.9 Quality Standards
+## 1.13 Quality Standards
 
 Every modular build must include:
 
@@ -286,7 +439,7 @@ Every modular build must include:
 
 ---
 
-## 1.10 Capacity & Scaling
+## 1.14 Capacity & Scaling
 
 | Volume | VV Capacity | Action Needed |
 |--------|------------|---------------|
@@ -298,7 +451,7 @@ Every modular build must include:
 
 ---
 
-## 1.11 Intellectual Property — Modular Builds
+## 1.15 Intellectual Property — Modular Builds
 
 | Asset | Ownership |
 |-------|----------|
@@ -311,7 +464,7 @@ Every modular build must include:
 
 ---
 
-## 1.12 Term & Termination — Modular Builds
+## 1.16 Term & Termination — Modular Builds
 
 - **Term:** Ongoing, month-to-month, no minimum commitment
 - **Termination by either party:** 30 days written notice
@@ -510,56 +663,139 @@ Based on the SAAS Implementation Plan and CEO direction:
 
 # PART 3: SHARED TERMS
 
-## 3.1 Confidentiality
+## 3.1 Independent Contractor Relationship
 
-Both parties agree to:
-- Keep all client data, pricing details, revenue figures, and strategy documents confidential
-- Not disclose the terms of this partnership to third parties without written consent (except legal/financial advisors)
-- Return or destroy confidential materials upon termination
-
-**Duration:** Confidentiality obligations survive 24 months after termination.
+- Both parties operate as independent contractors. Nothing in this agreement creates an employment, agency, joint venture, or formal partnership (in the legal sense) between the parties.
+- Each party is responsible for their own taxes, benefits, insurance, and business expenses.
+- Neither party has authority to bind the other to contracts, obligations, or commitments without prior written consent.
+- VV may engage subcontractors for delivery work at VV's discretion, provided subcontractors are bound by equivalent confidentiality and quality obligations. VV remains responsible for all deliverables regardless of subcontractor involvement.
 
 ---
 
-## 3.2 Liability & Insurance
+## 3.2 Confidentiality
+
+Both parties agree to:
+- Keep all client data, pricing details, revenue figures, internal strategy documents, and the terms of this agreement confidential
+- Not disclose partnership terms to third parties without written consent (exception: legal/financial advisors, accountants, and potential investors under NDA)
+- Return or destroy confidential materials within 30 days of termination
+- Not use the other party's confidential information for any purpose outside this agreement
+
+**Scope:** Confidentiality covers: client lists, revenue data, pricing strategy, system prompts, workflow architectures, Voice Profiles, partnership financials, and all documents marked "Confidential."
+
+**Exclusions:** Information that is (a) publicly available through no fault of the receiving party, (b) independently developed, or (c) lawfully obtained from a third party.
+
+**Duration:** Confidentiality obligations survive **24 months** after termination.
+
+---
+
+## 3.3 Representations & Warranties
+
+**Both parties represent and warrant that:**
+- They have full authority to enter into this agreement
+- They will perform their obligations in a professional and workmanlike manner
+- They will comply with all applicable laws and regulations in the performance of their obligations
+- They will not knowingly introduce security vulnerabilities, malware, or unauthorized access points into any deliverables
+
+**SeedLink additionally warrants that:**
+- SeedLink has the right to operate the seedlink.app platform and sell the services described herein
+- SeedLink will maintain valid Stripe Connect platform status throughout the term
+- SeedLink will process all client payments through the agreed Stripe Connect configuration and will not redirect, delay, or withhold VV's split beyond the agreed 1-business-day payout delay
+- SeedLink will provide VV with accurate client information necessary for delivery
+
+**VV additionally warrants that:**
+- VV has the technical capability to deliver the services described in Sections 1.3 and 1.5
+- All deliverables will be original work or properly licensed; VV will not infringe third-party IP
+- VV will maintain the quality standards defined in Section 1.13 for every client build
+- VV will meet the SLA commitments defined in Section 1.9 (24-hour acknowledgment, 48-hour build start)
+
+---
+
+## 3.4 Indemnification
+
+**VV indemnifies SeedLink** against claims arising from:
+- Defective deliverables that cause client harm (e.g., workflow malfunction that sends unauthorized communications)
+- IP infringement in VV's original work product
+- VV's breach of confidentiality obligations
+
+**SeedLink indemnifies VV** against claims arising from:
+- Misrepresentation of services to clients during the sales process
+- Payment disputes caused by SeedLink's failure to configure or maintain Stripe Connect correctly
+- Client claims arising from SeedLink's failure to perform its responsibilities (validation call, questionnaire, billing)
+- SeedLink's breach of confidentiality obligations
+
+**Indemnification limits:**
+- Neither party's total liability under this agreement shall exceed the total fees paid/received under this agreement in the 12 months preceding the claim
+- Neither party is liable for indirect, consequential, incidental, or lost-profit damages
+
+---
+
+## 3.5 Liability & Insurance
 
 - Each party is responsible for their own professional liability
 - VV carries professional liability insurance covering delivery work (or will obtain before exceeding 5 concurrent clients)
 - SeedLink carries business liability insurance covering client relationships and platform operation
-- Neither party is liable for indirect, consequential, or lost-profit damages
-- AI-generated content disclaimer: Both parties acknowledge that AI outputs may contain errors. The human-in-the-loop review process mitigates but does not eliminate this risk. Client agreements must include content liability language.
+- **AI-generated content disclaimer:** Both parties acknowledge that AI outputs may contain errors. The human-in-the-loop review process mitigates but does not eliminate this risk. Client agreements must include content liability language. Neither party is liable to the other for client claims arising solely from AI-generated content that passed the human approval step.
 
 ---
 
-## 3.3 Dispute Resolution
+## 3.6 Dispute Resolution
 
 1. **Good faith discussion** between principals (Shilpa + Anthony) — 14 days
 2. **Mediation** via mutually agreed mediator — 30 days
 3. **Binding arbitration** — if mediation fails, per AAA Commercial Arbitration Rules
 
+**Payment disputes:** If VV believes a Stripe split was processed incorrectly, VV may raise the issue in writing. SeedLink must respond with Stripe transaction records within 5 business days. If the discrepancy is confirmed, SeedLink corrects it within 3 business days. If SeedLink fails to respond or correct, VV may pause new builds per Section 1.7.
+
 **Governing law:** State of [TO BE DETERMINED on partnership call]
 
 ---
 
-## 3.4 Third-Party Tool Dependencies
+## 3.7 Third-Party Tool Dependencies
 
 Both parties acknowledge:
 - The entire service relies on third-party tools (n8n, Claude API, Buffer, Prosp.AI, etc.)
 - Pricing changes, API deprecation, or service discontinuation by any third-party vendor is outside both parties' control
 - Both parties will monitor tool dependencies and proactively communicate changes that affect delivery or pricing
 - Neither party is liable for service disruptions caused by third-party tool failures
+- If a third-party tool cost increase materially affects delivery economics (>20% increase), both parties will renegotiate affected pricing within 30 days
 
 ---
 
-## 3.5 Data Processing
+## 3.8 Force Majeure
+
+Neither party is liable for delays or failures caused by events beyond reasonable control, including: natural disasters, government actions, internet/infrastructure outages, third-party platform outages (Stripe, n8n cloud, Anthropic API), pandemics, or acts of war.
+
+**Obligations during force majeure:**
+- The affected party must notify the other within 48 hours
+- Both parties must make reasonable efforts to mitigate impact
+- If a force majeure event lasts more than 30 days, either party may terminate affected engagements without penalty
+- Client builds already paid for will be completed once the force majeure event resolves, or refunded if completion is no longer feasible
+
+---
+
+## 3.9 Data Processing
 
 - SeedLink is the data controller for client data
 - VV is a data processor acting on SeedLink's behalf
 - VV will not use client data for any purpose other than delivering the contracted services
 - VV will follow reasonable data security practices (encrypted credential storage, no plaintext API keys, access controls)
+- VV will notify SeedLink within 48 hours of discovering any data breach affecting client data
 - For EU-targeting clients: both parties will execute a Data Processing Agreement (DPA) per GDPR requirements
 
 ---
+
+## 3.10 Amendments
+
+- This agreement may only be amended in writing, signed (or acknowledged in writing, e.g., email confirmation) by both parties
+- Verbal agreements or informal Slack messages do not constitute amendments
+- Material changes to revenue split, pricing, scope of work, or termination terms require a formal amendment with 14 days notice before taking effect
+- Minor operational changes (e.g., tool substitutions, process improvements) may be agreed via email and documented in the next formal revision
+
+---
+
+## 3.11 Entire Agreement
+
+This document, together with any written amendments, constitutes the entire agreement between the parties regarding the subject matter herein. It supersedes all prior discussions, proposals, and draft documents (including earlier versions of this agreement, call transcripts, and informal commitments).
 
 ---
 
@@ -656,7 +892,7 @@ Set up a simple tracking system (Google Sheet or Airtable):
 | Client Name | — |
 | Date Purchased | — |
 | Module(s) | A, B, C, D |
-| Tier | Basic / Standard / Premium |
+| Tier / Package | Basic / Standard / Outreach / Content / Full Stack |
 | Amount Paid | — |
 | VV Payout (75%) | Auto-calculated |
 | SeedLink Commission (25%) | Auto-calculated |
@@ -773,9 +1009,9 @@ Five short-answer questions that capture natural language patterns:
 4. "Are you comfortable with first-person ('I built this because...') or prefer company voice ('We believe...')?"
 5. "What's more important: sounding smart or sounding approachable?" (slider or choice)
 
-**Step 4 (Premium tier only): Voice Recording (~5 min)**
+**Step 4 (Optional): Voice Recording (~5 min)**
 
-For Premium builds, the questionnaire includes an optional Loom/voice memo prompt:
+For clients who want deeper voice calibration, the questionnaire includes an optional Loom/voice memo prompt:
 
 > "Record yourself answering: What problem does your company solve and why do you care?"
 
@@ -828,30 +1064,55 @@ This happens within the existing monitoring period — no extra timeline or cost
 
 Voice Builder is included in all tiers at no extra charge. It replaces the "content links" requirement — it's not an add-on, it's an alternative path through the same onboarding.
 
-Premium tier includes the optional voice recording step, which adds ~15 minutes to VV's build time for transcription and extraction.
+The optional voice recording step adds ~15 minutes to VV's build time for transcription and extraction. Available on any tier or package.
 
 ---
 
 ## 4.6 What SeedLink Does vs. What VV Does
 
+*For full detail, see Section 1.2 (SeedLink scope) and Section 1.3 (VV scope).*
+
+### Pre-Sale & Sales
+
 | Task | SeedLink | VV |
 |------|----------|-----|
-| Marketing & sales (website, ads, content) | ✓ | |
+| Marketing & sales (website, ads, content, accelerator outreach) | ✓ | |
 | Client inquiries & pre-sale conversations | ✓ | |
-| Payment collection (Stripe) | ✓ | |
+| Pricing & packaging decisions | ✓ | |
+| Payment collection & Stripe management | ✓ | |
+| Post-purchase validation call (~15 min) | ✓ | |
+
+### Onboarding & Build
+
+| Task | SeedLink | VV |
+|------|----------|-----|
 | Onboarding questionnaire management | ✓ | |
-| Forwarding questionnaire to VV | ✓ | |
 | Voice Builder sample content (5 A/B pairs, archetypes) | | ✓ (one-time creation) |
 | Voice Profile generation (Claude prompt during build) | | ✓ |
-| Voice calibration during monitoring period | | ✓ |
-| Technical build (workflows, prompts, config) | | ✓ |
-| Client onboarding/handoff call | Optional | ✓ |
+| Technical build (workflows, prompts, config, testing) | | ✓ |
+| Google Sheet setup & configuration | | ✓ |
+| Client handoff call (30 min) | Optional | ✓ |
+| Handoff documentation | | ✓ |
+
+### Post-Build
+
+| Task | SeedLink | VV |
+|------|----------|-----|
 | 2-week monitoring | | ✓ |
-| Lite Support delivery | | ✓ |
-| Client relationship management | ✓ | |
-| Invoicing VV payouts | ✓ | |
+| Voice calibration during monitoring | | ✓ |
+| Lite Support delivery (monitoring, optimization, troubleshooting) | | ✓ (100% of work) |
+| Lite Support billing (Stripe auto-charge) | ✓ | |
+| Client relationship management (non-technical) | ✓ | |
+| Client technical support | | ✓ |
+| Upsell identification & pitch | ✓ | Flags to SeedLink |
+
+### Platform & Strategy
+
+| Task | SeedLink | VV |
+|------|----------|-----|
 | Platform development (Track B) | | ✓ |
 | Product roadmap decisions | ✓ (with VV input) | |
+| Pricing strategy | ✓ (with VV input) | |
 
 ---
 
@@ -917,4 +1178,4 @@ Signature: _______________
 ---
 
 *Confidential — Prepared for SeedLink.app × Veteran Vectors Partnership*
-*March 9, 2026 — v2.0*
+*March 10, 2026 — v3.0*

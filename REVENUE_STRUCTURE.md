@@ -84,9 +84,9 @@ Three options (decide on call):
 
 ### For Lite Support (Monthly Subscriptions)
 
-Stripe Connect handles recurring subscriptions identically:
+Lite Support uses a **90% VV / 10% SeedLink** split (VV performs 100% of delivery work; SeedLink handles automated billing only):
 - Client subscribes to $350/mo Content Lite Support
-- Every month, Stripe auto-splits: $262.50 → VV (75%), $87.50 → SeedLink (25%)
+- Every month, Stripe auto-splits: $315.00 → VV (90%), $35.00 → SeedLink (10%)
 - No monthly invoicing from VV to SeedLink ever again
 
 ---
