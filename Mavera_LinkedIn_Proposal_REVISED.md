@@ -276,30 +276,16 @@ Most clients start with a package. Each package bundles complementary modules in
 - 4 email sequences with CRM integration and response classification
 - Shared lead pipeline: LinkedIn connections flow into email nurture automatically
 - Unified performance dashboard across both channels
-- Est. build time: 18–24 hours
-
 **Content Package ($4,000)** — Content + SEO integrated from day one
 - AI content engine (editorial calendar, blog drafting, social derivation, AI review)
 - SEO/GEO optimization (keyword strategy, meta tags, schema markup, AI-citable structure)
 - Content is written *and* optimized in one pipeline — no separate SEO pass needed
 - Weekly performance reports across search and social
-- Est. build time: 32–42 hours
-
 **Full Stack ($6,000)** — Everything, fully integrated
 - All four modules with shared data flows and cross-channel triggers
 - LinkedIn outreach → email nurture → content amplification → SEO compounding
 - Single editorial calendar managing all channels
 - Unified analytics across outreach, content, email, and search
-- Est. build time: 50–66 hours
-
-### Financial Breakout
-
-| Package | Client Price | Stripe Fee | Net After Stripe | SeedLink (25%) | VV Delivery (75%) |
-|---------|-------------|------------|-----------------|----------------|-------------------|
-| **Outreach** | $2,500 | $72.80 | $2,427.20 | $606.80 | $1,820.40 |
-| **Content** | $4,000 | $116.30 | $3,883.70 | $970.93 | $2,912.78 |
-| **Full Stack** | $6,000 | $174.30 | $5,825.70 | $1,456.43 | $4,369.28 |
-
 ### À La Carte Still Available
 
 Prefer to start with just one module? Individual modules are available at Basic ($1,500) or Standard ($2,200). You can always upgrade to a package later — we'll credit what you've already paid toward the package price.
@@ -463,11 +449,9 @@ If any of this looks like it fits where Mavera is headed, we're happy to walk th
 - Restructured pricing around three packages: Outreach ($2,500), Content ($4,000), Full Stack ($6,000)
 - Removed Premium tier ($3,000) — two tiers only (Basic $1,500 / Standard $2,200) for à la carte
 - Individual modules repositioned as à la carte option; packages are the primary pricing
-- Added financial breakout table showing Stripe fees, SeedLink/VV split per package
-- Updated ROI section: Full Stack Year 1 total now $19,200 (down from $22,400)
+- Updated ROI section with Full Stack pricing
 - Updated all module pricing tables to 2-tier format
-- Added "better value" callouts pointing to relevant package on each module
-- Updated revenue split to 75% VV / 25% SeedLink per Mar 9 call
+- Added package callouts on each module section
 
 **v3.0 — 2026-03-06:**
 - Expanded from LinkedIn-only to modular 4-service proposal
