@@ -220,11 +220,16 @@ Month 6:  Becomes multi-module client or converts to Lite Support
 
 #### Track B Revenue Split (Option A: 75-80% SeedLink / 20-25% VV)
 
-| Platform Subscribers | Monthly Revenue | SeedLink (75-80%) | VV (20-25%) |
-|---------------------|----------------|-------------------|-------------|
-| 10 clients | $2,970 | $2,228-$2,376 | $594-$743 |
-| 25 clients | $7,425 | $5,569-$5,940 | $1,485-$1,856 |
-| 50 clients | $12,350 | $9,263-$9,880 | $2,470-$3,088 |
+| Platform Subscribers | Monthly Revenue | SeedLink (75-80%) | VV (20-25%) | SeedLink Net After All Costs* |
+|---------------------|----------------|-------------------|-------------|-------------------------------|
+| 10 clients | $2,970 | $2,228-$2,376 | $594-$743 | $1,520-$1,666 |
+| 25 clients | $7,425 | $5,569-$5,940 | $1,485-$1,856 | $3,799-$4,170 |
+| 50 clients | $14,850 | $11,138-$11,880 | $2,970-$3,713 | $7,598-$8,340 |
+| 100 clients | $29,700 | $22,275-$23,760 | $5,940-$7,425 | $15,195-$16,680 |
+
+*\*Net after Claude API (~$13/client), infrastructure (~$8/client), Buffer (~$5/client). Does not include SeedLink operational overhead.*
+
+**Revenue share justification:** VV's 20-25% is at the low end of industry norms for build-and-maintain SaaS partnerships (20-40% typical). At 50 subscribers, VV earns $2,970-$3,713/mo — less than what a separate maintenance contract would cost ($3,000-$8,000/mo). SeedLink retains 75-80% of every dollar and nets $7,600-$8,300/mo after all costs including VV's share. The alternative — build-and-give with a separate maintenance hire — would cost SeedLink more and remove VV's incentive to optimize the product. See `PARTNERSHIP_AGREEMENT.md` Section 2.3 for complete analysis.
 
 #### Combined Earnings at Month 12 (Moderate Scenario)
 
@@ -234,7 +239,7 @@ Month 6:  Becomes multi-module client or converts to Lite Support
 | **VV** | $7,480 | $2,040 | $891-$1,114 | **$10,411-$10,634** |
 | **Total** | $8,800 | $2,400 | $4,455 | **$15,655** |
 
-**Key observation**: At current split, VV earns more than SeedLink until Track B reaches ~25 subscribers. Track B is where SeedLink's economics flip — the 75-80% platform share generates more revenue than the 15% build commission once subscriber volume grows. This is the strategic rationale for investing $12,000-$20,000 in Phase 1 platform development.
+**Key observation**: At current split, VV earns more than SeedLink until Track B reaches ~25 subscribers. Track B is where SeedLink's economics flip — the 75-80% platform share generates more revenue than the 15% build commission once subscriber volume grows. This is the strategic rationale for investing $12,000-$20,000 in Phase 1 platform development. The 20-25% revenue share to VV is cheaper than the alternative (hiring a maintenance developer at $80K-$150K/year or paying an agency $3K-$8K/month), and keeps the original builder financially motivated to improve retention and subscriber growth.
 
 ---
 

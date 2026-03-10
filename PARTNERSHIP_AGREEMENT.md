@@ -530,7 +530,7 @@ Based on the SAAS_IMPLEMENTATION_PLAN.md and CEO direction, the white label buil
 
 The white label platform is a different economic model than modular builds. VV is building a product, not delivering a service. The terms reflect this:
 
-### Option A: Fixed-Fee Build + Revenue Share
+### Option A: Fixed-Fee Build + Revenue Share (Recommended)
 
 | Component | Terms |
 |-----------|-------|
@@ -539,6 +539,42 @@ The white label platform is a different economic model than modular builds. VV i
 | **Ongoing platform revenue share** | VV receives 20–25% of platform subscription revenue (MRR from clients using the SeedLink Content Engine) |
 | **Ongoing maintenance** | VV provides platform maintenance, bug fixes, and minor feature updates for 10 hours/month included in revenue share |
 | **Major feature development** | Scoped and priced separately per feature |
+
+#### Why 20–25% Revenue Share Is Fair and Necessary
+
+**1. Incentive alignment.** A one-time build fee creates a vendor relationship — VV delivers code and moves on. A revenue share creates a partner relationship — VV is financially motivated to build the best possible product, optimize subscriber retention, and proactively improve the platform, because more subscribers = more revenue for both parties. Without revenue share, VV has zero incentive to go above and beyond after final payment clears.
+
+**2. Below-market build pricing already favors SeedLink.** Custom SaaS MVP development typically costs $50,000–$300,000. VV is building for $37,000–$65,000 total — a 50–80% discount vs. market rates. The revenue share partially compensates for this subsidy. At even 100 subscribers ($397/mo avg), VV's 20–25% share amounts to $7,940–$9,925/mo — reasonable compensation for the party that built and maintains 100% of the sellable product.
+
+**3. Maintenance alone justifies it.** Industry-standard SaaS maintenance retainers for a platform of this complexity run $3,000–$8,000/month ($36,000–$96,000/year). The 20–25% share at modest scale (25–50 subscribers) generates $1,485–$3,088/mo — well below what a separate maintenance contract would cost SeedLink. The revenue share is effectively a discounted maintenance arrangement that also aligns incentives.
+
+**4. Industry benchmarks support the range.** Agencies that build and maintain SaaS platforms typically receive 20–40% ongoing revenue share. Referral-only partners (who do zero build work) commonly earn 15–30% recurring commissions. At 20–25%, VV's share sits at the low end of the builder-maintainer range — closer to a referral partner than a technical co-founder, despite doing technical co-founder-level work.
+
+**5. It's the cheapest path to a maintained product.** Without revenue share, SeedLink would need to either (a) hire a full-time developer at $80,000–$150,000/year to maintain the platform, or (b) pay an agency $3,000–$8,000/month for ongoing maintenance. The 20–25% revenue share is significantly cheaper than both alternatives at any subscriber count below ~200, and comes with the added benefit of keeping the original builder — who knows the codebase intimately — at the table.
+
+**6. SeedLink retains 75–80% of every dollar.** At 87–91% gross margins on the SaaS tiers (after Claude API and infrastructure costs), SeedLink's 75–80% share delivers $130–$464 net profit per subscriber per month after all costs including VV's share. The platform is highly profitable for SeedLink even with the revenue share.
+
+#### Revenue Share Financial Model (Option A: 20–25%)
+
+| Subscribers | Monthly Gross | SeedLink (75–80%) | VV (20–25%) | SeedLink Net After All Costs* |
+|-------------|--------------|--------------------|--------------|-----------------------------|
+| 10 | $2,970 | $2,228–$2,376 | $594–$743 | $1,520–$1,666 |
+| 25 | $7,425 | $5,569–$5,940 | $1,485–$1,856 | $3,799–$4,170 |
+| 50 | $14,850 | $11,138–$11,880 | $2,970–$3,713 | $7,598–$8,340 |
+| 100 | $29,700 | $22,275–$23,760 | $5,940–$7,425 | $15,195–$16,680 |
+| 200 | $59,400 | $44,550–$47,520 | $11,880–$14,850 | $30,390–$33,360 |
+
+*\*Net after Claude API (~$13/client), infrastructure (~$8/client), and Buffer (~$5/client). Does not include SeedLink operational overhead.*
+
+**Key insight for SeedLink:** At 50 subscribers, SeedLink nets $7,600–$8,300/month after all costs including VV's share. Without VV's revenue share, SeedLink would instead be paying $3,000–$8,000/month for equivalent maintenance — netting roughly the same or less. The revenue share is not a cost — it's the cheapest way to keep the platform maintained by the person who built it.
+
+#### What Happens Without Revenue Share (The "Build-and-Give" Risk)
+
+If VV builds the platform for a one-time fee with no ongoing revenue share:
+- VV has no contractual relationship post-delivery and no incentive to optimize the product
+- SeedLink must hire or contract maintenance separately ($36,000–$96,000/year)
+- SeedLink loses the institutional knowledge of the builder (the most expensive knowledge to replace)
+- VV's effective compensation for building a platform worth $500K–$4M+ at scale: $37K–$65K total (0.2–1.3% of platform value)
 
 **Milestone payment schedule (Phase 1):**
 
@@ -549,7 +585,7 @@ The white label platform is a different economic model than modular builds. VV i
 | M3: Landing page + Stripe + basic portal | 30% | Demo of end-to-end purchase + onboarding |
 | M4: Launch | 10% | First client successfully onboarded through the system |
 
-### Option B: Reduced Build Fee + Higher Revenue Share
+### Option B: Reduced Build Fee + Higher Revenue Share (Alternative)
 
 | Component | Terms |
 |-----------|-------|
@@ -558,13 +594,13 @@ The white label platform is a different economic model than modular builds. VV i
 | **Ongoing platform revenue share** | VV receives 35–40% of platform subscription revenue |
 | **Maintenance** | Same as Option A |
 
-**Option B rationale:** VV takes more risk upfront (lower guaranteed revenue) in exchange for higher upside as the platform scales. This option works better if both parties are confident in the growth trajectory.
+**Option B rationale:** VV takes more risk upfront (lower guaranteed revenue) in exchange for higher upside as the platform scales. The $16K–$30K fee discount is recovered in ~4 months at 50 subscribers. This option works better if both parties are confident in the growth trajectory, but shifts more near-term risk onto VV.
 
 ### Option C: Equity/Partnership (Advanced — Discuss on Call)
 
 If both parties want deeper alignment, a formal partnership structure with equity in the platform entity could be explored. This would require legal counsel and is out of scope for this initial agreement.
 
-**Recommendation:** Start with Option A. It's clean, transparent, and gives both parties a fair deal. Revisit revenue share percentages after 6 months of platform operation.
+**Recommendation:** Option A (20–25% revenue share). It preserves SeedLink's capital flexibility while ensuring VV remains a motivated, long-term platform partner. At 20–25%, VV's share is at the low end of industry norms (agencies who build + maintain SaaS platforms typically earn 20–40%), which gives SeedLink room to retain the lion's share (75–80%) of platform economics. Revisit revenue share percentages after 6 months of platform operation, with clear metrics as triggers (see Section 2.9).
 
 ---
 
@@ -656,6 +692,35 @@ Based on the SAAS Implementation Plan and CEO direction:
 - **Revenue share post-termination:** Ends 90 days after termination notice
 - **Non-compete:** VV will not build a competing platform (AI content automation SaaS with the same feature set) for 12 months after termination. VV may continue modular/custom builds for other clients.
 - **Source code escrow (optional):** If SeedLink wants additional protection, both parties can agree to a source code escrow arrangement
+
+---
+
+## 2.9 Revenue Share Review Framework
+
+The 20–25% revenue share will be reviewed at defined milestones. This prevents future ambiguity about when/why to renegotiate.
+
+**Review triggers (any one triggers a formal review):**
+
+| Trigger | Threshold | Review Scope |
+|---------|-----------|-------------|
+| Time-based | 6 months after first platform subscriber | Full revenue share review |
+| Subscriber count | Platform reaches 50 paying subscribers | Evaluate whether share % should adjust |
+| Maintenance hours | VV's actual maintenance consistently exceeds 10 hrs/mo for 3+ months | Increase included hours or adjust share |
+| Revenue milestone | Platform MRR exceeds $25,000 | Evaluate economics at scale |
+
+**Review process:**
+1. Either party can invoke a review when a trigger is hit
+2. Both parties share relevant data (Stripe revenue, VV hours logged, platform costs)
+3. 30-day good-faith negotiation window
+4. If no agreement is reached, current terms continue for another 6 months before the next review
+5. Neither party can unilaterally change the revenue share — changes require mutual written agreement
+
+**Adjustment guardrails:**
+- VV's revenue share will not drop below 15% without VV's consent
+- VV's revenue share will not exceed 30% without SeedLink's consent
+- Any adjustment applies only to future MRR, not retroactively
+
+**Key principle:** The revenue share should reflect VV's ongoing contribution. If VV is actively maintaining, improving, and scaling the platform (10+ hrs/mo), the 20–25% range is appropriate. If VV's role diminishes to passive maintenance only, both parties should discuss a lower share. If VV's contribution increases (major features, scaling work), both parties should discuss a higher share or separate feature compensation.
 
 ---
 

@@ -89,6 +89,13 @@ Net to split:        $2,135.90
   - Phase 1: $12K–$20K (milestones)
   - Phase 2: $25K–$45K (milestones)
   - Ongoing: 20–25% of platform MRR
+- **How to justify the 20–25% to Shilpa:**
+  - "The build itself is already 50–80% below market rate ($37K–$65K vs. $50K–$300K for a custom SaaS MVP). The revenue share keeps me invested in making the platform excellent — not just functional."
+  - "Without it, you'd need a separate maintenance contract at $3K–$8K/month ($36K–$96K/year). The revenue share at 50 subscribers is $2,970–$3,713/month — cheaper than hiring someone else."
+  - "Industry standard for agencies that build and maintain SaaS platforms is 20–40%. We're at the low end of that range. Referral-only partners who do zero build work get 15–30%."
+  - "You keep 75–80% of every dollar. At 87–91% gross margin on the tiers, you're netting $130–$464 per subscriber per month after my share and all costs. The platform is highly profitable for SeedLink with the share in place."
+  - "It also protects you — I'm financially motivated to fix bugs fast, improve retention, and make the product better. A one-time build contractor walks away after the check clears."
+  - "We've built in a review framework at 6 months and at 50 subscribers so we can adjust if the economics change. This isn't locked forever — it's designed to evolve with the business."
 
 **e) Capacity vs. revenue projections**
 - Agreement: VV comfortable at 1–3 builds/month, at capacity at 4–5

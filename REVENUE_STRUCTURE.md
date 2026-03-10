@@ -180,6 +180,20 @@ For the platform build, Stripe Connect works the same way:
 - VV sees platform MRR growing in real-time
 - No "trust me, there are 25 subscribers" — VV can verify independently
 
+### Why the 20–25% Split Is Right for Track B
+
+The Track B split (75–80% SeedLink / 20–25% VV) is intentionally different from Track A (25% SeedLink / 75% VV) because the value creation model is different:
+
+- **Track A** is labor-intensive per client — VV does 28–75 hours of custom work per build, so VV earns the majority
+- **Track B** is product revenue — VV builds once, the platform serves many clients with near-zero marginal effort per subscriber, so SeedLink (who owns the brand, acquires clients, and bears the marketing cost) retains the majority
+
+The 20–25% revenue share compensates VV for:
+1. **Building the platform at 50–80% below market rates** ($37K–$65K vs. $50K–$300K market cost for SaaS MVP)
+2. **Ongoing maintenance** (10 hrs/mo of bug fixes, prompt tuning, workflow adjustments)
+3. **Continued alignment** — VV stays motivated to improve the platform because better product = more subscribers = more revenue for VV
+
+**Benchmark:** Agencies that build and maintain SaaS platforms typically receive 20–40% ongoing revenue share. Pure referral partners (no build work) earn 15–30% recurring. At 20–25%, VV is at the conservative end for a build-and-maintain partner. See `PARTNERSHIP_AGREEMENT.md` Section 2.3 for full justification and financial model.
+
 ---
 
 ## Recommendation Summary
