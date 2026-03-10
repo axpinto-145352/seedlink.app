@@ -7,9 +7,9 @@
 
 **Prepared for:** Shilpa Kollengode, CEO — SeedLink.app
 **Prepared by:** Veteran Vectors
-**Date:** March 6, 2026
+**Date:** March 10, 2026
 **Classification:** Confidential
-**Version:** 3.0 (updated with modular service pricing and streamlined roadmap)
+**Version:** 4.0 (updated per Mar 9 call: 75/25 build split, 90/10 Lite Support split, Premium tier removed, package pricing — Outreach $2,500 / Content $4,000 / Full Stack $6,000, Growth Partner role, Stripe Connect auto-split, validation call added)
 
 ---
 
@@ -49,27 +49,28 @@ This is written so you can use it directly in conversations with partners, prosp
 
 ## 2. Executive Summary
 
-**The bottom line:** SeedLink's current pricing ($1,500 / $2,200 / $3,000) is **extremely competitive** — in some cases 50–70% below what agencies charge for comparable integration work. That's a powerful sales story. It also means margins are tight, especially at the Basic tier for non-LinkedIn services.
+**The bottom line:** SeedLink's updated pricing structure — à la carte modules ($1,500 Basic / $2,200 Standard) plus package bundles (Outreach $2,500, Content $4,000, Full Stack $6,000) — is **extremely competitive**, in some cases 50–70% below what agencies charge for comparable integration work. The Mar 9 restructure (Premium tier removed, 75/25 build split, 90/10 Lite Support split, Stripe Connect auto-split) streamlines operations and improves margin clarity for both parties.
 
-**Six key findings:**
+**Seven key findings:**
 
 | # | Finding |
 |---|---------|
-| 1 | **LinkedIn outreach is the strongest margin product.** The build is repeatable, the scope is well-defined, and the $1,500 price point sits comfortably between DIY ($59/mo tools) and agency retainers ($2,000–$5,000/mo). |
-| 2 | **SEO/AEO and Email are underpriced at Basic.** Agencies charge $1,500–$3,500/mo *ongoing* for SEO alone. A one-time $1,500 build that includes an AI content engine, editorial calendar, and SEO optimization is leaving money on the table. |
-| 3 | **The $1,500 Basic tier works as a door-opener, not a profit center.** Effective hourly rates at Basic (after commission) drop to $26–$43/hr — below market rate for a mid-level n8n developer. The money is made at Standard and Premium. |
-| 4 | **Waldium (YC S23) is not a direct competitor but is ahead on AEO.** They target developer tools companies and handle blogs, guides, and docs (not social or outreach). But their AI citation analytics and LLMs.txt support are capabilities worth watching. |
-| 5 | **The referral → productized service path is correct.** Starting with referral builds, creating a landing page, and standardising delivery only after demand is proven is the right sequence. |
-| 6 | **Third-party tool dependency is the biggest operational risk.** The entire service relies on tools SeedLink doesn't own (Prosp.AI, n8n, Buffer, Claude API). Each requires the client's own subscription and account. This must be transparent in all sales conversations. |
+| 1 | **Package pricing is the right move.** Outreach ($2,500), Content ($4,000), and Full Stack ($6,000) bundles simplify the sales conversation and guide clients toward higher-value purchases. The upgrade credit path (à la carte → package) reduces buyer hesitation. |
+| 2 | **LinkedIn outreach is the strongest margin product.** The build is repeatable, the scope is well-defined, and the $1,500 price point sits comfortably between DIY ($59/mo tools) and agency retainers ($2,000–$5,000/mo). |
+| 3 | **SEO/AEO and Email are underpriced at Basic.** Agencies charge $1,500–$3,500/mo *ongoing* for SEO alone. A one-time $1,500 build that includes an AI content engine, editorial calendar, and SEO optimization is leaving money on the table. The Content Package ($4,000) fixes this for bundled purchases. |
+| 4 | **The 75/25 build split is sustainable at Standard and above.** At the new split, VV's effective hourly rate on Standard builds ($30–$42/hr) is market-rate for mid-level n8n work. Basic à la carte is thin but works as a door-opener. |
+| 5 | **Waldium (YC S23) is not a direct competitor but is ahead on AEO.** They target developer tools companies and handle blogs, guides, and docs (not social or outreach). But their AI citation analytics and LLMs.txt support are capabilities worth watching. |
+| 6 | **The referral → productized service path is correct.** Starting with referral builds, creating a landing page, and standardising delivery only after demand is proven is the right sequence. The Growth Partner structure with clear role separation supports this. |
+| 7 | **Third-party tool dependency is the biggest operational risk.** The entire service relies on tools SeedLink doesn't own (Prosp.AI, n8n, Buffer, Claude API). Each requires the client's own subscription and account. This must be transparent in all sales conversations. |
 
 **Recommended actions (in priority order):**
 
-1. Tighten Basic tier scope to protect margins
-2. Push clients toward Standard/Premium with clear feature differentiation
+1. Lead with package pricing in sales conversations — position à la carte as fallback
+2. Push clients toward Standard tier and package bundles where margins are healthy
 3. Consider a paid assessment tier ($750–$1,000) as an entry point
-4. Raise Lite Support to $350/mo for non-LinkedIn services
-5. Track actual delivery hours for the next 5 builds to validate pricing
-6. Evaluate AEO upgrades (LLMs.txt, AI citation monitoring) — early-stage, unproven ROI but forward-looking
+4. Track actual delivery hours for the next 5 builds to validate pricing at the new split
+5. Evaluate AEO upgrades (LLMs.txt, AI citation monitoring) — early-stage, unproven ROI but forward-looking
+6. Monitor Lite Support conversion rate — at 90/10 split, this is where VV's recurring revenue compounds
 
 ---
 
@@ -175,12 +176,22 @@ These platforms overlap with different parts of what SeedLink integrates, but no
 
 ### SeedLink's Position in the Market
 
+#### À La Carte (Basic Tier)
+
 | Service | SeedLink Basic (build fee only) | Market Floor (Freelancer) | Market Mid (Agency) | SeedLink vs. Market |
 |---------|-------------------------------|--------------------------|--------------------|--------------------|
 | LinkedIn Outreach | $1,500 | $500–$1,000 | $3,000–$7,500 | **Competitive** — below agency, above bottom-tier freelancer |
 | SEO/AEO Engine | $1,500 | $5,000 | $5,000–$15,000 | **Well below market** for comparable scope |
 | Social Automation | $1,500 | $2,000 | $2,000–$8,000 | **Below market** — at or below freelancer floor |
 | Email Automation | $1,500 | $1,500 | $2,000–$8,000 | **At freelancer floor** |
+
+#### Package Bundles (Primary Sales Path)
+
+| Package | SeedLink Price | Comparable Agency Cost | SeedLink vs. Market |
+|---------|---------------|----------------------|---------------------|
+| Outreach (LinkedIn + Email) | $2,500 | $5,000–$15,000 | **50–80% below market** |
+| Content (Content + SEO/GEO) | $4,000 | $10,000–$30,000 | **60–85% below market** |
+| Full Stack (All 4) | $6,000 | $15,000–$40,000+ | **60–85% below market** |
 
 > **Important context for accurate comparison:** SeedLink prices shown are one-time build/integration fees only. Clients will additionally pay approximately $110–$165/month in third-party tool subscriptions (n8n, Claude API, Buffer, Prosp.AI, WordPress hosting). Agency retainer prices shown typically include tool costs. For accurate total-cost-of-ownership comparison, add 12 months of tool subscriptions (~$1,320–$1,980) to SeedLink build fees.
 
@@ -189,14 +200,15 @@ These platforms overlap with different parts of what SeedLink integrates, but no
 ```
 Price Scale (One-Time Build Fee Only)
 
-$0         $1.5K        $3K         $5K         $10K        $15K
-|------------|------------|-----------|-----------|-----------|
-             ^                                    ^
-         SeedLink                            Agency Average
-          Basic                              (SEO/Email)
+$0     $1.5K   $2.5K   $4K     $6K         $10K        $15K+
+|--------|-------|-------|-------|-----------|-----------|
+         ^       ^       ^       ^                       ^
+      Basic   Outreach Content Full Stack           Agency Avg
+     (à la    Pkg     Pkg     Pkg                  (multi-svc)
+      carte)
 ```
 
-**Key insight:** SeedLink's integration service is priced like a freelancer but delivers agency-level workflow automation. That's a strong value proposition for sales — and a margin risk for delivery.
+**Key insight:** SeedLink's integration service is priced like a freelancer but delivers agency-level workflow automation. Package bundles are the strongest value proposition — a Full Stack build ($6,000) replaces $15,000–$40,000 in agency work. That's the lead story in every sales conversation.
 
 ---
 
@@ -204,32 +216,52 @@ $0         $1.5K        $3K         $5K         $10K        $15K
 
 ### Labor Hours & Effective Rates
 
-Commission structure: SeedLink receives 15% of the build fee as a referral commission. The remaining 85% is the net revenue to Veteran Vectors (delivery partner). The "Net $/hr" column reflects the delivery partner's actual earnings per hour.
+Commission structure (per Mar 9 agreement): SeedLink receives 25% of the build fee. The remaining 75% is the net revenue to Veteran Vectors (delivery partner). Lite Support uses a 90/10 split (VV 90%, SeedLink 10%). The "Net $/hr" column reflects the delivery partner's actual earnings per hour.
 
-| Service | Tier | Build Fee | Est. Hours | Net Revenue (85%) | Net $/hr |
+> **Note:** Premium tier removed per Mar 9 call. Clients needing Premium-level scope are handled as custom quotes.
+
+#### À La Carte Module Pricing
+
+| Service | Tier | Build Fee | Est. Hours | Net Revenue (75%) | Net $/hr |
 |---------|------|-----------|-----------|-------------------|---------|
-| **LinkedIn** | Basic | $1,500 | 28–40h | $1,275 | $32–$46 |
-| | Standard | $2,200 | 40–55h | $1,870 | $34–$47 |
-| | Premium | $3,000 | 55–75h | $2,550 | $34–$47 |
-| **SEO/AEO** | Basic | $1,500 | 33–50h | $1,275 | **$26–$39** |
-| | Standard | $2,200 | 37–57h | $1,870 | $33–$51 |
-| | Premium | $3,000 | 42–65h | $2,550 | $39–$61 |
-| **Social** | Basic | $1,500 | 30–45h | $1,275 | **$28–$43** |
-| | Standard | $2,200 | 34–52h | $1,870 | $36–$55 |
-| | Premium | $3,000 | 40–60h | $2,550 | $43–$64 |
-| **Email** | Basic | $1,500 | 32–48h | $1,275 | **$27–$40** |
-| | Standard | $2,200 | 40–60h | $1,870 | $31–$47 |
-| | Premium | $3,000 | 50–75h | $2,550 | $34–$51 |
+| **LinkedIn** | Basic | $1,500 | 28–40h | $1,125 | $28–$40 |
+| | Standard | $2,200 | 40–55h | $1,650 | $30–$41 |
+| **SEO/AEO** | Basic | $1,500 | 33–50h | $1,125 | **$23–$34** |
+| | Standard | $2,200 | 37–57h | $1,650 | $29–$45 |
+| **Social** | Basic | $1,500 | 30–45h | $1,125 | **$25–$38** |
+| | Standard | $2,200 | 34–52h | $1,650 | $32–$49 |
+| **Email** | Basic | $1,500 | 32–48h | $1,125 | **$23–$35** |
+| | Standard | $2,200 | 40–60h | $1,650 | $28–$41 |
+
+#### Package Pricing
+
+| Package | Price | Est. Hours | Net Revenue (75%) | Net $/hr |
+|---------|-------|-----------|-------------------|---------|
+| **Outreach** (LinkedIn + Email) | $2,500 | 60–95h | $1,875 | $20–$31 |
+| **Content** (Content + SEO/GEO) | $4,000 | 65–100h | $3,000 | $30–$46 |
+| **Full Stack** (All 4 modules) | $6,000 | 120–180h | $4,500 | $25–$38 |
 
 ### Margin Health Summary
 
 | Tier | LinkedIn | SEO/AEO | Social | Email |
 |------|----------|---------|--------|-------|
-| **Basic** | Acceptable | **Thin** | **Thin** | **Thin** |
-| **Standard** | Good | Acceptable | Good | Acceptable |
-| **Premium** | Good | Good | Good | Acceptable |
+| **Basic (à la carte)** | Thin | **At risk** | **At risk** | **At risk** |
+| **Standard (à la carte)** | Acceptable | Acceptable | Acceptable | Acceptable |
+| **Content Package ($4,000)** | — | **Healthy** | — | — |
+| **Full Stack ($6,000)** | Acceptable | Acceptable | Acceptable | Acceptable |
 
-**The pattern is clear:** LinkedIn is the healthiest product. SEO and Email at Basic tier are margin-negative if builds run over estimate. Standard tier is where the business model works.
+**The pattern is clear:** At the 75/25 split, Basic à la carte modules are thin-to-risky. Standard à la carte is where individual modules work. Package pricing — especially the Content Package ($4,000) — delivers the healthiest margins. The Outreach Package ($2,500) is tight; the Full Stack ($6,000) is acceptable but demands efficient delivery across all four modules. **Lead with packages and Standard tier in every sales conversation.**
+
+### Lite Support Margin (90/10 Split)
+
+| Module | Monthly Price | VV Revenue (90%) | SeedLink (10%) |
+|--------|-------------|-----------------|---------------|
+| LinkedIn | $250/mo | $225/mo | $25/mo |
+| Content | $350/mo | $315/mo | $35/mo |
+| Email | $350/mo | $315/mo | $35/mo |
+| SEO/GEO | $350/mo | $315/mo | $35/mo |
+
+Lite Support is capped at 5 hours/module/month. At 90/10, VV's effective rate on Lite Support ranges from $45–$63/hr — the highest-margin recurring line in the partnership.
 
 ---
 
@@ -330,26 +362,28 @@ Waldium (YC S23, backed by General Catalyst and Z Fellows) is an autonomous publ
 
 ## 9. Strategic Recommendations
 
-### Recommendation 1: Tighten Basic Tier Scope
+### Recommendation 1: Lead with Package Pricing
 
-**Current problem:** The Basic tier promises a lot of deliverables for $1,500. This creates margin pressure and sets client expectations too high for the entry price.
+**Per Mar 9 restructure:** Package bundles (Outreach $2,500, Content $4,000, Full Stack $6,000) are the primary sales path. À la carte Basic ($1,500) and Standard ($2,200) remain available but should be positioned as fallbacks.
 
-**Proposed scope limits:**
+**Scope per tier (now aligned with Partnership Agreement Section 1.5):**
 
-| Service | Basic ($1,500) — Tightened | Standard ($2,200) | Premium ($3,000) |
-|---------|---------------------------|-------------------|------------------|
-| **LinkedIn** | 1 account, 1 persona, 1 sequence | 2 accounts, 2 personas | 3 accounts, 3 personas |
-| **SEO/AEO** | 1 pillar, 4 posts/mo, Google Docs output (no CMS integration) | 2 pillars, 8 posts/mo, WordPress integration | 3+ pillars, 12+ posts/mo, WordPress + schema markup |
-| **Social** | 1 platform, blog-to-social only | 2 platforms, blog-to-social + standalone posts | 2 platforms + standalone + automated scheduling |
-| **Email** | 2 sequences, basic CRM, no A/B testing | 4 sequences, advanced personalization | 6+ sequences, A/B testing, multi-segment targeting |
+| Service | Basic ($1,500) | Standard ($2,200) |
+|---------|---------------|-------------------|
+| **LinkedIn** | 1 account, 1 persona, 1 sequence | 2 accounts, 2 personas, 2 sequences |
+| **SEO/AEO** | 1 pillar, 4 posts/mo, no CMS integration | 2 pillars, 8 posts/mo, WordPress + JSON-LD |
+| **Social** | 1 platform, blog-to-social only | 2 platforms, blog-to-social + standalone |
+| **Email** | 2 sequences, basic CRM | 4 sequences, advanced personalization |
+
+> Premium tier removed — clients needing beyond-Standard scope get a custom quote.
 
 All tiers require the client's own subscriptions to the relevant third-party tools (Prosp.AI, Buffer, Claude API, etc.).
 
-**Why:** The Basic tier should be a "starter" that gets real results fast. Premium features (A/B testing, schema markup, multi-platform) should pull clients to Standard/Premium where margins are healthy.
+**Why packages work better:** The Content Package ($4,000) delivers healthy margins at 75/25. The Full Stack ($6,000) is the strongest value story vs. agencies ($15K–$40K). The upgrade credit path (à la carte → package) removes buyer hesitation.
 
-### Recommendation 2: Push Clients to Standard
+### Recommendation 2: Push Clients to Standard and Packages
 
-Every sales conversation should position Standard as the "right choice for most businesses." The price difference ($700) is small relative to value gained — and it's where the business model actually works. Basic should be presented as "for teams that just want to test the waters."
+Every sales conversation should position packages as the default and Standard as the minimum for à la carte buyers. Basic should be presented as "for teams that just want to test the waters with a single channel." At the 75/25 split, Basic à la carte is a door-opener — the real business happens at Standard and in packages.
 
 ### Recommendation 3: Consider a Paid Assessment Tier ($750–$1,000)
 
@@ -366,31 +400,30 @@ Rather than a stripped-down "Quick Win" build (which risks cannibalizing Basic w
 
 **Risk if we do Quick Win builds instead:** Two unprofitable tiers (Quick Win + Basic) below the healthy margin tier (Standard) creates downward pricing pressure, not upward pull.
 
-### Recommendation 4: Price Combined Packages to Reflect Integration Work
+### Recommendation 4: Package Pricing Is Now Set ✓
 
-If a client wants multiple services, integration complexity between workflows adds 15–25 hours of work. Combined packages should reflect this added labor:
+Per Mar 9 call, package pricing is finalized:
 
-| Package | Suggested Price | vs. Sum of Individual |
-|---------|----------------|----------------------|
-| Any 2 services (Basic) | $3,200 | +$200 over 2 × $1,500 |
-| Any 2 services (Standard) | $4,600 | +$200 over 2 × $2,200 |
-| Any 3 services (Standard) | $6,800 | +$200 over 3 × $2,200 |
-| Full stack, 4 services (Standard) | $9,200 | +$400 over 4 × $2,200 |
+| Package | Price | vs. Sum of À La Carte (Standard) | Rationale |
+|---------|-------|----------------------------------|-----------|
+| **Outreach** (LinkedIn + Email) | $2,500 | -$1,900 vs. 2 × $2,200 | Price to attract; integration adds value but keeps total accessible |
+| **Content** (Content + SEO/GEO) | $4,000 | -$400 vs. 2 × $2,200 | Closest to market rate; highest margin package |
+| **Full Stack** (All 4) | $6,000 | -$2,800 vs. 4 × $2,200 | Maximum value story vs. agencies; attracts serious buyers |
 
-**Why not discount bundles?** Integration complexity means bundles are more work, not less. The $200–$400 premium covers the cross-workflow configuration and testing.
+> Note: Unlike the previous recommendation to price *above* the sum of parts, the Mar 9 pricing prices packages *below* à la carte totals — a deliberate strategy to pull clients toward larger purchases. The integration work is absorbed into the package margin.
 
-### Recommendation 5: Raise Lite Support for Non-LinkedIn Services
+### Recommendation 5: Lite Support Pricing Is Set ✓
 
-LinkedIn Lite Support ($250/mo) is appropriately priced — sequences run predictably and monitoring is straightforward.
+Per Mar 9 agreement, Lite Support pricing is finalized with 90/10 split (VV 90%, SeedLink 10%):
 
-SEO and Content Engine maintenance requires more ongoing judgment: keyword strategy shifts, algorithm updates, content performance tuning, prompt adjustments. **Recommend $350/mo for non-LinkedIn Lite Support.**
+| Lite Support | Price | VV (90%) | SeedLink (10%) |
+|-------------|-------|----------|---------------|
+| LinkedIn | $250/mo | $225/mo | $25/mo |
+| Content | $350/mo | $315/mo | $35/mo |
+| Email | $350/mo | $315/mo | $35/mo |
+| SEO/GEO | $350/mo | $315/mo | $35/mo |
 
-| Lite Support | Current | Recommended |
-|-------------|---------|-------------|
-| LinkedIn | $250/mo | $250/mo (keep) |
-| SEO/AEO | $250/mo | **$350/mo** |
-| Social | $250/mo | **$350/mo** |
-| Email | $250/mo | **$350/mo** |
+The 90/10 split reflects the actual work distribution — VV does all monitoring, optimization, and client support. SeedLink processes automated Stripe billing. This is VV's highest-margin recurring revenue line ($45–$63/hr effective).
 
 ### Recommendation 6: Evaluate AEO Upgrades (With Caveats)
 
@@ -408,37 +441,53 @@ These are forward-looking additions. Current research shows mixed results on AEO
 
 ## 10. Proposed Pricing Framework
 
-### One-Time Build Pricing (Updated)
+### One-Time Build Pricing (Updated per Mar 9 Call)
 
-| | Paid Assessment | Basic | Standard | Premium |
-|---|----------------|-------|----------|---------|
-| **Price** | $750–$1,000 | $1,500 | $2,200 | $3,000 |
-| **Target client** | Needs strategy before committing | Budget-conscious, single-channel | Most businesses | High-volume / multi-channel |
-| **Delivery time** | 3–5 days | 1 week | 1–2 weeks | 2–3 weeks |
-| **Scope** | Strategy, audit, roadmap (no build) | Core automation, single-channel | Full automation, multi-channel | Full automation + advanced features |
-| **Margin health** | High | Thin (use as door-opener) | **Healthy** | Healthy |
+> **Premium tier removed.** Clients needing Premium-level scope are handled as custom quotes. Package pricing is the primary sales path.
+
+#### À La Carte Modules
+
+| | Paid Assessment | Basic | Standard |
+|---|----------------|-------|----------|
+| **Price** | $750–$1,000 | $1,500 | $2,200 |
+| **Target client** | Needs strategy before committing | Budget-conscious, single-channel | Most businesses |
+| **Delivery time** | 3–5 days | 1 week | 1–2 weeks |
+| **Scope** | Strategy, audit, roadmap (no build) | Core automation, single-channel | Full automation, multi-channel |
+| **Margin health (at 75/25)** | High | Thin (door-opener only) | **Acceptable** |
+
+#### Package Bundles (Recommended Sales Path)
+
+| Package | What's Included | Price | Margin Health (at 75/25) |
+|---------|----------------|-------|--------------------------|
+| **Outreach** | LinkedIn + Email | **$2,500** | Tight — requires efficient delivery |
+| **Content** | Content Creation + SEO/GEO | **$4,000** | **Healthy** |
+| **Full Stack** | All 4 modules | **$6,000** | Acceptable |
+
+> Upgrade credit: clients who purchased à la carte can apply what they've paid toward a package price.
 
 *All tiers require client's own subscriptions to relevant third-party tools (~$110–$165/mo ongoing).*
 
-### Recurring Revenue (Lite Support)
+### Recurring Revenue (Lite Support — 90/10 Split)
 
-| Service | Monthly | Annual Value (Per Client) |
-|---------|---------|--------------------------|
-| LinkedIn | $250/mo | $3,000/yr |
-| SEO/AEO | $350/mo | $4,200/yr |
-| Social | $350/mo | $4,200/yr |
-| Email | $350/mo | $4,200/yr |
-| Multi-service discount (3+) | 10% off | — |
+| Service | Monthly | VV Revenue (90%) | SeedLink (10%) | Annual Value (Per Client, Gross) |
+|---------|---------|-----------------|---------------|----------------------------------|
+| LinkedIn | $250/mo | $225/mo | $25/mo | $3,000/yr |
+| SEO/AEO | $350/mo | $315/mo | $35/mo | $4,200/yr |
+| Social | $350/mo | $315/mo | $35/mo | $4,200/yr |
+| Email | $350/mo | $315/mo | $35/mo | $4,200/yr |
+| Multi-service discount (3+) | 10% off | — | — | — |
 
 ### Revenue Scenarios (Month-by-Month Ramp Model)
 
-These projections use a proper accumulation model where Lite Support clients ramp up over the year (a client acquired in month 6 pays for 7 months, not 12). Revenue figures shown are gross (before 15% SeedLink commission on builds).
+These projections use a proper accumulation model where Lite Support clients ramp up over the year (a client acquired in month 6 pays for 7 months, not 12). Revenue figures shown as both gross and net (after 75/25 build split and 90/10 Lite Support split).
 
-| Scenario | Builds/Mo | Avg. Build | Lite Conversion | Year 1 Build Revenue | Year 1 Lite Revenue | Year 1 Total (Gross) |
-|----------|-----------|-----------|-----------------|---------------------|--------------------|--------------------|
-| **Conservative** | 2 | $2,200 | 50% | $52,800 | $23,400 | **~$76,000** |
-| **Moderate** | 4 | $2,200 | 50% | $105,600 | $46,800 | **~$152,000** |
-| **Aggressive** | 6 | $2,500 | 60% | $180,000 | $81,900 | **~$262,000** |
+| Scenario | Builds/Mo | Avg. Build | Lite Conversion | Year 1 Build (Gross) | Year 1 Lite (Gross) | Year 1 Total (Gross) | VV Net (75% builds + 90% Lite) | SeedLink Net (25% builds + 10% Lite) |
+|----------|-----------|-----------|-----------------|---------------------|--------------------|--------------------|-------------------------------|--------------------------------------|
+| **Conservative** | 2 | $3,500* | 50% | $84,000 | $23,400 | **~$107,000** | ~$84,060 | ~$23,340 |
+| **Moderate** | 4 | $3,500* | 50% | $168,000 | $46,800 | **~$215,000** | ~$168,120 | ~$46,680 |
+| **Aggressive** | 6 | $4,000* | 60% | $288,000 | $81,900 | **~$370,000** | ~$289,710 | ~$80,190 |
+
+*\* Average build price increased to reflect package pricing (most clients expected to purchase Outreach $2,500, Content $4,000, or Full Stack $6,000 rather than individual $2,200 modules).*
 
 *Lite Support revenue calculated as: avg. $300/mo × cumulative client-months (1+2+3+...+12 = 78 client-months at conservative). Conversion rate and churn assumptions are unvalidated — track real data during Phase 1 to calibrate.*
 
@@ -446,6 +495,7 @@ These projections use a proper accumulation model where Lite Support clients ram
 - Client acquisition rate (2–6 builds/month) depends on a referral pipeline that does not yet exist at scale
 - Lite Support conversion rate (50–60%) is an estimate — SaaS retention benchmarks for SMB advisory services are typically 30–50%
 - Aggressive scenario (6 builds/month = 240+ hours) requires delivery capacity beyond one person/team
+- Package adoption rate — if most clients buy à la carte Basic ($1,500), the average build price drops and these projections are too optimistic
 
 ---
 
@@ -473,7 +523,7 @@ These projections use a proper accumulation model where Lite Support clients ram
 |--------|---------|
 | Build onboarding questionnaire | Structured intake form capturing all client parameters |
 | Create parameterized templates | Config file → exported workflow JSONs for each client |
-| Define and publish pricing packages | Landing page with Assessment / Basic / Standard / Premium |
+| Define and publish pricing packages | Landing page with Assessment / Basic / Standard + Package bundles |
 | Deliver 5–10 client builds | Prove repeatability and refine process |
 | Collect case studies | Real results from client deployments |
 | Evaluate demand | Conversion rate from landing page, referral pipeline health |
@@ -564,33 +614,40 @@ Third-party product names, logos, and brands referenced in this report are prope
 
 ### Internal References
 
+- `PARTNERSHIP_AGREEMENT.md` — v3.0 operating partnership (Mar 10 restructure: 75/25 build, 90/10 Lite, Stripe Connect, scope of work)
 - `reviews/smb-pricing-analysis.md` — Detailed pricing breakdown with hour estimates
 - `COMPETITOR_REVIEW_WALDIUM.md` — Full Waldium competitive analysis
 - `reviews/mavera-voice-review.md` — Voice & tone quality review
 - `Mavera_LinkedIn_Proposal_REVISED.md` — Modular growth proposal (LinkedIn, Content, Email, SEO/GEO) with bundle pricing
 - `SCALABILITY_ANALYSIS.md` — Multi-client scaling cost analysis
 - `ONBOARDING.md` — Client onboarding guide
+- `Shilpa and Anthony Pinto.pdf` — Mar 9 call transcript (source for v4.0 changes)
 
 ---
 
 ## Bottom Line
 
-SeedLink's custom integration service covers more automation use cases — outreach, content, social, scheduling, and analytics — with more transparent pricing than comparable agency offerings at this price point. The risk isn't the service quality — it's the pricing at the Basic tier eating into delivery margins, and the need to be clear with clients that SeedLink integrates third-party tools rather than offering a proprietary platform.
+SeedLink's custom integration service covers more automation use cases — outreach, content, social, scheduling, and analytics — with more transparent pricing than comparable agency offerings at this price point. The Mar 9 restructure (75/25 build split, 90/10 Lite Support, package pricing, Premium removed, Stripe Connect auto-split) creates a cleaner operating model with clear role separation between SeedLink (sales, brand, billing) and VV (technical delivery, support).
 
-**The fix is straightforward:**
-1. Keep the $1,500 door-opener but tighten its scope
-2. Make Standard ($2,200) the default recommendation
-3. Offer paid assessments ($750) as the entry point, not stripped-down builds
-4. Price bundles above the sum of parts (integration work costs extra)
-5. Raise Lite Support for content-heavy services
-6. Track real hours and adjust pricing after 5 builds
-7. Ensure all client-facing materials clearly position SeedLink as an integration service with client-owned tool accounts
-8. Add legal protections (data processing agreements, content liability clauses, credential architecture documentation) before scaling
+**What's now in place:**
+1. Package pricing (Outreach $2,500, Content $4,000, Full Stack $6,000) as the primary sales path
+2. À la carte Basic ($1,500) as a door-opener with Standard ($2,200) for single-channel buyers
+3. 75/25 build split with Stripe Connect automatic payment routing
+4. 90/10 Lite Support split reflecting actual labor distribution
+5. Growth Partner role with clear scope boundaries (SeedLink = sales/brand, VV = delivery/support)
+6. Paid assessments ($750–$1,000) as an entry point, not stripped-down builds
 
-The foundation is strong. The pricing needs guardrails, and the positioning needs to be precise about what SeedLink is and isn't.
+**What still needs attention:**
+1. Track real delivery hours for the next 5 builds to validate margins at 75/25
+2. Monitor package adoption rate — if clients default to à la carte Basic, margins are at risk
+3. Ensure all client-facing materials clearly position SeedLink as an integration service with client-owned tool accounts
+4. Add legal protections (data processing agreements, content liability clauses, credential architecture documentation) before scaling
+5. Evaluate AEO upgrades once content engine is running and producing performance data
+
+The foundation is strong. The operating model is now clearly defined. Execution is the next step.
 
 
 ---
 
 *Veteran Vectors — Confidential — Prepared for Shilpa Kollengode, CEO, SeedLink.app*
-*March 6, 2026 — v3.0*
+*March 10, 2026 — v4.0*
