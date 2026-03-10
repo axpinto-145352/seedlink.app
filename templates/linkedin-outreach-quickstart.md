@@ -71,7 +71,7 @@ This isn't a theory. These are real numbers from live campaigns using this exact
 | | Old Model | This Model |
 |---|---|---|
 | Monthly Cost | $[OLD_MONTHLY]/mo | $250/mo (Lite support) |
-| One-Time Setup | — | $1,500 – $3,000 |
+| One-Time Setup | — | $1,500 – $2,200 (à la carte) or $2,500 (Outreach Package) |
 | Year 1 Total | $[OLD_ANNUAL] | ~$[NEW_ANNUAL] |
 | Annual Saving | Baseline | $[SAVINGS] saved |
 | Cost Reduction | Baseline | [X]% cheaper |
@@ -91,9 +91,9 @@ This isn't a theory. These are real numbers from live campaigns using this exact
 
 ## 05 | One-Time Build Pricing
 
-| | 1 Account | 2 Accounts ★ | 3 Accounts ★ |
-|---|---|---|---|
-| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
+| | Basic (1 Account) | Standard (2 Accounts) ★ |
+|---|---|---|
+| **One-Time Build Fee** | **$1,500** | **$2,200** |
 | Prosp AI Setup & Config | ✓ | ✓ | ✓ |
 | Loom Video Framework | ✓ | ✓ | ✓ |
 | Calendly Setup & Integration | ✓ | ✓ | ✓ |

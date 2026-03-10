@@ -39,15 +39,14 @@ Most companies spend $[AMOUNT]/month on social media management — and still po
 |---|---|---|---|
 | Basic (1 platform) | LinkedIn OR X | 3–5 posts | ✓ |
 | Standard (2 platforms) ★ | LinkedIn + X | 5–10 posts | ✓ |
-| Premium (2 platforms + extras) | LinkedIn + X + standalone | 10–15 posts | ✓ |
 
 ---
 
 ## 03 | One-Time Build Pricing
 
-| | Basic | Standard ★ | Premium |
-|---|---|---|---|
-| **One-Time Build Fee** | **$1,500** | **$2,200** | **$3,000** |
+| | Basic | Standard ★ |
+|---|---|---|
+| **One-Time Build Fee** | **$1,500** | **$2,200** |
 | n8n Social Pipeline Setup | ✓ | ✓ | ✓ |
 | Claude AI Prompt Engineering | ✓ | ✓ | ✓ |
 | Blog-to-Social Derivation Workflow | ✓ | ✓ | ✓ |

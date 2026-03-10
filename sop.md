@@ -157,7 +157,7 @@ Most of the onboarding process is automated by the `client-onboarding-orchestrat
 3. Verify Voice Profile tab was populated by the voice-profile-generator workflow
 4. Review the Claude-generated client config (setup checklist, risk flags, customization notes)
 
-### Build Phase (per SLA timeline — Basic: 5-7 days, Standard: 7-10 days, Premium: 10-15 days)
+### Build Phase (per SLA timeline — Basic: 5-7 days, Standard: 7-10 days, Outreach Pkg: 10-15 days, Content Pkg: 15-20 days, Full Stack: 20-25 days)
 
 1. Set client-specific n8n environment variables:
    - `{CLIENT_ID}_SHEET_ID` — from the auto-provisioned Google Sheet

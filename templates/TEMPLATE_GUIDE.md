@@ -1,15 +1,22 @@
 # Seedlink Proposal Templates — Quick Reference
 
-## Standard Pricing (Commission Included)
+## Package Pricing (Primary — Commission Included)
+
+| Package | What's Included | Price |
+|---------|----------------|-------|
+| **Outreach Package** | LinkedIn + Email | **$2,500** |
+| **Content Package** | Content + SEO/GEO | **$4,000** |
+| **Full Stack** | All 4 modules | **$6,000** |
+
+## À La Carte Pricing (Single Modules — Commission Included)
 
 | Tier | LinkedIn Outreach | SEO/AEO Engine | Social Content | Email Automation |
 |---|---|---|---|---|
 | Basic (1 account/channel) | $1,500 | $1,500 | $1,500 | $1,500 |
 | Standard (2 accounts/channels) ★ | $2,200 | $2,200 | $2,200 | $2,200 |
-| Premium (3 accounts/channels) | $3,000 | $3,000 | $3,000 | $3,000 |
 | Lite Support (monthly) | $250 | $250 | $250 | $250 |
 
-*All pricing includes Seedlink referral commission. Adjust tiers as needed for combined packages.*
+*Packages are the recommended pricing path. À la carte for clients who need a single module only. Premium tier ($3,000) has been removed — handle Premium-level scope as a custom quote.*
 
 ---
 
@@ -53,3 +60,4 @@
 |---|---|---|
 | 2026-03-06 | Initial template structure created | — |
 | 2026-03-06 | Standard pricing tiers set per CEO direction | Shilpa K. |
+| 2026-03-10 | Package pricing added (Outreach $2,500, Content $4,000, Full Stack $6,000). Premium tier removed. | — |

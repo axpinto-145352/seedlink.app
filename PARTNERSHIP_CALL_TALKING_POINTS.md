@@ -8,7 +8,7 @@
 ## 1. STRIPE CONNECT — THE WIN-WIN PROPOSAL
 
 ### The Problem We're Solving
-- Old model: Client pays SeedLink → SeedLink holds 100% → manually pays VV 85% "within 7 days"
+- Old model: Client pays SeedLink → SeedLink holds 100% → manually pays VV 75% "within 7 days"
 - Creates trust dependency, manual invoicing, delayed cash flow, zero visibility for VV
 - 13-Lens Review flagged this as a **Critical finding** (L1-2)
 
@@ -16,8 +16,8 @@
 - SeedLink sets up a Connect platform account (~1 hour setup)
 - VV connects their Stripe account (~10 minutes)
 - **At checkout, Stripe automatically splits every payment:**
-  - **85% → VV** (deposited next business day)
-  - **15% → SeedLink** (deposited next business day)
+  - **75% → VV** (deposited 1 business day after payment — delayed split)
+  - **25% → SeedLink** (deposited same day — logged as revenue for investor reporting)
 - Both parties see all transactions in real-time via their Stripe dashboards
 - Zero manual invoicing. Zero delayed payments. Zero trust required.
 
@@ -26,16 +26,16 @@
 Client pays:         $2,200.00
 Stripe fee:          -$64.10  (2.9% + $0.30)
 Net to split:        $2,135.90
-  → VV (85%):        $1,815.52  (auto, next business day)
-  → SeedLink (15%):  $320.39    (auto, next business day)
+  → SeedLink (25%):  $533.98   (auto, same day)
+  → VV (75%):        $1,601.93 (auto, next business day — delayed split)
 ```
 
 ### Stripe Fee Handling — Recommendation: Proportional Split
 | Option | Who Pays | Verdict |
 |--------|----------|---------|
 | Client absorbs | Client charged extra | Less transparent |
-| **Proportional (recommended)** | **VV 85% of fee, SeedLink 15%** | **Fairest — neither disadvantaged** |
-| SeedLink absorbs | Comes off SeedLink's 15% | Disproportionate |
+| **Proportional (recommended)** | **VV 75% of fee, SeedLink 25%** | **Fairest — neither disadvantaged** |
+| SeedLink absorbs | Comes off SeedLink's 25% | Disproportionate |
 
 ### Benefits for VV
 - Automatic payment — no chasing, no invoicing

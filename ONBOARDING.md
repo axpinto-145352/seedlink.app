@@ -694,7 +694,7 @@ The system is designed for 4 blog posts/month (1/week) with 3-4 LinkedIn posts a
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-### Veteran Vectors (Retainer Support — $600/month)
+### Veteran Vectors — Growth Partner (Retainer Support — $600/month)
 
 | Contact | Details |
 |---------|---------|
